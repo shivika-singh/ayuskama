@@ -1,19 +1,51 @@
 const mongoose = require("mongoose");
 
 const PatientSchema = new mongoose.Schema({
+    patientId: String,
     name: String,
     age: Number,
     address: String,
     phone: String,
     treatmentPlan: String,
     roomNumber: String,
+    password: { type: String, required: true },
     emergencyContact: String,
     allergens: String,
+    disease: String,
+    assignedTherapist: String,
+    treatmentRoom: String,
+    yogaTiming: String,
+    treatmentTime: String,
+    dosAndDonts: String,
+    mealTimings: {
+        breakfast: String,
+        lunch: String,
+        dinner: String
+    },
     medicines: [{
         name: String,
         dosage: String,
         time: String
     }],
+    checkInDate: Date,
+    checkOutDate: Date,
+    queries: [{
+        question: String,
+        answer: String,
+        date: { type: Date, default: Date.now },
+        status: { type: String, default: "Pending" }
+    }],
+    paymentMethod: { type: String, enum: ['pending', 'advanced', 'checkout'], default: 'pending' },
+    dietPlan: String,
+    treatmentProtocol: String,
+    dischargeSummary: {
+        stayDuration: String,
+        treatmentsReceived: [String],
+        totalAmount: Number,
+        paidAmount: Number,
+        notes: String
+    },
+    status: { type: String, default: 'active' },
     createdAt: { type: Date, default: Date.now }
 });
 

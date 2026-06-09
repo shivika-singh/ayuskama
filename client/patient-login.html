@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayuskama - Admin Login</title>
+    <title>Ayuskama - Patient Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -63,7 +63,7 @@
             left: 0;
             width: 100%;
             height: 6px;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
         }
 
         .brand-header {
@@ -198,17 +198,17 @@
 <div class="login-container">
     <div class="brand-header">
         <h1 style="display: flex; align-items: center; gap: 12px; justify-content: inherit;"><img src="assets/logo.jpg" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> Ayus<span>kama</span></h1>
-        <p>Admin Portal Login</p>
+        <p>Patient Portal Login</p>
     </div>
 
     <div id="errorMsg" class="alert-error">
-        <span>❌</span> Invalid username or password.
+        <span id="errorIcon">❌</span> <span id="errorText">Invalid Patient ID or Room Number.</span>
     </div>
 
     <form id="loginForm">
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Enter your username" required autocomplete="username">
+            <label for="patientId">Patient ID</label>
+            <input type="text" id="patientId" placeholder="e.g. AYUR-1234" required autocomplete="username">
         </div>
 
         <div class="form-group">
@@ -217,7 +217,7 @@
         </div>
 
         <button type="submit" class="submit-btn" id="loginBtn">
-            Sign In <span>→</span>
+            Enter Portal <span>→</span>
         </button>
     </form>
 </div>
@@ -225,8 +225,14 @@
 <script>
     const form = document.getElementById("loginForm");
     const errorMsg = document.getElementById("errorMsg");
+    const errorText = document.getElementById("errorText");
     const loginBtn = document.getElementById("loginBtn");
     
+    // Check if player is already logged in
+    if (localStorage.getItem('patientData')) {
+        window.location.href = "patient-dashboard.html";
+    }
+
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
         
@@ -235,43 +241,47 @@
         
         // Add loading state
         const originalText = loginBtn.innerHTML;
-        loginBtn.innerHTML = "Authenticating... <span>⏳</span>";
+        loginBtn.innerHTML = "Verifying... <span>⏳</span>";
         loginBtn.style.opacity = "0.8";
         loginBtn.disabled = true;
 
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
+        const patientId = document.getElementById("patientId").value.trim();
+        const password = document.getElementById("password").value.trim();
 
         try {
-            const response = await fetch('http://localhost:5001/api/admin/login', {
+            const response = await fetch('http://localhost:5001/api/patients/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ patientId, password })
             });
 
             const data = await response.json();
 
             if (response.ok) {
                 // Success - redirect to dashboard
-                window.location.href = "dashboard.html";
+                localStorage.setItem('patientData', JSON.stringify(data.patient));
+                window.location.href = "patient-dashboard.html";
             } else {
-                showError(data.message || "Invalid username or password.");
+                // Failure
+                showError(data.message || "Invalid Patient ID or Room Number.");
             }
         } catch (err) {
             console.error(err);
             showError("Unable to connect to server. Please try again.");
         } finally {
-            // Restore button
-            loginBtn.innerHTML = originalText;
-            loginBtn.style.opacity = "1";
-            loginBtn.disabled = false;
+            // Restore button if not redirected
+            if (!localStorage.getItem('patientData')) {
+                loginBtn.innerHTML = originalText;
+                loginBtn.style.opacity = "1";
+                loginBtn.disabled = false;
+            }
         }
     });
 
     function showError(msg) {
-        errorMsg.innerHTML = `<span>❌</span> ${msg}`;
+        errorText.textContent = msg;
         errorMsg.style.display = "flex";
         
         // Shake effect on the container

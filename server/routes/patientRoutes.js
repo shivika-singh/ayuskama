@@ -1,12 +1,29 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 const Patient = require("../models/patient");
 
 router.post("/register", async (req, res) => {
     try {
-        const patient = new Patient(req.body);
+        const patientData = req.body;
+        // Generate a patientId if none is provided
+        if (!patientData.patientId) {
+            const roomNum = patientData.roomNumber || Math.floor(100 + Math.random() * 900);
+            patientData.patientId = "ayush_" + roomNum;
+        }
+        
+        // Auto-generate password: first 3 letters of name + "-" + roomNumber
+        const namePart = patientData.name ? patientData.name.substring(0, 3).toLowerCase() : "usr";
+        const roomPart = patientData.roomNumber || "000";
+        patientData.password = namePart + "-" + roomPart;
+
+        // Hash the patient's password
+        const salt = await bcrypt.genSalt(10);
+        patientData.password = await bcrypt.hash(patientData.password, salt);
+        
+        const patient = new Patient(patientData);
         await patient.save();
-        res.json({ message: "Patient Registered Successfully" });
+        res.json({ message: "Patient Registered Successfully", patientId: patient.patientId });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -40,6 +57,154 @@ router.put("/:id/medicines", async (req, res) => {
         await patient.save();
         
         res.json({ message: "Medicines updated successfully", patient });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.put("/:id/routine", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+        
+        if (req.body.assignedTherapist !== undefined) patient.assignedTherapist = req.body.assignedTherapist;
+        if (req.body.treatmentRoom !== undefined) patient.treatmentRoom = req.body.treatmentRoom;
+        if (req.body.yogaTiming !== undefined) patient.yogaTiming = req.body.yogaTiming;
+        if (req.body.treatmentTime !== undefined) patient.treatmentTime = req.body.treatmentTime;
+        if (req.body.dosAndDonts !== undefined) patient.dosAndDonts = req.body.dosAndDonts;
+        if (req.body.mealTimings !== undefined) patient.mealTimings = req.body.mealTimings;
+        if (req.body.treatmentPlan !== undefined) patient.treatmentPlan = req.body.treatmentPlan;
+        if (req.body.checkInDate !== undefined) patient.checkInDate = req.body.checkInDate;
+        if (req.body.checkOutDate !== undefined) patient.checkOutDate = req.body.checkOutDate;
+        if (req.body.dietPlan !== undefined) patient.dietPlan = req.body.dietPlan;
+        if (req.body.treatmentProtocol !== undefined) patient.treatmentProtocol = req.body.treatmentProtocol;
+
+        await patient.save();
+        res.json({ message: "Routine updated successfully", patient });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Post a new query (from Patient Dashboard)
+router.post("/:id/queries", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+        
+        patient.queries.push({ question: req.body.question, status: "Pending" });
+        await patient.save();
+        res.json({ message: "Query submitted successfully", patient });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Answer a query (from Admin Dashboard)
+router.put("/:id/queries/:queryId", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+        
+        const query = patient.queries.id(req.params.queryId);
+        if (!query) return res.status(404).json({ message: "Query not found" });
+
+        query.answer = req.body.answer;
+        query.status = "Answered";
+        
+        await patient.save();
+        res.json({ message: "Query answered successfully", patient });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// Patient login
+router.post("/login", async (req, res) => {
+    try {
+        const { patientId, password } = req.body;
+        if (!patientId || !password) {
+            return res.status(400).json({ message: "Patient ID and Password are required" });
+        }
+
+        // We lookup by _id if it's a mongo ID, or by a custom patientId field.
+        // Let's assume patientId here is the `_id` string for now since our UI passes the _id.
+        // Wait, the client used `patientId`. Let's support both `_id` and custom `patientId`.
+        let patient;
+        if (patientId.startsWith("ayush_") || patientId.startsWith("AYUR-")) {
+            patient = await Patient.findOne({ patientId: patientId });
+        } else {
+            try {
+                patient = await Patient.findById(patientId);
+            } catch (e) {
+                patient = null;
+            }
+        }
+
+        if (!patient) {
+            return res.status(404).json({ message: "Invalid Patient ID or Password" });
+        }
+
+        // Compare password
+        const isMatch = await bcrypt.compare(password, patient.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid Patient ID or Password" });
+        }
+
+        if (patient.status === 'checked-out') {
+            return res.status(403).json({ message: "Patient has been checked out." });
+        }
+
+        res.json({ message: "Login successful", patient });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Select payment method (First login)
+router.put("/:id/payment-method", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+        
+        patient.paymentMethod = req.body.paymentMethod;
+        await patient.save();
+        res.json({ message: "Payment method updated", patient });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Checkout and generate discharge summary
+router.post("/:id/checkout", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+        // Calculate stay duration
+        const checkIn = patient.checkInDate ? new Date(patient.checkInDate) : patient.createdAt;
+        const checkOut = new Date();
+        const diffTime = Math.abs(checkOut - checkIn);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1; // at least 1 day
+        
+        // Mock payment calculation
+        const totalAmount = diffDays * 5000; // 5000 per day mock cost
+        const paidAmount = patient.paymentMethod === 'advanced' ? totalAmount : 0;
+
+        patient.dischargeSummary = {
+            stayDuration: `${diffDays} Days`,
+            treatmentsReceived: [patient.treatmentPlan || "General Wellness", patient.treatmentProtocol || ""].filter(Boolean),
+            totalAmount: totalAmount,
+            paidAmount: paidAmount,
+            notes: "Thank you for choosing Ayuskama. Please follow the diet plan and dos/donts."
+        };
+
+        patient.status = 'checked-out';
+        patient.checkOutDate = checkOut;
+        await patient.save();
+        
+        res.json({ message: "Checkout successful", dischargeSummary: patient.dischargeSummary });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

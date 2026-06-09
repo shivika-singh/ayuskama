@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuskama - Manage Treatments</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="ayuskama-theme.css">
+    <style>
+        .container { max-width: 900px; margin: 3rem auto; padding: 2rem; background: var(--card-bg); border-radius: 12px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; }
+        .btn { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="dashboard.html" class="brand-logo">Ayus<span>kama</span></a>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-btn nav-btn-outline">← Dashboard</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Manage Predefined Treatments</h2>
+        <form id="treatmentForm" style="margin-top: 20px;">
+            <div class="form-group">
+                <label>Treatment Name</label>
+                <input type="text" id="tName" required>
+            </div>
+            <div class="form-group">
+                <label>Protocol (Method/Steps)</label>
+                <textarea id="tProtocol" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Default Dos and Don'ts</label>
+                <textarea id="tDosDonts" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn">Add Treatment</button>
+        </form>
+
+        <table id="treatmentsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Protocol</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const loadTreatments = async () => {
+            const res = await fetch("http://localhost:5001/api/treatments");
+            const data = await res.json();
+            const tbody = document.querySelector("#treatmentsTable tbody");
+            tbody.innerHTML = "";
+            data.forEach(t => {
+                tbody.innerHTML += `<tr><td>${t.name}</td><td>${t.protocol}</td></tr>`;
+            });
+        };
+
+        document.getElementById("treatmentForm").onsubmit = async (e) => {
+            e.preventDefault();
+            await fetch("http://localhost:5001/api/treatments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: document.getElementById("tName").value,
+                    protocol: document.getElementById("tProtocol").value,
+                    defaultDosAndDonts: document.getElementById("tDosDonts").value
+                })
+            });
+            document.getElementById("treatmentForm").reset();
+            loadTreatments();
+        };
+
+        loadTreatments();
+    </script>
+</body>
+</html>

@@ -3,27 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AyurCare - Admin Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Ayuskama - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2b593f;
-            --primary-light: #447a5d;
-            --primary-dark: #1b3d29;
-            --accent: #d89f5b;
-            --bg-color: #f4f9f5;
-            --card-bg: #ffffff;
-            --text-main: #2c3e35;
-            --text-muted: #6b8273;
-            --border: #e0ebe4;
-            --hover-bg: #eaf1ec;
+            --primary: #4CAF50;
+            --primary-light: #81C784;
+            --primary-dark: #388E3C;
+            --accent: #C5A059;
+            --bg-color: #fdfdfd;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border: #e8e8e8;
+            --hover-bg: #f4f6f4;
         }
+        h1, h2, h3, h4, h5, h6, .brand-logo, .option-title, .section-title {
+            font-family: 'Cormorant Garamond', serif !important;
+        }
+        body, p, span, a, div, button, input {
+            font-family: 'Montserrat', sans-serif;
+        }
+
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
+            
         }
 
         body {
@@ -210,7 +217,7 @@
             border-radius: 8px;
             border: 1px solid var(--border);
             width: 250px;
-            font-family: 'Outfit', sans-serif;
+            
         }
 
         .search-box::before {
@@ -342,15 +349,18 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="ayuskama-theme.css">
 </head>
 <body>
 
 <!-- Navigation Bar -->
 <div class="navbar">
     <a href="dashboard.html" class="brand-logo">
-        Ayur<span>Care</span> <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
+        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayus<span>kama</span> <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
     </a>
     <div class="nav-links">
+        <a href="treatments.html" class="nav-btn nav-btn-outline">⚙️ Treatments</a>
         <a href="register.html" class="nav-btn nav-btn-outline">+ New Patient</a>
         <a href="therapist.html" class="nav-btn nav-btn-outline">👨‍⚕️ Therapists</a>
         <a href="login.html" class="nav-btn nav-btn-solid">Logout</a>
@@ -423,7 +433,7 @@
 </div>
 
 <script>
-    // In a real app, this would fetch from http://localhost:5000/api/patients
+    // In a real app, this would fetch from http://localhost:5001/api/patients
     // For now, we'll populate it with dummy data to demonstrate the UI
     let dummyPatients = [
         { id: 1, name: "Rajesh Kumar", age: 45, room: "Ward A-12", treatment: "Panchakarma Therapy", phone: "+91 98765 43210" },
@@ -496,7 +506,7 @@
     // Fetch real data from your backend
     async function fetchPatients() {
         try {
-            const res = await fetch("http://localhost:5000/api/patients");
+            const res = await fetch("http://localhost:5001/api/patients");
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.length > 0) {
@@ -512,5 +522,6 @@
     window.onload = fetchPatients;
 </script>
 
+    <script src="animations.js"></script>
 </body>
 </html>

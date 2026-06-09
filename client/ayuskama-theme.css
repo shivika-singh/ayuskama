@@ -1,0 +1,183 @@
+/* Ayuskama Premium Aesthetic Override */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+    --ayuskama-green: #1b3022;
+    --ayuskama-green-light: #2c523b;
+    --ayuskama-gold: #c5a059;
+    --ayuskama-gold-light: #dfba71;
+    --ayuskama-bg: #fdfaf6;
+    --ayuskama-text: #4a4a4a;
+    
+    /* Override existing vars to force new theme */
+    --primary: var(--ayuskama-green) !important;
+    --primary-light: var(--ayuskama-green-light) !important;
+    --primary-dark: #0f1c14 !important;
+    --accent: var(--ayuskama-gold) !important;
+    --bg-color: var(--ayuskama-bg) !important;
+    --text-main: var(--ayuskama-text) !important;
+    --border: #eae1d5 !important;
+}
+
+body, p, span, div, input, button, select, textarea, li, a {
+    font-family: 'Jost', sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-logo, .section-title {
+    font-family: 'Cormorant Garamond', serif !important;
+    color: var(--ayuskama-green) !important;
+}
+
+h1 span, h2 span, .brand-logo span {
+    color: var(--ayuskama-gold) !important;
+}
+
+/* Premium Buttons */
+button, .nav-btn, .submit-btn, .btn {
+    background-color: var(--ayuskama-green) !important;
+    color: #fff !important;
+    border-radius: 2px !important; /* Premium sharp corners */
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    border: 1px solid var(--ayuskama-green) !important;
+    transition: all 0.4s ease !important;
+    box-shadow: none !important;
+}
+
+button:hover, .nav-btn:hover, .submit-btn:hover, .btn:hover {
+    background-color: var(--ayuskama-gold) !important;
+    border-color: var(--ayuskama-gold) !important;
+    color: #fff !important;
+    transform: translateY(-2px) !important;
+}
+
+.nav-btn-outline {
+    background-color: transparent !important;
+    color: var(--ayuskama-green) !important;
+    border: 1px solid var(--ayuskama-green) !important;
+}
+
+.nav-btn-outline:hover {
+    background-color: var(--ayuskama-green) !important;
+    color: #fff !important;
+}
+
+/* Premium Cards */
+.card, .login-container {
+    background: #ffffff !important;
+    border-radius: 4px !important;
+    border: 1px solid var(--border) !important;
+    border-top: 4px solid var(--ayuskama-green) !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.03) !important;
+    backdrop-filter: none !important;
+}
+
+.card-header h2 {
+    font-size: 1.6rem !important;
+    font-weight: 600 !important;
+}
+
+/* Form Inputs */
+input, select, textarea {
+    border-radius: 2px !important;
+    border: 1px solid var(--border) !important;
+    background: #fff !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--ayuskama-gold) !important;
+    box-shadow: 0 0 0 2px rgba(197, 160, 89, 0.2) !important;
+}
+
+/* Hero Section / Landing Page */
+.hero-section {
+    position: relative !important;
+    background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2000&auto=format&fit=crop') !important; 
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 80vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(27, 48, 34, 0.75) !important; /* Dark green overlay */
+    z-index: 1;
+}
+
+.hero-section > * {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    color: #fff !important;
+    font-size: 4rem !important;
+    font-weight: 400 !important;
+    text-transform: capitalize !important;
+}
+.hero-content h1 span {
+    color: var(--ayuskama-gold) !important;
+}
+.hero-content p {
+    color: #e5dccf !important;
+    font-size: 1.2rem !important;
+    letter-spacing: 1px;
+}
+
+/* Background textures */
+body {
+    background-color: var(--ayuskama-bg) !important;
+    background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png') !important;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 1px solid var(--border) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    padding: 15px 5% !important;
+}
+
+.navbar .brand-logo {
+    color: var(--ayuskama-green) !important;
+    font-size: 2rem !important;
+}
+
+/* Dashboard specific overrides */
+.stat-card {
+    border-radius: 4px !important;
+    border: 1px solid var(--border) !important;
+    background: #fff !important;
+}
+.stat-card .stat-value {
+    font-family: 'Cormorant Garamond', serif !important;
+    color: var(--ayuskama-green) !important;
+}
+
+/* Tables */
+table th {
+    background: var(--ayuskama-green) !important;
+    color: #fff !important;
+    font-family: 'Jost', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem !important;
+}
+table td {
+    border-bottom: 1px solid var(--border) !important;
+}

@@ -3,30 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AyurCare - Patient Registration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Ayuskama - Patient Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2b593f;
-            --primary-light: #447a5d;
-            --primary-dark: #1b3d29;
-            --accent: #d89f5b; /* earthy gold for Ayurvedic touch */
-            --bg-color: #f4f9f5;
-            --card-bg: #ffffff;
-            --text-main: #2c3e35;
-            --text-muted: #6b8273;
-            --border: #e0ebe4;
-            --success: #155724;
-            --success-bg: #d4edda;
-            --error: #721c24;
-            --error-bg: #f8d7da;
+            --primary: #4CAF50;
+            --primary-light: #81C784;
+            --primary-dark: #388E3C;
+            --accent: #C5A059;
+            --bg-color: #fdfdfd;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border: #e8e8e8;
+            --hover-bg: #f4f6f4;
         }
+        h1, h2, h3, h4, h5, h6, .brand-logo, .option-title, .section-title {
+            font-family: 'Cormorant Garamond', serif !important;
+        }
+        body, p, span, a, div, button, input {
+            font-family: 'Montserrat', sans-serif;
+        }
+
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
+            
         }
 
         body {
@@ -328,6 +332,8 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="ayuskama-theme.css">
 </head>
 <body>
 
@@ -335,7 +341,7 @@
     <!-- Branding Side -->
     <div class="branding-panel">
         <div class="brand-header">
-            <h1>Ayur<span>Care</span></h1>
+            <h1 style="display: flex; align-items: center; gap: 12px; justify-content: inherit;"><img src="assets/logo.jpg" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> Ayus<span>kama</span></h1>
             <p>Admin Portal - Patient Management System</p>
         </div>
         
@@ -399,17 +405,44 @@
                     <textarea id="address" placeholder="Complete address..." required></textarea>
                 </div>
 
+                <div class="section-title">Stay & Logistics</div>
+                
+                <div class="form-group">
+                    <label for="checkInDate">Check-In Date</label>
+                    <input type="date" id="checkInDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="checkOutDate">Check-Out Date</label>
+                    <input type="date" id="checkOutDate" required>
+                </div>
+
                 <div class="section-title">Medical & Treatment Details</div>
+
+                <div class="form-group full-width">
+                    <label for="disease">Primary Condition / Disease Name</label>
+                    <input type="text" id="disease" placeholder="What is happening to the patient? (E.g. Arthritis, Insomnia)" required>
+                </div>
 
                 <div class="form-group">
                     <label for="treatmentPlan">Proposed Treatment Plan</label>
-                    <input type="text" id="treatmentPlan" placeholder="E.g. Panchakarma Therapy" required>
+                    <select id="treatmentPlan" required>
+                        <option value="">Select Predefined Treatment</option>
+                        <option value="General Wellness">General Wellness</option>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dietPlan">Diet Plan</label>
+                    <input type="text" id="dietPlan" placeholder="E.g. Vata Pacifying Diet">
                 </div>
 
                 <div class="form-group">
                     <label for="roomNumber">Allotted Room / Ward</label>
                     <input type="text" id="roomNumber" placeholder="E.g. Ward A-12" required>
                 </div>
+
+
 
                 <div class="form-group full-width">
                     <label for="allergens">Known Allergies (if any)</label>
@@ -424,6 +457,23 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            const res = await fetch("http://localhost:5001/api/treatments");
+            if (res.ok) {
+                const treatments = await res.json();
+                const select = document.getElementById("treatmentPlan");
+                treatments.forEach(t => {
+                    const opt = document.createElement("option");
+                    opt.value = t.name;
+                    opt.textContent = t.name;
+                    select.appendChild(opt);
+                });
+            }
+        } catch (e) { console.log(e); }
+    });
+</script>
 <script>
     const form = document.getElementById("patientForm");
     const successMsg = document.getElementById("successMsg");
@@ -449,13 +499,17 @@
             phone: document.getElementById("phone").value.trim(),
             emergencyContact: document.getElementById("emergencyContact").value.trim(),
             address: document.getElementById("address").value.trim(),
-            treatmentPlan: document.getElementById("treatmentPlan").value.trim(),
+            checkInDate: document.getElementById("checkInDate").value,
+            checkOutDate: document.getElementById("checkOutDate").value,
+            treatmentPlan: document.getElementById("treatmentPlan").value,
+            dietPlan: document.getElementById("dietPlan").value.trim(),
             roomNumber: document.getElementById("roomNumber").value.trim(),
+            disease: document.getElementById("disease").value.trim(),
             allergens: document.getElementById("allergens").value.trim()
         };
 
         try {
-            const res = await fetch("http://localhost:5000/api/patients/register", {
+            const res = await fetch("http://localhost:5001/api/patients/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(patientData)
@@ -482,5 +536,6 @@
     });
 </script>
 
+    <script src="animations.js"></script>
 </body>
 </html>

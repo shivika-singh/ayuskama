@@ -3,27 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AyurCare - Patient Details</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Ayuskama - Patient Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2b593f;
-            --primary-light: #447a5d;
-            --primary-dark: #1b3d29;
-            --accent: #d89f5b;
-            --bg-color: #f4f9f5;
-            --card-bg: #ffffff;
-            --text-main: #2c3e35;
-            --text-muted: #6b8273;
-            --border: #e0ebe4;
-            --hover-bg: #eaf1ec;
+            --primary: #4CAF50;
+            --primary-light: #81C784;
+            --primary-dark: #388E3C;
+            --accent: #C5A059;
+            --bg-color: #fdfdfd;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border: #e8e8e8;
+            --hover-bg: #f4f6f4;
         }
+        h1, h2, h3, h4, h5, h6, .brand-logo, .option-title, .section-title {
+            font-family: 'Cormorant Garamond', serif !important;
+        }
+        body, p, span, a, div, button, input {
+            font-family: 'Montserrat', sans-serif;
+        }
+
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
+            
         }
 
         body {
@@ -405,13 +412,15 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="ayuskama-theme.css">
 </head>
 <body>
 
 <!-- Navigation Bar -->
 <div class="navbar">
     <a href="dashboard.html" class="brand-logo">
-        Ayur<span>Care</span> <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
+        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayus<span>kama</span> <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
     </a>
     <div class="nav-links">
         <a href="dashboard.html" class="nav-btn nav-btn-outline">← Back to Dashboard</a>
@@ -439,10 +448,20 @@
             <div class="avatar-large" id="patientInitials">PT</div>
             <div class="page-title">
                 <h1 id="patientName">Patient Name</h1>
+                
                 <p>
                     <span class="status-badge" id="patientId">ID: Loading...</span>
                     Registered: <span id="patientDate">Loading...</span>
                 </p>
+                <div style="margin-top: 10px; display: flex; gap: 15px;">
+                    <div style="background: var(--card-bg); padding: 5px 12px; border-radius: 8px; font-size: 0.9rem; border: 1px solid var(--border);">
+                        <strong>Check-In:</strong> <span id="dispCheckIn">-</span>
+                    </div>
+                    <div style="background: var(--card-bg); padding: 5px 12px; border-radius: 8px; font-size: 0.9rem; border: 1px solid var(--border);">
+                        <strong>Check-Out:</strong> <span id="dispCheckOut">-</span>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -481,6 +500,11 @@
                 </div>
                 <div class="card-body">
                     <ul class="info-list">
+                        
+                        <li class="info-item">
+                            <span class="info-label">Disease / Condition</span>
+                            <span class="info-value" id="patientDisease" style="color: var(--primary-dark); font-weight: 600;">-</span>
+                        </li>
                         <li class="info-item">
                             <span class="info-label">Treatment Plan</span>
                             <span class="info-value" id="patientTreatment" style="color: var(--primary-dark); font-weight: 600;">-</span>
@@ -494,6 +518,54 @@
                             <span class="info-value" id="patientAllergens" style="color: #d84b5b;">-</span>
                         </li>
                     </ul>
+                </div>
+            </div>
+
+            
+            <!-- Daily Routine & Logistics -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <h2>🕒 Daily Routine & Logistics</h2>
+                    <button class="nav-btn nav-btn-outline" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openRoutineModal()">Edit Routine</button>
+                </div>
+                <div class="card-body">
+                    <ul class="info-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <li class="info-item">
+                            <span class="info-label">Assigned Therapist</span>
+                            <span class="info-value" id="dispTherapist">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Treatment Room</span>
+                            <span class="info-value" id="dispRoom">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Treatment Time</span>
+                            <span class="info-value" id="dispTreatmentTime">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Yoga Timing</span>
+                            <span class="info-value" id="dispYoga">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Meal Timings</span>
+                            <span class="info-value" id="dispMeals">Breakfast: - | Lunch: - | Dinner: -</span>
+                        </li>
+                        <li class="info-item" style="grid-column: span 2;">
+                            <span class="info-label">Dos & Don'ts for Treatment</span>
+                            <span class="info-value" id="dispDosDonts" style="line-height: 1.6; color: var(--text-muted);">-</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <!-- Patient Queries -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <h2>💬 Patient Queries</h2>
+                </div>
+                <div class="card-body" id="queriesContainer" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="empty-state">Loading queries...</div>
                 </div>
             </div>
 
@@ -520,6 +592,86 @@
             </div>
         </div>
     </div>
+    
+    <!-- Edit Routine Modal -->
+    <div id="routineModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Edit Daily Routine</h2>
+                <button class="close-btn" onclick="closeRoutineModal()">✕</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 15px;">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Check-In Date</label>
+                        <input type="date" id="inputCheckIn" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Check-Out Date</label>
+                        <input type="date" id="inputCheckOut" style="width: 100%; padding: 10px;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Assigned Therapist</label>
+                    <input type="text" id="inputTherapist" placeholder="E.g. Dr. Neetu Singh" style="width: 100%; padding: 10px;">
+                </div>
+
+                <div class="form-group">
+                    <label>Treatment Plan / Protocol</label>
+                    <select id="inputTreatment" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <option value="">Select Predefined Treatment</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Diet Plan</label>
+                    <input type="text" id="inputDiet" placeholder="E.g. Vata Pacifying Diet" style="width: 100%; padding: 10px;">
+                </div>
+                <div class="form-group">
+                    <label>Treatment Room</label>
+                    <select id="inputRoom" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <option value="">Select Room</option>
+                        <option value="Ground Floor 1">Ground Floor 1</option>
+                        <option value="Ground Floor 2">Ground Floor 2</option>
+                        <option value="4th Floor 1">4th Floor 1</option>
+                        <option value="4th Floor 2">4th Floor 2</option>
+                        <option value="4th Floor 3">4th Floor 3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Treatment Time</label>
+                    <input type="time" id="inputTreatmentTime" style="width: 100%; padding: 10px;">
+                </div>
+                <div class="form-group">
+                    <label>Yoga Timing</label>
+                    <input type="time" id="inputYoga" style="width: 100%; padding: 10px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Breakfast</label>
+                        <input type="time" id="inputBreakfast" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Lunch</label>
+                        <input type="time" id="inputLunch" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Dinner</label>
+                        <input type="time" id="inputDinner" style="width: 100%; padding: 10px;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Dos and Don'ts</label>
+                    <textarea id="inputDosDonts" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);" placeholder="What to eat, what to avoid..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="nav-btn nav-btn-outline" onclick="closeRoutineModal()">Cancel</button>
+                <button class="nav-btn" style="background: var(--primary); color: white;" onclick="saveRoutine()" id="saveRoutineBtn">Save Routine</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Medicines Modal -->
     <div id="medicinesModal" class="modal" style="display: none;">
         <div class="modal-content">
@@ -542,6 +694,36 @@
 </div>
 
 <script>
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            const res = await fetch("http://localhost:5001/api/treatments");
+            if (res.ok) {
+                const treatments = await res.json();
+                window.predefinedTreatments = treatments; // store globally for auto-filling
+                const select = document.getElementById("inputTreatment");
+                treatments.forEach(t => {
+                    const opt = document.createElement("option");
+                    opt.value = t.name;
+                    opt.textContent = t.name;
+                    select.appendChild(opt);
+                });
+                
+                // Auto-fill protocol and dos/donts when a treatment is selected
+                select.addEventListener("change", (e) => {
+                    const selected = window.predefinedTreatments.find(t => t.name === e.target.value);
+                    if (selected) {
+                        if (selected.defaultDosAndDonts) {
+                            document.getElementById("inputDosDonts").value = selected.defaultDosAndDonts;
+                        }
+                    }
+                });
+            }
+        } catch (e) { console.log(e); }
+    });
+
+    let currentPatient = null;
+
     // Get ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const patientId = urlParams.get('id');
@@ -574,6 +756,7 @@
     }
 
     function renderPatient(patient) {
+        currentPatient = patient;
         // Hide loader, show content
         loader.style.display = "none";
         content.style.display = "block";
@@ -581,13 +764,25 @@
         // Map data (handling both real DB keys and dummy keys)
         document.getElementById("patientName").textContent = patient.name || "Unknown Patient";
         document.getElementById("patientInitials").textContent = getInitials(patient.name);
-        document.getElementById("patientId").textContent = "ID: " + (patient._id || patient.id || "N/A");
+        document.getElementById("patientId").textContent = "ID: " + (patient.patientId || patient._id || patient.id || "N/A");
         document.getElementById("patientDate").textContent = formatDate(patient.createdAt);
 
         document.getElementById("patientAge").textContent = patient.age ? patient.age + " yrs" : "N/A";
         document.getElementById("patientPhone").textContent = patient.phone || "N/A";
         document.getElementById("patientEmergency").textContent = patient.emergencyContact || "N/A";
         document.getElementById("patientAddress").textContent = patient.address || "N/A";
+
+        
+        document.getElementById("patientDisease").textContent = patient.disease || "Not specified";
+        
+        document.getElementById("dispTherapist").textContent = patient.assignedTherapist || "Unassigned";
+        document.getElementById("dispRoom").textContent = patient.treatmentRoom || "Unassigned";
+        document.getElementById("dispTreatmentTime").textContent = patient.treatmentTime || "Unassigned";
+        document.getElementById("dispYoga").textContent = patient.yogaTiming || "Unassigned";
+        document.getElementById("dispDosDonts").textContent = patient.dosAndDonts || "No specific instructions.";
+        
+        const meals = patient.mealTimings || {};
+        document.getElementById("dispMeals").textContent = `Breakfast: ${meals.breakfast || '-'} | Lunch: ${meals.lunch || '-'} | Dinner: ${meals.dinner || '-'}`;
 
         document.getElementById("patientTreatment").textContent = patient.treatmentPlan || patient.treatment || "N/A";
         document.getElementById("patientRoom").textContent = patient.roomNumber || patient.room || "N/A";
@@ -597,6 +792,41 @@
         if (allergens.toLowerCase() === "none" || allergens.toLowerCase() === "none reported" || allergens.trim() === "") {
             document.getElementById("patientAllergens").style.color = "var(--text-muted)";
             document.getElementById("patientAllergens").textContent = "None reported";
+        }
+
+        
+        // Map Dates
+        document.getElementById("dispCheckIn").textContent = patient.checkInDate ? new Date(patient.checkInDate).toLocaleDateString() : "Not set";
+        document.getElementById("dispCheckOut").textContent = patient.checkOutDate ? new Date(patient.checkOutDate).toLocaleDateString() : "Not set";
+
+        // Render Queries
+        const queriesContainer = document.getElementById("queriesContainer");
+        if (patient.queries && patient.queries.length > 0) {
+            queriesContainer.innerHTML = "";
+            patient.queries.slice().reverse().forEach(q => {
+                const qDiv = document.createElement("div");
+                qDiv.style.cssText = "border: 1px solid var(--border); border-radius: 12px; padding: 15px; background: #fafcfa;";
+                
+                const answeredHtml = q.status === "Answered" 
+                    ? `<div style="margin-top: 10px; padding: 10px; background: #e8f5e9; border-radius: 8px; color: var(--primary-dark);">
+                           <strong>Reply:</strong> ${q.answer}
+                       </div>`
+                    : `<div style="margin-top: 10px; display: flex; gap: 10px;">
+                           <input type="text" id="answer-${q._id}" placeholder="Type your answer here..." style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;">
+                           <button class="nav-btn" style="background: var(--primary); color: white; padding: 8px 16px;" onclick="answerQuery('${q._id}')">Reply</button>
+                       </div>`;
+
+                qDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <strong>Q: ${q.question}</strong>
+                        <small style="color: var(--text-muted);">${new Date(q.date).toLocaleString()}</small>
+                    </div>
+                    ${answeredHtml}
+                `;
+                queriesContainer.appendChild(qDiv);
+            });
+        } else {
+            queriesContainer.innerHTML = `<div class="empty-state"><span>💬</span><p>No queries from this patient yet.</p></div>`;
         }
 
         // Render Medicines
@@ -654,6 +884,111 @@
         }
     }
 
+    
+    // --- Routine Modal Logic ---
+    const routineModal = document.getElementById("routineModal");
+    function openRoutineModal() {
+        document.getElementById("inputCheckIn").value = currentPatient.checkInDate ? currentPatient.checkInDate.split("T")[0] : "";
+        document.getElementById("inputCheckOut").value = currentPatient.checkOutDate ? currentPatient.checkOutDate.split("T")[0] : "";
+        document.getElementById("inputTherapist").value = currentPatient.assignedTherapist || "";
+        document.getElementById("inputRoom").value = currentPatient.treatmentRoom || "";
+        document.getElementById("inputTreatmentTime").value = currentPatient.treatmentTime || "";
+        document.getElementById("inputYoga").value = currentPatient.yogaTiming || "";
+        document.getElementById("inputDosDonts").value = currentPatient.dosAndDonts || "";
+        if (currentPatient.mealTimings) {
+            document.getElementById("inputBreakfast").value = currentPatient.mealTimings.breakfast || "";
+            document.getElementById("inputLunch").value = currentPatient.mealTimings.lunch || "";
+            document.getElementById("inputDinner").value = currentPatient.mealTimings.dinner || "";
+        }
+        routineModal.style.display = "flex";
+    }
+
+    
+    async function answerQuery(queryId) {
+        const answerInput = document.getElementById(`answer-${queryId}`);
+        const answer = answerInput.value.trim();
+        if (!answer) return alert("Please type an answer first.");
+
+        answerInput.disabled = true;
+        try {
+            const res = await fetch(`http://localhost:5001/api/patients/${patientId}/queries/${queryId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ answer })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                currentPatient = data.patient;
+                renderPatient(currentPatient);
+            } else {
+                alert("Failed to submit answer");
+                answerInput.disabled = false;
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error submitting answer");
+            answerInput.disabled = false;
+        }
+    }
+
+    function closeRoutineModal() {
+        routineModal.style.display = "none";
+    }
+
+    async function saveRoutine() {
+        const btn = document.getElementById("saveRoutineBtn");
+        btn.textContent = "Saving...";
+        
+        
+            const treatmentPlan = document.getElementById("inputTreatment").value;
+            const dietPlan = document.getElementById("inputDiet").value.trim();
+            let treatmentProtocol = "";
+            if (window.predefinedTreatments) {
+                const selected = window.predefinedTreatments.find(t => t.name === treatmentPlan);
+                if (selected) treatmentProtocol = selected.protocol;
+            }
+            
+            const payload = {
+                checkInDate: document.getElementById("inputCheckIn").value,
+                checkOutDate: document.getElementById("inputCheckOut").value,
+                assignedTherapist: document.getElementById("inputTherapist").value,
+                treatmentRoom: document.getElementById("inputRoom").value,
+                treatmentTime: document.getElementById("inputTreatmentTime").value,
+                yogaTiming: document.getElementById("inputYoga").value,
+                mealTimings: {
+                    breakfast: document.getElementById("inputBreakfast").value,
+                    lunch: document.getElementById("inputLunch").value,
+                    dinner: document.getElementById("inputDinner").value
+                },
+                dosAndDonts: document.getElementById("inputDosDonts").value,
+                treatmentPlan: treatmentPlan,
+                dietPlan: dietPlan,
+                treatmentProtocol: treatmentProtocol
+            };
+
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/patients/${patientId}/routine`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const data = await res.json();
+                currentPatient = data.patient;
+                renderPatient(currentPatient);
+                closeRoutineModal();
+            } else {
+                alert("Failed to save routine");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error saving routine");
+        } finally {
+            btn.textContent = "Save Routine";
+        }
+    }
+
     function addMedicineRow(med = {name: '', dosage: '', time: ''}, index = -1) {
         const list = document.getElementById('modalMedicinesList');
         const row = document.createElement('div');
@@ -689,7 +1024,7 @@
         saveBtn.disabled = true;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/patients/${patientId}/medicines`, {
+            const res = await fetch(`http://localhost:5001/api/patients/${patientId}/medicines`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -734,7 +1069,7 @@
 
         try {
             // Try fetching from Real API first
-            const res = await fetch(`http://localhost:5000/api/patients/${patientId}`);
+            const res = await fetch(`http://localhost:5001/api/patients/${patientId}`);
             if (res.ok) {
                 const patient = await res.json();
                 renderPatient(patient);
@@ -757,5 +1092,6 @@
     window.onload = init;
 </script>
 
+    <script src="animations.js"></script>
 </body>
 </html>

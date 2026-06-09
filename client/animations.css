@@ -1,0 +1,130 @@
+/* Global Premium Animations & Effects */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-shadow: 0 8px 32px 0 rgba(43, 89, 63, 0.1);
+}
+
+/* Scroll Reveal Classes */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Different delay utility classes */
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+
+/* Continuous floating animation for graphics */
+.float-anim {
+    animation: floating 4s ease-in-out infinite;
+}
+
+.float-anim-alt {
+    animation: floatingAlt 5s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes floatingAlt {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Keyframes for initial load fade-in */
+.fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.5, 0, 0, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Magnetic Hover Effect for Buttons */
+.magnetic-btn {
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease;
+}
+
+.magnetic-btn:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 15px 30px rgba(43, 89, 63, 0.2);
+}
+
+/* Premium Glassmorphism */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 24px;
+}
+
+/* Animated Gradient Background */
+.gradient-bg {
+    background: linear-gradient(-45deg, #f4f9f5, #e3f0e8, #fcf1e3, #ffffff);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Beautiful custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f4f9f5;
+}
+::-webkit-scrollbar-thumb {
+    background: #447a5d;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #2b593f;
+}
+
+/* Global Glassmorphism & Animations for existing App elements */
+.login-container, .form-panel, .therapist-card, .dashboard-stats .stat-card, .guidelines-panel, .layout-container {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 15px 35px rgba(43, 89, 63, 0.08) !important;
+    animation: fadeInUp 0.8s cubic-bezier(0.5, 0, 0, 1) forwards;
+}
+
+.submit-btn, .btn-primary, .nav-btn-solid {
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease !important;
+}
+
+.submit-btn:hover, .btn-primary:hover, .nav-btn-solid:hover {
+    transform: scale(1.02) translateY(-2px) !important;
+    box-shadow: 0 15px 30px rgba(43, 89, 63, 0.2) !important;
+}
+
+body {
+    /* Set animated gradient background to all pages */
+    background: linear-gradient(-45deg, #f4f9f5, #e3f0e8, #fcf1e3, #ffffff) !important;
+    background-size: 400% 400% !important;
+    animation: gradientShift 15s ease infinite !important;
+}

@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuskama - My Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-light: #81C784;
+            --primary-dark: #388E3C;
+            --accent: #C5A059;
+            --bg-color: #fdfdfd;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border: #e8e8e8;
+            --hover-bg: #f4f6f4;
+        }
+        h1, h2, h3, h4, h5, h6, .brand-logo, .option-title, .section-title {
+            font-family: 'Cormorant Garamond', serif !important;
+        }
+        body, p, span, a, div, button, input {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            background: white;
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(43, 89, 63, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .nav-btn-outline {
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            background: transparent;
+        }
+
+        .nav-btn-outline:hover {
+            background: var(--hover-bg);
+        }
+
+        /* Main Content Grid */
+        .main-container {
+            padding: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 3rem;
+            border-radius: 24px;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(43, 89, 63, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::after {
+            content: '🍃';
+            position: absolute;
+            right: -20px;
+            top: -50px;
+            font-size: 15rem;
+            opacity: 0.05;
+            transform: rotate(-15deg);
+        }
+
+        .welcome-text h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .room-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .room-badge span {
+            display: block;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .room-badge strong {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* Content Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(43, 89, 63, 0.05);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: #fafcfa;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Specific Card Styles */
+        .guidelines-list {
+            list-style: none;
+        }
+        
+        .guidelines-list li {
+            margin-bottom: 1.2rem;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .guidelines-list li::before {
+            content: '✓';
+            color: var(--accent);
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .treatment-badge {
+            background: #e3f0e8;
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: inline-block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .meal-timing {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .meal-timing:last-child {
+            border-bottom: none;
+        }
+
+        .meal-name {
+            font-weight: 500;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meal-time {
+            color: var(--text-muted);
+            font-weight: 600;
+            background: var(--bg-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .medicine-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--bg-color);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .med-info h4 {
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+        }
+
+        .med-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .med-time {
+            background: #fcf1e3;
+            color: #b37322;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem 0;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="ayuskama-theme.css">
+</head>
+<body>
+
+
+<!-- Payment Modal -->
+<div id="paymentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: var(--card-bg); padding: 3rem; border-radius: 20px; text-align: center; max-width: 500px; width: 90%;">
+        <h2 style="margin-bottom: 1rem; color: var(--primary-dark);">Select Payment Method</h2>
+        <p style="margin-bottom: 2rem; color: var(--text-muted);">Welcome to Ayuskama! Please choose how you would like to handle your billing.</p>
+        <button onclick="selectPayment('advanced')" class="nav-btn nav-btn-solid" style="width: 100%; margin-bottom: 1rem; padding: 15px; font-size: 1.1rem;">Advanced Payment (Now)</button>
+        <button onclick="selectPayment('checkout')" class="nav-btn nav-btn-outline" style="width: 100%; padding: 15px; font-size: 1.1rem;">Total Payment at Checkout</button>
+    </div>
+</div>
+
+<!-- Discharge Summary Modal -->
+<div id="dischargeModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: var(--card-bg); padding: 3rem; border-radius: 20px; max-width: 600px; width: 90%;">
+        <h2 style="margin-bottom: 1rem; color: var(--primary-dark); text-align: center;">Discharge Summary & Invoice</h2>
+        <div id="dischargeContent" style="margin-bottom: 2rem; line-height: 1.6;"></div>
+        <button onclick="logout()" class="nav-btn nav-btn-solid" style="width: 100%; padding: 15px; font-size: 1.1rem;">Acknowledge & Logout</button>
+    </div>
+</div>
+
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="#" class="brand-logo">
+        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayus<span>kama</span>
+    </a>
+    <div class="nav-links">
+        
+        <button onclick="checkoutPatient()" class="nav-btn" style="background: var(--accent); color: white; border: none;">Checkout</button>
+        <button onclick="logout()" class="nav-btn nav-btn-outline">Logout</button>
+
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="welcome-banner">
+
+        
+        <div class="welcome-text">
+            <h1>Welcome, <span id="ptName">Patient</span></h1>
+            <p>Your journey to holistic healing starts here. ID: <strong id="ptId">---</strong></p>
+            <p style="margin-top: 10px; font-weight: 500; color: #e3f0e8;">Primary Condition: <span id="ptDisease">---</span></p>
+            <div style="margin-top: 15px; display: inline-flex; gap: 15px; background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 8px; font-size: 0.95rem;">
+                <div><strong>Check-In:</strong> <span id="ptCheckIn">-</span></div>
+                <div><strong>Check-Out:</strong> <span id="ptCheckOut">-</span></div>
+            </div>
+        </div>
+
+
+        <div class="room-badge">
+            <span>Room / Ward</span>
+            <strong id="ptRoom">---</strong>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Guidelines Card -->
+        <div class="card" style="grid-row: span 2;">
+            <div class="card-header">
+                <span class="card-icon">📜</span>
+                <h2>Hospital Guidelines</h2>
+            </div>
+            <div class="card-body">
+                <ul class="guidelines-list">
+                    <li><strong>Dinacharya (Daily Routine):</strong> Wake up before sunrise (Brahma Muhurta) to synchronize with nature's rhythms.</li>
+                    <li><strong>Dietary Rules:</strong> Consume only warm, freshly prepared Ayurvedic meals provided by the kitchen. Avoid outside food strictly.</li>
+                    <li><strong>Hydration:</strong> Drink warm water or prescribed herbal teas throughout the day. Avoid cold water.</li>
+                    <li><strong>Rest:</strong> Ensure adequate daytime rest post-treatments. Avoid sleeping immediately after meals.</li>
+                    <li><strong>Technology Detox:</strong> Minimize screen time, especially during treatments and before bedtime to promote mental calmness.</li>
+                    <li><strong>Hygiene:</strong> Maintain personal hygiene. Wear loose, comfortable cotton clothing.</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- Treatment & Therapists Card -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">🌸</span>
+                <h2>Today's Treatment</h2>
+            </div>
+            <div class="card-body" style="text-align: center;">
+                <h3 style="color: var(--text-muted); margin-bottom: 10px; font-weight: 500; font-size: 1rem;">Primary Plan</h3>
+
+                <div class="treatment-badge" id="ptTreatment">Loading...</div>
+                <div style="text-align: left; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px;">
+                    <strong style="color: var(--primary-dark); display: block; margin-bottom: 5px;">Treatment Protocol</strong>
+                    <p id="ptProtocol" style="font-size: 0.95rem; color: var(--text-main);">Standard procedure.</p>
+                </div>
+
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; text-align: left; background: var(--bg-color); padding: 15px; border-radius: 12px;">
+                    <div>
+                        <small style="color: var(--text-muted); font-weight: 600;">Time</small>
+                        <div id="ptTreatmentTime" style="font-weight: 500;">-</div>
+                    </div>
+                    <div>
+                        <small style="color: var(--text-muted); font-weight: 600;">Room</small>
+                        <div id="ptTreatmentRoom" style="font-weight: 500;">-</div>
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <small style="color: var(--text-muted); font-weight: 600;">Assigned Therapist</small>
+                        <div id="ptTherapist" style="font-weight: 500; color: var(--primary-dark);">-</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; text-align: left; background: #fff8e1; padding: 15px; border-radius: 12px; border: 1px solid #ffe082;">
+                    <small style="color: #b37322; font-weight: 600;">Dos & Don'ts</small>
+                    <div id="ptDosDonts" style="font-size: 0.95rem; line-height: 1.5; margin-top: 5px;">Follow general hospital guidelines.</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Routine Card -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">☀️</span>
+                <h2>Daily Routine</h2>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div class="meal-timing">
+                    <span class="meal-name">🧘‍♀️ Yoga Session</span>
+                    <span class="meal-time" id="timeYoga" style="background: #e3f0e8; color: var(--primary-dark);">06:00 AM</span>
+                </div>
+                <div class="meal-timing">
+                    <span class="meal-name">🌅 Breakfast</span>
+                    <span class="meal-time" id="timeBreakfast">08:00 AM</span>
+                </div>
+                <div class="meal-timing">
+                    <span class="meal-name">☀️ Lunch</span>
+                    <span class="meal-time" id="timeLunch">01:00 PM</span>
+                </div>
+
+                <div class="meal-timing">
+                    <span class="meal-name">🌙 Dinner</span>
+                    <span class="meal-time" id="timeDinner">07:30 PM</span>
+                </div>
+                <div style="padding: 15px; background: #e3f0e8; margin-top: 10px;">
+                    <strong style="color: var(--primary-dark);">Personalized Diet Plan:</strong>
+                    <p id="ptDietPlan" style="margin-top: 5px; font-size: 0.95rem;">Follow general hospital meals.</p>
+                </div>
+
+            </div>
+        </div>
+
+        
+        <!-- Queries Card -->
+        <div class="card" style="grid-column: span 2;">
+            <div class="card-header">
+                <span class="card-icon">💬</span>
+                <h2>Ask a Question</h2>
+            </div>
+            <div class="card-body">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="queryInput" placeholder="Have a question about your treatment or meals? Ask here..." style="flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
+                    <button class="nav-btn" style="background: var(--primary); color: white; padding: 12px 24px;" onclick="submitQuery()" id="submitQueryBtn">Ask</button>
+                </div>
+                <div id="patientQueriesContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="empty-state">Loading queries...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medicines Card -->
+        <div class="card" style="grid-column: span 2;">
+            <div class="card-header">
+                <span class="card-icon">💊</span>
+                <h2>Assigned Medicines</h2>
+            </div>
+            <div class="card-body" id="medicinesContainer">
+                <div class="empty-state">Loading medicines...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Authentication Check
+    const rawData = localStorage.getItem('patientData');
+    if (!rawData) {
+        window.location.href = "patient-login.html";
+    }
+
+    let patient = null;
+    try {
+        patient = JSON.parse(rawData);
+    } catch (e) {
+        console.error("Data error", e);
+        logout();
+    }
+
+    function updateUI(patientData) {
+        if (!patientData) return;
+
+
+        // Populate UI
+        document.getElementById("ptName").textContent = patientData.name || "Guest";
+        document.getElementById("ptId").textContent = patientData.patientId || patientData._id || "N/A";
+        document.getElementById("ptRoom").textContent = patientData.roomNumber || "TBD";
+        
+        document.getElementById("ptDisease").textContent = patientData.disease || "Not specified";
+        
+        // Dates
+        document.getElementById("ptCheckIn").textContent = patientData.checkInDate ? new Date(patientData.checkInDate).toLocaleDateString() : "Not set";
+        document.getElementById("ptCheckOut").textContent = patientData.checkOutDate ? new Date(patientData.checkOutDate).toLocaleDateString() : "Not set";
+
+
+        document.getElementById("ptTreatment").textContent = patientData.treatmentPlan || "General Consultation";
+        document.getElementById("ptProtocol").textContent = patientData.treatmentProtocol || "No specific protocol assigned.";
+        document.getElementById("ptDietPlan").textContent = patientData.dietPlan || "Follow general hospital meals.";
+
+        // Handle Payment Modal on load
+        if (patientData.paymentMethod === 'pending') {
+            document.getElementById("paymentModal").style.display = "flex";
+        }
+
+        
+        // Treatment Details
+        document.getElementById("ptTreatmentTime").textContent = patientData.treatmentTime || "TBD";
+        document.getElementById("ptTreatmentRoom").textContent = patientData.treatmentRoom || "TBD";
+        document.getElementById("ptTherapist").textContent = patientData.assignedTherapist || "Please check with reception";
+        document.getElementById("ptDosDonts").textContent = patientData.dosAndDonts || "Follow general hospital guidelines.";
+        
+        // Routine Timings
+        document.getElementById("timeYoga").textContent = patientData.yogaTiming || "06:00 AM";
+
+        // Meal Timings
+        if (patientData.mealTimings) {
+            if (patientData.mealTimings.breakfast) document.getElementById("timeBreakfast").textContent = patientData.mealTimings.breakfast;
+            if (patientData.mealTimings.lunch) document.getElementById("timeLunch").textContent = patientData.mealTimings.lunch;
+            if (patientData.mealTimings.dinner) document.getElementById("timeDinner").textContent = patientData.mealTimings.dinner;
+        }
+
+
+        
+        // Queries
+        const pqContainer = document.getElementById("patientQueriesContainer");
+        if (patientData.queries && patientData.queries.length > 0) {
+            pqContainer.innerHTML = "";
+            patientData.queries.slice().reverse().forEach(q => {
+                const qDiv = document.createElement("div");
+                qDiv.style.cssText = "border: 1px solid var(--border); border-radius: 10px; padding: 15px; background: #fafcfa;";
+                
+                const answeredHtml = q.status === "Answered" 
+                    ? `<div style="margin-top: 10px; padding: 10px; background: #e8f5e9; border-radius: 8px; color: var(--primary-dark);">
+                           <strong>Reply:</strong> ${q.answer}
+                       </div>`
+                    : `<div style="margin-top: 10px; padding: 5px; color: var(--text-muted); font-size: 0.9rem;">
+                           <em>Waiting for admin response...</em>
+                       </div>`;
+
+                qDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <strong style="color: var(--text-main);">Q: ${q.question}</strong>
+                        <small style="color: var(--text-muted);">${new Date(q.date).toLocaleString()}</small>
+                    </div>
+                    ${answeredHtml}
+                `;
+                pqContainer.appendChild(qDiv);
+            });
+        } else {
+            pqContainer.innerHTML = `<div class="empty-state"><span>💬</span><p>No questions asked yet.</p></div>`;
+        }
+
+        // Medicines
+        const medContainer = document.getElementById("medicinesContainer");
+        if (patientData.medicines && patientData.medicines.length > 0) {
+            medContainer.innerHTML = "";
+            patientData.medicines.forEach(med => {
+                const medDiv = document.createElement("div");
+                medDiv.className = "medicine-item";
+                medDiv.innerHTML = `
+                    <div class="med-info">
+                        <h4>${med.name}</h4>
+                        <p>Dosage: ${med.dosage}</p>
+                    </div>
+                    <div class="med-time">🕒 ${med.time}</div>
+                `;
+                medContainer.appendChild(medDiv);
+            });
+        } else {
+            medContainer.innerHTML = `
+                <div class="empty-state">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 10px;">🍃</span>
+                    No specific medicines assigned currently.
+                </div>
+            `;
+        }
+    }
+
+    
+    async function submitQuery() {
+        const input = document.getElementById("queryInput");
+        const question = input.value.trim();
+        if (!question) return alert("Please type a question.");
+
+        const btn = document.getElementById("submitQueryBtn");
+        btn.textContent = "Sending...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/queries`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question })
+            });
+            if (res.ok) {
+                input.value = "";
+                await fetchLatestData();
+            } else {
+                alert("Failed to submit question");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error submitting question");
+        } finally {
+            btn.textContent = "Ask";
+            btn.disabled = false;
+        }
+    }
+
+    async function fetchLatestData() {
+        if (!patient || !patient._id) {
+            updateUI(patient);
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/patients/${patient._id}`);
+            if (res.ok) {
+                const latestData = await res.json();
+                patient = latestData; // UPDATE GLOBAL
+                // Update local storage with fresh data
+                localStorage.setItem('patientData', JSON.stringify(latestData));
+                updateUI(latestData);
+            } else {
+                console.warn("Failed to fetch latest data, using cached data.");
+                updateUI(patient);
+            }
+        } catch (err) {
+            console.error("Error fetching live data, falling back to cache:", err);
+            updateUI(patient);
+        }
+    }
+
+    // Initial render with cache, then fetch fresh data
+    if (patient) {
+        updateUI(patient);
+        fetchLatestData();
+    }
+
+    
+    // --- Notification Engine ---
+    let activeAlerts = new Set();
+
+    function showNotification(title, message, icon) {
+        // Prevent duplicate alerts for the same event
+        if (activeAlerts.has(title)) return;
+        activeAlerts.add(title);
+        
+        const notif = document.createElement("div");
+        notif.className = "fade-in-up";
+        notif.style.cssText = `
+            position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px); border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 20px; border-radius: 16px; z-index: 9999; display: flex; gap: 15px; align-items: center; max-width: 350px;
+        `;
+        notif.innerHTML = `
+            <div style="font-size: 2.5rem;">${icon}</div>
+            <div>
+                <h4 style="margin-bottom: 5px; color: var(--primary-dark);">${title}</h4>
+                <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.4;">${message}</p>
+            </div>
+            <button style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.2rem; cursor: pointer;" onclick="this.parentElement.remove()">✕</button>
+        `;
+        document.body.appendChild(notif);
+        
+        // Auto remove after 15 seconds
+        setTimeout(() => { if(document.body.contains(notif)) notif.remove(); activeAlerts.delete(title); }, 15000);
+    }
+
+    async function checkSchedules() {
+        if (!patient) return;
+        await fetchLatestData(); // ALWAYS GET FRESH DATA
+        const now = new Date();
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+
+        // Helper to parse HH:MM AM/PM to comparable minutes
+        const parseTime = (timeStr) => {
+            if (!timeStr) return -1;
+            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+            if(!match) return -1;
+            let [_, h, m, ampm] = match;
+            h = parseInt(h); m = parseInt(m);
+            if (ampm && ampm.toUpperCase() === 'PM' && h !== 12) h += 12;
+            if (ampm && ampm.toUpperCase() === 'AM' && h === 12) h = 0;
+            return h * 60 + m;
+        };
+
+        const nowMinutes = currentHours * 60 + currentMinutes;
+
+        // Check Treatment (within 15 min warning)
+        const treatMins = parseTime(patient.treatmentTime);
+        if (treatMins !== -1 && (treatMins - nowMinutes) <= 15 && (treatMins - nowMinutes) > 0) {
+            showNotification("Upcoming Treatment", `Your treatment starts soon at ${patient.treatmentRoom || 'your room'}.`, "🌸");
+        }
+
+        // Check Meals (within 5 mins)
+        if (patient.mealTimings) {
+            if (parseTime(patient.mealTimings.breakfast) !== -1 && Math.abs(parseTime(patient.mealTimings.breakfast) - nowMinutes) <= 5) showNotification("Breakfast Time", "Your breakfast is ready. Please proceed to the dining area.", "🌅");
+            if (parseTime(patient.mealTimings.lunch) !== -1 && Math.abs(parseTime(patient.mealTimings.lunch) - nowMinutes) <= 5) showNotification("Lunch Time", "Your lunch is ready. Enjoy your meal.", "☀️");
+            if (parseTime(patient.mealTimings.dinner) !== -1 && Math.abs(parseTime(patient.mealTimings.dinner) - nowMinutes) <= 5) showNotification("Dinner Time", "Your dinner is ready. Remember to eat light.", "🌙");
+        }
+
+        // Check Medicines (Exact time)
+        if (patient.medicines && patient.medicines.length > 0) {
+            patient.medicines.forEach(med => {
+                // If the medicine time matches exactly (e.g. "Morning", "08:00 AM" etc. Since it's free text, let's try to parse if it's a time)
+                const medMins = parseTime(med.time);
+                if (medMins === nowMinutes) {
+                    showNotification("Medicine Reminder", `It's time to take ${med.name} (${med.dosage}).`, "💊");
+                }
+            });
+        }
+    }
+
+    // Run every minute
+    setInterval(checkSchedules, 60000);
+    // Initial check just in case
+    setTimeout(checkSchedules, 2000);
+
+
+
+    async function selectPayment(method) {
+        try {
+            await fetch(`http://localhost:5001/api/patients/${patient._id}/payment-method`, {
+                method: "PUT", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentMethod: method })
+            });
+            document.getElementById("paymentModal").style.display = "none";
+            patient.paymentMethod = method;
+            localStorage.setItem('patientData', JSON.stringify(patient));
+        } catch(e) { console.error(e); }
+    }
+
+    async function checkoutPatient() {
+        if (!confirm("Are you sure you want to checkout and generate your final summary?")) return;
+        try {
+            const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/checkout`, {
+                method: "POST"
+            });
+            const data = await res.json();
+            if(res.ok) {
+                const s = data.dischargeSummary;
+                document.getElementById("dischargeContent").innerHTML = `
+                    <p><strong>Stay Duration:</strong> ${s.stayDuration}</p>
+                    <p><strong>Treatments:</strong> ${s.treatmentsReceived.join(", ")}</p>
+                    <div style="margin: 15px 0; border-top: 1px dashed #ccc; padding-top: 15px;">
+                        <p style="font-size: 1.2rem;"><strong>Total Amount:</strong> ₹${s.totalAmount}</p>
+                        <p style="color: var(--primary-dark);"><strong>Paid:</strong> ₹${s.paidAmount}</p>
+                        <p style="color: #d84b5b;"><strong>Due:</strong> ₹${s.totalAmount - s.paidAmount}</p>
+                    </div>
+                    <p style="font-style: italic; color: var(--text-muted);">${s.notes}</p>
+                `;
+                document.getElementById("dischargeModal").style.display = "flex";
+            } else { alert(data.message); }
+        } catch(e) { console.error(e); }
+    }
+
+    function logout() {
+
+        localStorage.removeItem('patientData');
+        window.location.href = "patient-login.html";
+    }
+</script>
+
+    <script src="animations.js"></script>
+</body>
+</html>
