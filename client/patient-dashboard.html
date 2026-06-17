@@ -322,6 +322,103 @@
                 gap: 20px;
             }
         }
+
+        /* Premium Timeline for Daily Routine */
+        .timeline-container {
+            position: relative;
+            padding: 1.5rem 1rem;
+            margin-left: 10px;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 105px;
+            width: 2px;
+            background: var(--border);
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        .timeline-badge {
+            width: 85px;
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--ayuskama-gold, #c5a059);
+            padding-top: 6px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .timeline-marker {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--ayuskama-green, #1b3022);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        .timeline-item:hover .timeline-marker {
+            background: var(--ayuskama-green, #1b3022);
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .timeline-content {
+            flex: 1;
+            background: #faf7f2;
+            padding: 12px 18px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover .timeline-content {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(43, 89, 63, 0.05);
+            border-color: var(--ayuskama-green, #1b3022);
+        }
+        .timeline-item-special .timeline-marker {
+            border-color: var(--ayuskama-gold, #c5a059);
+            background: #fff9e6;
+        }
+        .timeline-item-special .timeline-content {
+            background: #fffcf5;
+            border-left: 4px solid var(--ayuskama-gold, #c5a059);
+        }
+        .timeline-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--ayuskama-green, #1b3022);
+            margin-bottom: 4px;
+        }
+        .timeline-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.4;
+        }
+        .diet-box {
+            margin: 1.5rem;
+            padding: 15px 20px;
+            background: #fafcfa;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--ayuskama-green, #1b3022);
+        }
     </style>
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="ayuskama-theme.css">
@@ -447,29 +544,8 @@
                 <span class="card-icon">☀️</span>
                 <h2>Daily Routine</h2>
             </div>
-            <div class="card-body" style="padding: 0;">
-                <div class="meal-timing">
-                    <span class="meal-name">🧘‍♀️ Yoga Session</span>
-                    <span class="meal-time" id="timeYoga" style="background: #e3f0e8; color: var(--primary-dark);">06:00 AM</span>
-                </div>
-                <div class="meal-timing">
-                    <span class="meal-name">🌅 Breakfast</span>
-                    <span class="meal-time" id="timeBreakfast">08:00 AM</span>
-                </div>
-                <div class="meal-timing">
-                    <span class="meal-name">☀️ Lunch</span>
-                    <span class="meal-time" id="timeLunch">01:00 PM</span>
-                </div>
-
-                <div class="meal-timing">
-                    <span class="meal-name">🌙 Dinner</span>
-                    <span class="meal-time" id="timeDinner">07:30 PM</span>
-                </div>
-                <div style="padding: 15px; background: #e3f0e8; margin-top: 10px;">
-                    <strong style="color: var(--primary-dark);">Personalized Diet Plan:</strong>
-                    <p id="ptDietPlan" style="margin-top: 5px; font-size: 0.95rem;">Follow general hospital meals.</p>
-                </div>
-
+            <div class="card-body" style="padding: 0;" id="routineCardBody">
+                <div class="empty-state">Loading daily routine...</div>
             </div>
         </div>
 
@@ -519,9 +595,107 @@
         logout();
     }
 
-    function updateUI(patientData) {
+    function renderDailyTimeline(patientData, therapistSessions = []) {
+        const container = document.getElementById("routineCardBody");
+        if (!container) return;
+
+        const parseTimeToMinutes = (timeStr) => {
+            if (!timeStr || timeStr === 'TBD' || timeStr === '-') return 9999;
+            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+            if (!match) return 9999;
+            let [_, h, m, ampm] = match;
+            let hours = parseInt(h);
+            let minutes = parseInt(m);
+            if (ampm) {
+                const suffix = ampm.toUpperCase();
+                if (suffix === 'PM' && hours !== 12) hours += 12;
+                if (suffix === 'AM' && hours === 12) hours = 0;
+            }
+            return hours * 60 + minutes;
+        };
+
+        const formatTime12h = (timeStr) => {
+            if (!timeStr) return "";
+            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+            if (!match) return timeStr;
+            let [_, h, m, ampm] = match;
+            if (ampm) return timeStr; // Already in 12h format
+            let hours = parseInt(h);
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            const paddedHours = hours.toString().padStart(2, '0');
+            return `${paddedHours}:${m} ${suffix}`;
+        };
+
+        const yogaTime = patientData.yogaTiming || "06:00 AM";
+        const breakfastTime = (patientData.mealTimings && patientData.mealTimings.breakfast) || "08:00 AM";
+        const lunchTime = (patientData.mealTimings && patientData.mealTimings.lunch) || "01:00 PM";
+        const dinnerTime = (patientData.mealTimings && patientData.mealTimings.dinner) || "07:30 PM";
+
+        const routineItems = [
+            { name: 'Yoga Session', time: yogaTime, icon: '🧘‍♀️', desc: 'Pranayama, stretching & meditation.' },
+            { name: 'Breakfast', time: breakfastTime, icon: '🌅', desc: 'Light, freshly prepared Ayurvedic breakfast.' },
+            { name: 'Lunch', time: lunchTime, icon: '☀️', desc: 'Main lunch meal. Warm and freshly prepared.' },
+            { name: 'Dinner', time: dinnerTime, icon: '🌙', desc: 'Light dinner to promote deep rest & easy digestion.' }
+        ];
+
+        if (patientData.treatmentPlan && patientData.treatmentPlan !== 'None' && patientData.treatmentPlan !== 'General Consultation') {
+            const treatTime = patientData.treatmentTime || "TBD";
+            routineItems.push({
+                name: `${patientData.treatmentPlan}`,
+                time: treatTime,
+                icon: '🌸',
+                desc: `Room: ${patientData.treatmentRoom || 'TBD'} | Therapist: ${patientData.assignedTherapist || 'TBD'}`,
+                isSpecial: true
+            });
+        }
+
+        // Add therapist-scheduled sessions to the timeline
+        therapistSessions.forEach(session => {
+            const therapistName = session.therapistId ? session.therapistId.name : 'Assigned Therapist';
+            const timeDisplay = `${formatTime12h(session.startTime)} - ${formatTime12h(session.endTime)}`;
+            
+            routineItems.push({
+                name: `Session: ${session.treatment}`,
+                time: formatTime12h(session.startTime),
+                icon: '🌸',
+                desc: `Therapist: ${therapistName} | Time: ${timeDisplay}`,
+                isSpecial: true
+            });
+        });
+
+        routineItems.sort((a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
+
+        let html = `<div class="timeline-container">`;
+        routineItems.forEach(item => {
+            html += `
+                <div class="timeline-item ${item.isSpecial ? 'timeline-item-special' : ''}">
+                    <div class="timeline-badge">${item.time}</div>
+                    <div class="timeline-marker">${item.icon}</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">${item.name}</div>
+                        <div class="timeline-desc">${item.desc}</div>
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+
+        html += `
+            <div class="diet-box">
+                <strong style="color: var(--primary-dark); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px;">Personalized Diet Plan</strong>
+                <p id="ptDietPlan" style="margin: 0; font-size: 0.95rem; color: var(--text-main); line-height: 1.4;"></p>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    function updateUI(patientData, therapistSessions = []) {
         if (!patientData) return;
 
+        // Render Timeline
+        renderDailyTimeline(patientData, therapistSessions);
 
         // Populate UI
         document.getElementById("ptName").textContent = patientData.name || "Guest";
@@ -550,16 +724,6 @@
         document.getElementById("ptTreatmentRoom").textContent = patientData.treatmentRoom || "TBD";
         document.getElementById("ptTherapist").textContent = patientData.assignedTherapist || "Please check with reception";
         document.getElementById("ptDosDonts").textContent = patientData.dosAndDonts || "Follow general hospital guidelines.";
-        
-        // Routine Timings
-        document.getElementById("timeYoga").textContent = patientData.yogaTiming || "06:00 AM";
-
-        // Meal Timings
-        if (patientData.mealTimings) {
-            if (patientData.mealTimings.breakfast) document.getElementById("timeBreakfast").textContent = patientData.mealTimings.breakfast;
-            if (patientData.mealTimings.lunch) document.getElementById("timeLunch").textContent = patientData.mealTimings.lunch;
-            if (patientData.mealTimings.dinner) document.getElementById("timeDinner").textContent = patientData.mealTimings.dinner;
-        }
 
 
         
@@ -651,7 +815,7 @@
 
     async function fetchLatestData() {
         if (!patient || !patient._id) {
-            updateUI(patient);
+            updateUI(patient, []);
             return;
         }
 
@@ -660,22 +824,35 @@
             if (res.ok) {
                 const latestData = await res.json();
                 patient = latestData; // UPDATE GLOBAL
+                
+                // Fetch therapist-scheduled sessions for this patient
+                let therapistSessions = [];
+                const patientIdField = latestData.patientId || latestData._id;
+                try {
+                    const sessRes = await fetch(`http://localhost:5001/api/sessions/patient/${patientIdField}`);
+                    if (sessRes.ok) {
+                        therapistSessions = await sessRes.json();
+                    }
+                } catch (sessErr) {
+                    console.error("Failed to fetch therapist sessions", sessErr);
+                }
+
                 // Update local storage with fresh data
                 localStorage.setItem('patientData', JSON.stringify(latestData));
-                updateUI(latestData);
+                updateUI(latestData, therapistSessions);
             } else {
                 console.warn("Failed to fetch latest data, using cached data.");
-                updateUI(patient);
+                updateUI(patient, []);
             }
         } catch (err) {
             console.error("Error fetching live data, falling back to cache:", err);
-            updateUI(patient);
+            updateUI(patient, []);
         }
     }
 
     // Initial render with cache, then fetch fresh data
     if (patient) {
-        updateUI(patient);
+        updateUI(patient, []);
         fetchLatestData();
     }
 

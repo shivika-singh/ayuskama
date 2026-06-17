@@ -1,17 +1,17 @@
+require("dotenv").config({ path: "./.env" });
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-require("dotenv").config();
-
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB Connected"))
     .catch(err => console.log(err));
-
+mongoose.connection.once("open", () => {
+    console.log("Database:", mongoose.connection.name);
+});
 const patientRoutes = require("./routes/patientRoutes");
 const therapistRoutes = require("./routes/therapistRoutes");
 const sessionRoutes = require("./routes/sessionRoutes");
@@ -25,3 +25,4 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/treatments", treatmentRoutes);
 
 app.listen(5001, () => console.log("Server running on port 5001"));
+console.log("URI:", process.env.MONGO_URI);

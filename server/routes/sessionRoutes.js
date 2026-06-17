@@ -1,7 +1,18 @@
 const express = require("express");
 const Session = require("../models/session");
+const Therapist = require("../models/therapist");
 
 const router = express.Router();
+
+// Get sessions for a specific patientId
+router.get("/patient/:patientId", async (req, res) => {
+    try {
+        const sessions = await Session.find({ patientId: req.params.patientId }).populate("therapistId");
+        res.json(sessions);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // Update a session
 router.put("/:id", async (req, res) => {

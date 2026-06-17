@@ -411,6 +411,68 @@
                 width: 100%;
             }
         }
+
+        /* Admin Patient Details Premium Routine Grid Styling */
+        .routine-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .routine-sub-card {
+            background: #faf7f2;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .routine-sub-card:hover {
+            border-color: var(--ayuskama-green, #1b3022);
+            box-shadow: 0 4px 12px rgba(43, 89, 63, 0.03);
+            transform: translateY(-2px);
+        }
+        .routine-card-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--ayuskama-green, #1b3022);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 8px;
+        }
+        .routine-detail-row {
+            margin-bottom: 0.75rem;
+        }
+        .routine-detail-row:last-child {
+            margin-bottom: 0;
+        }
+        .routine-detail-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .routine-detail-value {
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .routine-alert-box {
+            background: #fffdf5;
+            border-left: 4px solid var(--ayuskama-gold, #c5a059);
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 4px;
+            margin-top: 1.5rem;
+        }
     </style>
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="ayuskama-theme.css">
@@ -529,32 +591,60 @@
                     <button class="nav-btn nav-btn-outline" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openRoutineModal()">Edit Routine</button>
                 </div>
                 <div class="card-body">
-                    <ul class="info-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <li class="info-item">
-                            <span class="info-label">Assigned Therapist</span>
-                            <span class="info-value" id="dispTherapist">-</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Treatment Room</span>
-                            <span class="info-value" id="dispRoom">-</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Treatment Time</span>
-                            <span class="info-value" id="dispTreatmentTime">-</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Yoga Timing</span>
-                            <span class="info-value" id="dispYoga">-</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Meal Timings</span>
-                            <span class="info-value" id="dispMeals">Breakfast: - | Lunch: - | Dinner: -</span>
-                        </li>
-                        <li class="info-item" style="grid-column: span 2;">
-                            <span class="info-label">Dos & Don'ts for Treatment</span>
-                            <span class="info-value" id="dispDosDonts" style="line-height: 1.6; color: var(--text-muted);">-</span>
-                        </li>
-                    </ul>
+                    <div class="routine-grid-container">
+                        <!-- Card 1: Assigned Therapist & Location -->
+                        <div class="routine-sub-card">
+                            <div class="routine-card-title">
+                                <span>👨‍⚕️ Staff & Care</span>
+                            </div>
+                            <div class="routine-detail-row">
+                                <span class="routine-detail-label">Assigned Therapist</span>
+                                <span class="routine-detail-value" id="dispTherapist">-</span>
+                            </div>
+                            <div class="routine-detail-row">
+                                <span class="routine-detail-label">Treatment Room</span>
+                                <span class="routine-detail-value" id="dispRoom">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Treatment & Yoga Schedule -->
+                        <div class="routine-sub-card">
+                            <div class="routine-card-title">
+                                <span>🕒 Timetable</span>
+                            </div>
+                            <div class="routine-detail-row">
+                                <span class="routine-detail-label">Treatment Time</span>
+                                <span class="routine-detail-value" id="dispTreatmentTime">-</span>
+                            </div>
+                            <div class="routine-detail-row">
+                                <span class="routine-detail-label">Yoga Timing</span>
+                                <span class="routine-detail-value" id="dispYoga">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Meal Schedule -->
+                        <div class="routine-sub-card">
+                            <div class="routine-card-title">
+                                <span>🥗 Diet & Nutrition</span>
+                            </div>
+                            <div class="routine-detail-row">
+                                <span class="routine-detail-label">Meal Timings</span>
+                                <span class="routine-detail-value" id="dispMeals">Breakfast: - | Lunch: - | Dinner: -</span>
+                            </div>
+                            <div class="routine-detail-row">
+                                <span class="routine-detail-label">Diet Plan</span>
+                                <span class="routine-detail-value" id="dispDietPlan">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dos & Don'ts Alert Box -->
+                    <div class="routine-alert-box">
+                        <strong style="color: var(--ayuskama-green, #1b3022); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                            <span>🌿 Dos & Don'ts for Treatment</span>
+                        </strong>
+                        <div id="dispDosDonts" style="line-height: 1.6; color: var(--text-muted); font-size: 0.95rem;">-</div>
+                    </div>
                 </div>
             </div>
 
@@ -783,6 +873,7 @@
         
         const meals = patient.mealTimings || {};
         document.getElementById("dispMeals").textContent = `Breakfast: ${meals.breakfast || '-'} | Lunch: ${meals.lunch || '-'} | Dinner: ${meals.dinner || '-'}`;
+        document.getElementById("dispDietPlan").textContent = patient.dietPlan || "None";
 
         document.getElementById("patientTreatment").textContent = patient.treatmentPlan || patient.treatment || "N/A";
         document.getElementById("patientRoom").textContent = patient.roomNumber || patient.room || "N/A";
@@ -895,6 +986,7 @@
         document.getElementById("inputTreatmentTime").value = currentPatient.treatmentTime || "";
         document.getElementById("inputYoga").value = currentPatient.yogaTiming || "";
         document.getElementById("inputDosDonts").value = currentPatient.dosAndDonts || "";
+        document.getElementById("inputDiet").value = currentPatient.dietPlan || "";
         if (currentPatient.mealTimings) {
             document.getElementById("inputBreakfast").value = currentPatient.mealTimings.breakfast || "";
             document.getElementById("inputLunch").value = currentPatient.mealTimings.lunch || "";
