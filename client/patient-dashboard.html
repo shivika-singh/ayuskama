@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ayuskama - My Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #4CAF50;
@@ -18,10 +21,26 @@
             --border: #e8e8e8;
             --hover-bg: #f4f6f4;
         }
-        h1, h2, h3, h4, h5, h6, .brand-logo, .option-title, .section-title {
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .brand-logo,
+        .option-title,
+        .section-title {
             font-family: 'Cormorant Garamond', serif !important;
         }
-        body, p, span, a, div, button, input {
+
+        body,
+        p,
+        span,
+        a,
+        div,
+        button,
+        input {
             font-family: 'Montserrat', sans-serif;
         }
 
@@ -30,7 +49,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            
+
         }
 
         body {
@@ -140,12 +159,12 @@
         }
 
         .room-badge {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             padding: 15px 30px;
             border-radius: 16px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .room-badge span {
@@ -210,7 +229,7 @@
         .guidelines-list {
             list-style: none;
         }
-        
+
         .guidelines-list li {
             margin-bottom: 1.2rem;
             padding-left: 30px;
@@ -316,6 +335,7 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
+
             .welcome-banner {
                 flex-direction: column;
                 text-align: center;
@@ -329,6 +349,7 @@
             padding: 1.5rem 1rem;
             margin-left: 10px;
         }
+
         .timeline-container::before {
             content: '';
             position: absolute;
@@ -338,15 +359,18 @@
             width: 2px;
             background: var(--border);
         }
+
         .timeline-item {
             display: flex;
             align-items: flex-start;
             margin-bottom: 1.5rem;
             position: relative;
         }
+
         .timeline-item:last-child {
             margin-bottom: 0;
         }
+
         .timeline-badge {
             width: 85px;
             text-align: right;
@@ -357,6 +381,7 @@
             margin-right: 15px;
             flex-shrink: 0;
         }
+
         .timeline-marker {
             width: 32px;
             height: 32px;
@@ -368,16 +393,18 @@
             justify-content: center;
             font-size: 1rem;
             z-index: 2;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             flex-shrink: 0;
             margin-right: 15px;
         }
+
         .timeline-item:hover .timeline-marker {
             background: var(--ayuskama-green, #1b3022);
             color: #fff;
             transform: scale(1.1);
         }
+
         .timeline-content {
             flex: 1;
             background: #faf7f2;
@@ -386,31 +413,37 @@
             border: 1px solid var(--border);
             transition: all 0.3s ease;
         }
+
         .timeline-item:hover .timeline-content {
             transform: translateX(4px);
             box-shadow: 0 4px 12px rgba(43, 89, 63, 0.05);
             border-color: var(--ayuskama-green, #1b3022);
         }
+
         .timeline-item-special .timeline-marker {
             border-color: var(--ayuskama-gold, #c5a059);
             background: #fff9e6;
         }
+
         .timeline-item-special .timeline-content {
             background: #fffcf5;
             border-left: 4px solid var(--ayuskama-gold, #c5a059);
         }
+
         .timeline-title {
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--ayuskama-green, #1b3022);
             margin-bottom: 4px;
         }
+
         .timeline-desc {
             font-size: 0.85rem;
             color: var(--text-muted);
             margin: 0;
             line-height: 1.4;
         }
+
         .diet-box {
             margin: 1.5rem;
             padding: 15px 20px;
@@ -419,256 +452,649 @@
             border: 1px solid var(--border);
             border-left: 4px solid var(--ayuskama-green, #1b3022);
         }
+
+        /* Navigation Tabs */
+        .tab-navigation {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.25rem;
+        }
+
+        .tab-btn {
+            font-size: 0.9rem !important;
+            padding: 12px 24px !important;
+            letter-spacing: 1px !important;
+            border-radius: 4px !important;
+            cursor: pointer;
+        }
+
+        /* About Section Cards */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .about-card {
+            background: #ffffff;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--ayuskama-green);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .about-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--ayuskama-green);
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 10px;
+        }
+
+        .about-subtitle {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .pillars-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pillar-item {
+            background: #faf7f2;
+            padding: 1.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .pillar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ayuskama-green);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .contact-info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .contact-info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            line-height: 1.5;
+        }
+
+        .contact-icon {
+            font-size: 1.3rem;
+            color: var(--ayuskama-gold);
+        }
+
+        @media (max-width: 900px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pillars-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Diet Practices CSS */
+        .diet-practices-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .diet-column {
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .avoid-column {
+            background: #fff8f8;
+            border-left: 4px solid #d32f2f;
+        }
+
+        .good-column {
+            background: #f7faf7;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .diet-column-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Montserrat', sans-serif !important;
+            font-weight: 600;
+        }
+
+        .avoid-column .diet-column-title {
+            color: #c62828;
+        }
+
+        .good-column .diet-column-title {
+            color: #2e7d32;
+        }
+
+        .diet-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .diet-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .diet-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .avoid-list li::before {
+            content: '•';
+            color: #d32f2f;
+            position: absolute;
+            left: 0;
+            font-size: 1.5rem;
+            line-height: 1;
+            top: -2px;
+        }
+
+        .good-list li::before {
+            content: '•';
+            color: #2e7d32;
+            position: absolute;
+            left: 0;
+            font-size: 1.5rem;
+            line-height: 1;
+            top: -2px;
+        }
+
+        @media (max-width: 768px) {
+            .diet-practices-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
     </style>
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="ayuskama-theme.css">
 </head>
+
 <body>
 
 
-<!-- Payment Modal -->
-<div id="paymentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: var(--card-bg); padding: 3rem; border-radius: 20px; text-align: center; max-width: 500px; width: 90%;">
-        <h2 style="margin-bottom: 1rem; color: var(--primary-dark);">Select Payment Method</h2>
-        <p style="margin-bottom: 2rem; color: var(--text-muted);">Welcome to Ayuskama! Please choose how you would like to handle your billing.</p>
-        <button onclick="selectPayment('advanced')" class="nav-btn nav-btn-solid" style="width: 100%; margin-bottom: 1rem; padding: 15px; font-size: 1.1rem;">Advanced Payment (Now)</button>
-        <button onclick="selectPayment('checkout')" class="nav-btn nav-btn-outline" style="width: 100%; padding: 15px; font-size: 1.1rem;">Total Payment at Checkout</button>
-    </div>
-</div>
-
-<!-- Discharge Summary Modal -->
-<div id="dischargeModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: var(--card-bg); padding: 3rem; border-radius: 20px; max-width: 600px; width: 90%;">
-        <h2 style="margin-bottom: 1rem; color: var(--primary-dark); text-align: center;">Discharge Summary & Invoice</h2>
-        <div id="dischargeContent" style="margin-bottom: 2rem; line-height: 1.6;"></div>
-        <button onclick="logout()" class="nav-btn nav-btn-solid" style="width: 100%; padding: 15px; font-size: 1.1rem;">Acknowledge & Logout</button>
-    </div>
-</div>
-
-<!-- Navigation Bar -->
-<div class="navbar">
-    <a href="#" class="brand-logo">
-        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayus<span>kama</span>
-    </a>
-    <div class="nav-links">
-        
-        <button onclick="checkoutPatient()" class="nav-btn" style="background: var(--accent); color: white; border: none;">Checkout</button>
-        <button onclick="logout()" class="nav-btn nav-btn-outline">Logout</button>
-
-    </div>
-</div>
-
-<div class="main-container">
-    <div class="welcome-banner">
-
-        
-        <div class="welcome-text">
-            <h1>Welcome, <span id="ptName">Patient</span></h1>
-            <p>Your journey to holistic healing starts here. ID: <strong id="ptId">---</strong></p>
-            <p style="margin-top: 10px; font-weight: 500; color: #e3f0e8;">Primary Condition: <span id="ptDisease">---</span></p>
-            <div style="margin-top: 15px; display: inline-flex; gap: 15px; background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 8px; font-size: 0.95rem;">
-                <div><strong>Check-In:</strong> <span id="ptCheckIn">-</span></div>
-                <div><strong>Check-Out:</strong> <span id="ptCheckOut">-</span></div>
-            </div>
-        </div>
-
-
-        <div class="room-badge">
-            <span>Room / Ward</span>
-            <strong id="ptRoom">---</strong>
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+        <div
+            style="background: var(--card-bg); padding: 3rem; border-radius: 20px; text-align: center; max-width: 500px; width: 90%;">
+            <h2 style="margin-bottom: 1rem; color: var(--primary-dark);">Select Payment Method</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-muted);">Welcome to Ayuskama! Please choose how you would
+                like to handle your billing.</p>
+            <button onclick="selectPayment('advanced')" class="nav-btn nav-btn-solid"
+                style="width: 100%; margin-bottom: 1rem; padding: 15px; font-size: 1.1rem;">Advanced Payment
+                (Now)</button>
+            <button onclick="selectPayment('checkout')" class="nav-btn nav-btn-outline"
+                style="width: 100%; padding: 15px; font-size: 1.1rem;">Total Payment at Checkout</button>
         </div>
     </div>
 
-    <div class="dashboard-grid">
-        <!-- Guidelines Card -->
-        <div class="card" style="grid-row: span 2;">
-            <div class="card-header">
-                <span class="card-icon">📜</span>
-                <h2>Hospital Guidelines</h2>
-            </div>
-            <div class="card-body">
-                <ul class="guidelines-list">
-                    <li><strong>Dinacharya (Daily Routine):</strong> Wake up before sunrise (Brahma Muhurta) to synchronize with nature's rhythms.</li>
-                    <li><strong>Dietary Rules:</strong> Consume only warm, freshly prepared Ayurvedic meals provided by the kitchen. Avoid outside food strictly.</li>
-                    <li><strong>Hydration:</strong> Drink warm water or prescribed herbal teas throughout the day. Avoid cold water.</li>
-                    <li><strong>Rest:</strong> Ensure adequate daytime rest post-treatments. Avoid sleeping immediately after meals.</li>
-                    <li><strong>Technology Detox:</strong> Minimize screen time, especially during treatments and before bedtime to promote mental calmness.</li>
-                    <li><strong>Hygiene:</strong> Maintain personal hygiene. Wear loose, comfortable cotton clothing.</li>
-                </ul>
-            </div>
+    <!-- Discharge Summary Modal -->
+    <div id="dischargeModal" class="modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: var(--card-bg); padding: 3rem; border-radius: 20px; max-width: 600px; width: 90%;">
+            <h2 style="margin-bottom: 1rem; color: var(--primary-dark); text-align: center;">Discharge Summary & Invoice
+            </h2>
+            <div id="dischargeContent" style="margin-bottom: 2rem; line-height: 1.6;"></div>
+            <button onclick="logout()" class="nav-btn nav-btn-solid"
+                style="width: 100%; padding: 15px; font-size: 1.1rem;">Acknowledge & Logout</button>
         </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="#" class="brand-logo">
+            <img src="assets/logo.jpg" alt="Logo"
+                style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;">
+            Ayus<span>kama</span>
+        </a>
+        <div class="nav-links">
+
+            <button onclick="checkoutPatient()" class="nav-btn"
+                style="background: var(--accent); color: white; border: none;">Checkout</button>
+            <button onclick="logout()" class="nav-btn nav-btn-outline">Logout</button>
+
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="welcome-banner">
 
 
-        <!-- Treatment & Therapists Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-icon">🌸</span>
-                <h2>Today's Treatment</h2>
-            </div>
-            <div class="card-body" style="text-align: center;">
-                <h3 style="color: var(--text-muted); margin-bottom: 10px; font-weight: 500; font-size: 1rem;">Primary Plan</h3>
-
-                <div class="treatment-badge" id="ptTreatment">Loading...</div>
-                <div style="text-align: left; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px;">
-                    <strong style="color: var(--primary-dark); display: block; margin-bottom: 5px;">Treatment Protocol</strong>
-                    <p id="ptProtocol" style="font-size: 0.95rem; color: var(--text-main);">Standard procedure.</p>
+            <div class="welcome-text">
+                <h1>Welcome, <span id="ptName">Patient</span></h1>
+                <p>Your journey to holistic healing starts here. ID: <strong id="ptId">---</strong></p>
+                <p style="margin-top: 10px; font-weight: 500; color: #e3f0e8;">Primary Condition: <span
+                        id="ptDisease">---</span></p>
+                <div
+                    style="margin-top: 15px; display: inline-flex; gap: 15px; background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 8px; font-size: 0.95rem;">
+                    <div><strong>Check-In:</strong> <span id="ptCheckIn">-</span></div>
+                    <div><strong>Check-Out:</strong> <span id="ptCheckOut">-</span></div>
                 </div>
+            </div>
 
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; text-align: left; background: var(--bg-color); padding: 15px; border-radius: 12px;">
-                    <div>
-                        <small style="color: var(--text-muted); font-weight: 600;">Time</small>
-                        <div id="ptTreatmentTime" style="font-weight: 500;">-</div>
+
+            <div class="room-badge">
+                <span>Room / Ward</span>
+                <strong id="ptRoom">---</strong>
+            </div>
+        </div>
+
+        <!-- Navigation Tab Buttons -->
+        <div class="tab-navigation">
+            <button id="btn-nav-home" class="nav-btn tab-btn" onclick="showSection('home')">
+                🏠 Home
+            </button>
+            <button id="btn-nav-schedule" class="nav-btn nav-btn-outline tab-btn" onclick="showSection('schedule')">
+                📅 Schedule
+            </button>
+            <button id="btn-nav-about" class="nav-btn nav-btn-outline tab-btn" onclick="showSection('about')">
+                🌿 About Institute
+            </button>
+        </div>
+
+        <!-- 1) Home Section -->
+        <div id="section-home" class="dashboard-section">
+            <div class="dashboard-grid">
+                <!-- Guidelines Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📜</span>
+                        <h2>Hospital Guidelines</h2>
                     </div>
-                    <div>
-                        <small style="color: var(--text-muted); font-weight: 600;">Room</small>
-                        <div id="ptTreatmentRoom" style="font-weight: 500;">-</div>
+                    <div class="card-body">
+                        <ul class="guidelines-list">
+                            <li><strong>Dinacharya (Daily Routine):</strong> Wake up before sunrise (Brahma Muhurta) to
+                                synchronize with nature's rhythms.</li>
+                            <li><strong>Dietary Rules:</strong> Consume only warm, freshly prepared Ayurvedic meals
+                                provided by the kitchen. Avoid outside food strictly.</li>
+                            <li><strong>Hydration:</strong> Drink warm water or prescribed herbal teas throughout the
+                                day. Avoid cold water.</li>
+                            <li><strong>Rest:</strong> Ensure adequate daytime rest post-treatments. Avoid sleeping
+                                immediately after meals.</li>
+                            <li><strong>Technology Detox:</strong> Minimize screen time, especially during treatments
+                                and before bedtime to promote mental calmness.</li>
+                            <li><strong>Hygiene:</strong> Maintain personal hygiene. Wear loose, comfortable cotton
+                                clothing.</li>
+                        </ul>
                     </div>
-                    <div style="grid-column: span 2;">
-                        <small style="color: var(--text-muted); font-weight: 600;">Assigned Therapist</small>
-                        <div id="ptTherapist" style="font-weight: 500; color: var(--primary-dark);">-</div>
+                </div>
+
+                <!-- Queries Card -->
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <span class="card-icon">💬</span>
+                        <h2>Ask a Question</h2>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <input type="text" id="queryInput"
+                                placeholder="Have a question about your treatment or meals? Ask here..."
+                                style="flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
+                            <button class="nav-btn"
+                                style="background: var(--primary); color: white; padding: 12px 24px;"
+                                onclick="submitQuery()" id="submitQueryBtn">Ask</button>
+                        </div>
+                        <div id="patientQueriesContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                            <div class="empty-state">Loading queries...</div>
+                        </div>
                     </div>
                 </div>
 
-                <div style="margin-top: 15px; text-align: left; background: #fff8e1; padding: 15px; border-radius: 12px; border: 1px solid #ffe082;">
-                    <small style="color: #b37322; font-weight: 600;">Dos & Don'ts</small>
-                    <div id="ptDosDonts" style="font-size: 0.95rem; line-height: 1.5; margin-top: 5px;">Follow general hospital guidelines.</div>
+                <!-- Diet Practices Card -->
+                <div class="card" style="grid-column: span 3;">
+                    <div class="card-header">
+                        <span class="card-icon">🥗</span>
+                        <h2>Diet Practices</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="diet-practices-container">
+                            <div class="diet-column avoid-column">
+                                <h3 class="diet-column-title"><span class="diet-icon">⚠️</span> Avoid / Reduce</h3>
+                                <ul class="diet-list avoid-list">
+                                    <li><strong>White flour food:</strong> Reduce white bread, pizza, pasta, momos, pancake, noodles etc.</li>
+                                    <li><strong>Hot & Spicy food:</strong> Limit hot & spicy food like red & green chilly.</li>
+                                    <li><strong>Sour & Acidic food:</strong> Reduce vinegar, pickles, lemon.</li>
+                                    <li><strong>Yogurt, Lassi & Curd:</strong> Avoid at night. Do not consume during cough & cold, muscle stiffness, or tension.</li>
+                                    <li><strong>Heavy & Deep-fried food:</strong> Avoid deep-fried, oily, and heavy foods. Limit meat, fish, and chicken (prefer in soup form).</li>
+                                    <li><strong>Processed & Cold items:</strong> Avoid processed, preserved, and frozen foods, cold drinks, carbonated drinks, ice-cold water, and cold showers.</li>
+                                    <li><strong>Stimulants:</strong> Avoid alcohol, smoking, and black tea or coffee on an empty stomach.</li>
+                                    <li><strong>Raw vegetables:</strong> Avoid raw vegetables (onions, broccoli, cabbage, beetroot, carrot, lettuce). Cooked, steamed, or boiled vegetables are better.</li>
+                                    <li><strong>Lentils & Legumes:</strong> Limit black lentils. For other beans/lentils (Urad dal, Arhar dal, Chana dal, Rajma, legumes), soak in water overnight before cooking the next day.</li>
+                                    <li><strong>Refined sugar:</strong> Avoid white sugar products, refined sugar, chocolate, candy, pastry, cakes etc.</li>
+                                </ul>
+                            </div>
+                            <div class="diet-column good-column">
+                                <h3 class="diet-column-title"><span class="diet-icon">✨</span> Good / Recommended</h3>
+                                <ul class="diet-list good-list">
+                                    <li><strong>Water:</strong> Drink more water, but not immediately after meals (wait for one hour).</li>
+                                    <li><strong>Whole Grains:</strong> Prefer brown flour, grains & cereals like amaranth, oats, whole wheat, rice, quinoa, barley etc.</li>
+                                    <li><strong>Vegetables:</strong> Eat boiled, cooked & steamed vegetables, green leafy vegetables, soups, asparagus, green beans, cooked garlic & onion, carrots etc.</li>
+                                    <li><strong>Fruits & Sprouts:</strong> Enjoy papaya, banana, pomegranates, berries, cherries, grapes, peaches, mango or other seasonal fruits. Sprouted beans, moong bean sprouts, alfalfa sprouts etc. (If prone to gas or bloating, consume in cooked form).</li>
+                                    <li><strong>Spices & Herbs:</strong> Use turmeric, ginger, Himalayan salt, black pepper, coriander, cloves, cumin seeds, fenugreek seed, thyme seed, ajwain, cinnamon, cardamom, asafetida etc.</li>
+                                    <li><strong>Beverages:</strong> Enjoy herbal tea, ginger tulsi tea, mint tea, and aloe vera juice.</li>
+                                    <li><strong>Dairy:</strong> Consume cow or buffalo milk cooked with turmeric & black pepper or cooked with cardamom, fennel or saffron (curcuma), cow ghee, goat milk etc.</li>
+                                    <li><strong>Healthy Oils:</strong> Use cow ghee, mustard oil, coconut oil, olive oil, or sunflower oil for cooking.</li>
+                                    <li><strong>Soaked Dried Fruits:</strong> Soak raisins, dates, figs, and prunes in water overnight to eat the next day.</li>
+                                    <li><strong>Soaked Nuts:</strong> Soak dry fruits and nuts (like almonds) in water overnight to eat the next day.</li>
+                                    <li><strong>Natural Sweets:</strong> Limit to honey, fruit juice, jaggery, brown sugar etc.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- 2) Schedule Section -->
+        <div id="section-schedule" class="dashboard-section" style="display: none;">
+            <div class="dashboard-grid">
+                <!-- Today's Treatment Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🌸</span>
+                        <h2>Today's Treatment</h2>
+                    </div>
+                    <div class="card-body" style="text-align: center;">
+                        <h3 style="color: var(--text-muted); margin-bottom: 10px; font-weight: 500; font-size: 1rem;">
+                            Primary Plan</h3>
 
-        <!-- Routine Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-icon">☀️</span>
-                <h2>Daily Routine</h2>
-            </div>
-            <div class="card-body" style="padding: 0;" id="routineCardBody">
-                <div class="empty-state">Loading daily routine...</div>
+                        <div class="treatment-badge" id="ptTreatment">Loading...</div>
+                        <div
+                            style="text-align: left; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px;">
+                            <strong style="color: var(--primary-dark); display: block; margin-bottom: 5px;">Treatment
+                                Protocol</strong>
+                            <p id="ptProtocol" style="font-size: 0.95rem; color: var(--text-main);">Standard procedure.
+                            </p>
+                        </div>
+
+
+                        <div
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; text-align: left; background: var(--bg-color); padding: 15px; border-radius: 12px;">
+                            <div>
+                                <small style="color: var(--text-muted); font-weight: 600;">Time</small>
+                                <div id="ptTreatmentTime" style="font-weight: 500;">-</div>
+                            </div>
+                            <div>
+                                <small style="color: var(--text-muted); font-weight: 600;">Room</small>
+                                <div id="ptTreatmentRoom" style="font-weight: 500;">-</div>
+                            </div>
+                            <div style="grid-column: span 2;">
+                                <small style="color: var(--text-muted); font-weight: 600;">Assigned Therapist</small>
+                                <div id="ptTherapist" style="font-weight: 500; color: var(--primary-dark);">-</div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="margin-top: 15px; text-align: left; background: #fff8e1; padding: 15px; border-radius: 12px; border: 1px solid #ffe082;">
+                            <small style="color: #b37322; font-weight: 600;">Dos & Don'ts</small>
+                            <div id="ptDosDonts" style="font-size: 0.95rem; line-height: 1.5; margin-top: 5px;">Follow
+                                general hospital guidelines.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Routine Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">☀️</span>
+                        <h2>Daily Routine</h2>
+                    </div>
+                    <div class="card-body" style="padding: 0;" id="routineCardBody">
+                        <div class="empty-state">Loading daily routine...</div>
+                    </div>
+                </div>
+
+                <!-- Medicines Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">💊</span>
+                        <h2>Assigned Medicines</h2>
+                    </div>
+                    <div class="card-body" id="medicinesContainer">
+                        <div class="empty-state">Loading medicines...</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        
-        <!-- Queries Card -->
-        <div class="card" style="grid-column: span 2;">
-            <div class="card-header">
-                <span class="card-icon">💬</span>
-                <h2>Ask a Question</h2>
-            </div>
-            <div class="card-body">
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="text" id="queryInput" placeholder="Have a question about your treatment or meals? Ask here..." style="flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
-                    <button class="nav-btn" style="background: var(--primary); color: white; padding: 12px 24px;" onclick="submitQuery()" id="submitQueryBtn">Ask</button>
-                </div>
-                <div id="patientQueriesContainer" style="display: flex; flex-direction: column; gap: 10px;">
-                    <div class="empty-state">Loading queries...</div>
-                </div>
-            </div>
-        </div>
+        <!-- 3) About Section -->
+        <div id="section-about" class="dashboard-section" style="display: none;">
+            <div class="about-grid">
+                <!-- Left Column: About Institute & Philosophy -->
+                <div class="about-card">
+                    <h2 class="about-title">Ayuskama Ayurveda & Panchakarma Institute</h2>
+                    <p class="about-subtitle">Nestled in the spiritual heart of Rishikesh, Ayuskama is devoted to
+                        reviving and sharing the profound science of Ayurveda.</p>
+                    <p style="line-height: 1.6; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                        Through authentic Ayurvedic practices, personalized therapies, and carefully curated wellness
+                        programs, we help you reconnect with your inner self and the natural rhythms of the universe.
+                        Our institute offers a sanctuary for holistic wellness, detoxification, and spiritual alignment.
+                    </p>
 
-        <!-- Medicines Card -->
-        <div class="card" style="grid-column: span 2;">
-            <div class="card-header">
-                <span class="card-icon">💊</span>
-                <h2>Assigned Medicines</h2>
-            </div>
-            <div class="card-body" id="medicinesContainer">
-                <div class="empty-state">Loading medicines...</div>
+                    <h3
+                        style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--ayuskama-green); margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px dashed var(--border); padding-bottom: 8px;">
+                        Our Core Philosophy Pillars</h3>
+                    <div class="pillars-list">
+                        <div class="pillar-item">
+                            <div class="pillar-title"><span>🌿</span> Healthy Body</div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                Restoring balance and boosting immunity through Panchakarma detox and individualized
+                                therapies.</p>
+                        </div>
+                        <div class="pillar-item">
+                            <div class="pillar-title"><span>🧘‍♀️</span> Calm Mind</div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                Reducing stress and attaining mental clarity via yoga, meditation, and nervous-system
+                                calming herbs.</p>
+                        </div>
+                        <div class="pillar-item">
+                            <div class="pillar-title"><span>✨</span> Spirituality</div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                Aligning with nature, chanting mantras, and performing sacred rituals to awaken the
+                                soul.</p>
+                        </div>
+                        <div class="pillar-item">
+                            <div class="pillar-title"><span>🤝</span> Relations</div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                Cultivating conscious connections with yourself, loved ones, and the universe around us.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Founders & Contact Info -->
+                <div>
+                    <div class="about-card" style="margin-bottom: 2rem;">
+                        <h2 class="about-title" style="font-size: 1.6rem;">Our Founders</h2>
+                        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                            <div>
+                                <strong style="color: var(--ayuskama-green); display: block; font-size: 1rem;">Dr. Vinod
+                                    Kumar</strong>
+                                <span
+                                    style="font-size: 0.8rem; color: var(--ayuskama-gold); font-weight: 600; text-transform: uppercase;">Chief
+                                    Doctor & CEO</span>
+                                <p
+                                    style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">
+                                    25+ years of clinical expertise in classical Panchakarma therapy.</p>
+                            </div>
+                            <div style="border-top: 1px dashed var(--border); padding-top: 1rem;">
+                                <strong style="color: var(--ayuskama-green); display: block; font-size: 1rem;">Dr. Neetu
+                                    Singh</strong>
+                                <span
+                                    style="font-size: 0.8rem; color: var(--ayuskama-gold); font-weight: 600; text-transform: uppercase;">Chief
+                                    Doctor</span>
+                                <p
+                                    style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">
+                                    20+ years of expertise in women's holistic health, yoga, and diet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-card">
+                        <h2 class="about-title" style="font-size: 1.6rem;">Contact Us</h2>
+                        <ul class="contact-info-list">
+                            <li class="contact-info-item">
+                                <span class="contact-icon">📍</span>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                                    Secret Waterfall Road, Upper Tapovan, Rishikesh, Uttarakhand 249201
+                                </span>
+                            </li>
+                            <li class="contact-info-item">
+                                <span class="contact-icon">📞</span>
+                                <span style="font-size: 0.85rem;">
+                                    <a href="tel:+918445889122"
+                                        style="color: var(--text-main); text-decoration: none; font-weight: 500;">+91
+                                        844 588 9122</a><br>
+                                    <a href="tel:+919917317388"
+                                        style="color: var(--text-main); text-decoration: none; font-weight: 500;">+91
+                                        991 731 7388</a>
+                                </span>
+                            </li>
+                            <li class="contact-info-item">
+                                <span class="contact-icon">✉️</span>
+                                <span style="font-size: 0.85rem;">
+                                    <a href="mailto:ayuskamarishikesh@gmail.com"
+                                        style="color: var(--text-main); text-decoration: none; font-weight: 500;">ayuskamarishikesh@gmail.com</a>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // Authentication Check
-    const rawData = localStorage.getItem('patientData');
-    if (!rawData) {
-        window.location.href = "patient-login.html";
-    }
+    <script>
 
-    let patient = null;
-    try {
-        patient = JSON.parse(rawData);
-    } catch (e) {
-        console.error("Data error", e);
-        logout();
-    }
-
-    function renderDailyTimeline(patientData, therapistSessions = []) {
-        const container = document.getElementById("routineCardBody");
-        if (!container) return;
-
-        const parseTimeToMinutes = (timeStr) => {
-            if (!timeStr || timeStr === 'TBD' || timeStr === '-') return 9999;
-            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-            if (!match) return 9999;
-            let [_, h, m, ampm] = match;
-            let hours = parseInt(h);
-            let minutes = parseInt(m);
-            if (ampm) {
-                const suffix = ampm.toUpperCase();
-                if (suffix === 'PM' && hours !== 12) hours += 12;
-                if (suffix === 'AM' && hours === 12) hours = 0;
-            }
-            return hours * 60 + minutes;
-        };
-
-        const formatTime12h = (timeStr) => {
-            if (!timeStr) return "";
-            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-            if (!match) return timeStr;
-            let [_, h, m, ampm] = match;
-            if (ampm) return timeStr; // Already in 12h format
-            let hours = parseInt(h);
-            const suffix = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12 || 12;
-            const paddedHours = hours.toString().padStart(2, '0');
-            return `${paddedHours}:${m} ${suffix}`;
-        };
-
-        const yogaTime = patientData.yogaTiming || "06:00 AM";
-        const breakfastTime = (patientData.mealTimings && patientData.mealTimings.breakfast) || "08:00 AM";
-        const lunchTime = (patientData.mealTimings && patientData.mealTimings.lunch) || "01:00 PM";
-        const dinnerTime = (patientData.mealTimings && patientData.mealTimings.dinner) || "07:30 PM";
-
-        const routineItems = [
-            { name: 'Yoga Session', time: yogaTime, icon: '🧘‍♀️', desc: 'Pranayama, stretching & meditation.' },
-            { name: 'Breakfast', time: breakfastTime, icon: '🌅', desc: 'Light, freshly prepared Ayurvedic breakfast.' },
-            { name: 'Lunch', time: lunchTime, icon: '☀️', desc: 'Main lunch meal. Warm and freshly prepared.' },
-            { name: 'Dinner', time: dinnerTime, icon: '🌙', desc: 'Light dinner to promote deep rest & easy digestion.' }
-        ];
-
-        if (patientData.treatmentPlan && patientData.treatmentPlan !== 'None' && patientData.treatmentPlan !== 'General Consultation') {
-            const treatTime = patientData.treatmentTime || "TBD";
-            routineItems.push({
-                name: `${patientData.treatmentPlan}`,
-                time: treatTime,
-                icon: '🌸',
-                desc: `Room: ${patientData.treatmentRoom || 'TBD'} | Therapist: ${patientData.assignedTherapist || 'TBD'}`,
-                isSpecial: true
-            });
+        // Authentication Check
+        const rawData = localStorage.getItem('patientData');
+        if (!rawData) {
+            window.location.href = "patient-login.html";
         }
 
-        // Add therapist-scheduled sessions to the timeline
-        therapistSessions.forEach(session => {
-            const therapistName = session.therapistId ? session.therapistId.name : 'Assigned Therapist';
-            const timeDisplay = `${formatTime12h(session.startTime)} - ${formatTime12h(session.endTime)}`;
-            
-            routineItems.push({
-                name: `Session: ${session.treatment}`,
-                time: formatTime12h(session.startTime),
-                icon: '🌸',
-                desc: `Therapist: ${therapistName} | Time: ${timeDisplay}`,
-                isSpecial: true
+        let patient = null;
+        try {
+            patient = JSON.parse(rawData);
+        } catch (e) {
+            console.error("Data error", e);
+            logout();
+        }
+
+        function renderDailyTimeline(patientData, therapistSessions = []) {
+            const container = document.getElementById("routineCardBody");
+            if (!container) return;
+
+            const parseTimeToMinutes = (timeStr) => {
+                if (!timeStr || timeStr === 'TBD' || timeStr === '-') return 9999;
+                const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+                if (!match) return 9999;
+                let [_, h, m, ampm] = match;
+                let hours = parseInt(h);
+                let minutes = parseInt(m);
+                if (ampm) {
+                    const suffix = ampm.toUpperCase();
+                    if (suffix === 'PM' && hours !== 12) hours += 12;
+                    if (suffix === 'AM' && hours === 12) hours = 0;
+                }
+                return hours * 60 + minutes;
+            };
+
+            const formatTime12h = (timeStr) => {
+                if (!timeStr) return "";
+                const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+                if (!match) return timeStr;
+                let [_, h, m, ampm] = match;
+                if (ampm) return timeStr; // Already in 12h format
+                let hours = parseInt(h);
+                const suffix = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                const paddedHours = hours.toString().padStart(2, '0');
+                return `${paddedHours}:${m} ${suffix}`;
+            };
+
+            const yogaTime = patientData.yogaTiming || "06:00 AM";
+            const breakfastTime = (patientData.mealTimings && patientData.mealTimings.breakfast) || "08:00 AM";
+            const lunchTime = (patientData.mealTimings && patientData.mealTimings.lunch) || "01:00 PM";
+            const dinnerTime = (patientData.mealTimings && patientData.mealTimings.dinner) || "07:30 PM";
+
+            const routineItems = [
+                { name: 'Yoga Session', time: yogaTime, icon: '🧘‍♀️', desc: 'Pranayama, stretching & meditation.' },
+                { name: 'Breakfast', time: breakfastTime, icon: '🌅', desc: 'Light, freshly prepared Ayurvedic breakfast.' },
+                { name: 'Lunch', time: lunchTime, icon: '☀️', desc: 'Main lunch meal. Warm and freshly prepared.' },
+                { name: 'Dinner', time: dinnerTime, icon: '🌙', desc: 'Light dinner to promote deep rest & easy digestion.' }
+            ];
+
+            if (patientData.treatmentPlan && patientData.treatmentPlan !== 'None' && patientData.treatmentPlan !== 'General Consultation') {
+                const treatTime = patientData.treatmentTime || "TBD";
+                routineItems.push({
+                    name: `${patientData.treatmentPlan}`,
+                    time: treatTime,
+                    icon: '🌸',
+                    desc: `Room: ${patientData.treatmentRoom || 'TBD'} | Therapist: ${patientData.assignedTherapist || 'TBD'}`,
+                    isSpecial: true
+                });
+            }
+
+            // Add therapist-scheduled sessions to the timeline
+            therapistSessions.forEach(session => {
+                const therapistName = session.therapistId ? session.therapistId.name : 'Assigned Therapist';
+                const timeDisplay = `${formatTime12h(session.startTime)} - ${formatTime12h(session.endTime)}`;
+
+                routineItems.push({
+                    name: `Session: ${session.treatment}`,
+                    time: formatTime12h(session.startTime),
+                    icon: '🌸',
+                    desc: `Therapist: ${therapistName} | Time: ${timeDisplay}`,
+                    isSpecial: true
+                });
             });
-        });
 
-        routineItems.sort((a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
+            routineItems.sort((a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
 
-        let html = `<div class="timeline-container">`;
-        routineItems.forEach(item => {
-            html += `
+            let html = `<div class="timeline-container">`;
+            routineItems.forEach(item => {
+                html += `
                 <div class="timeline-item ${item.isSpecial ? 'timeline-item-special' : ''}">
                     <div class="timeline-badge">${item.time}</div>
                     <div class="timeline-marker">${item.icon}</div>
@@ -678,201 +1104,201 @@
                     </div>
                 </div>
             `;
-        });
-        html += `</div>`;
+            });
+            html += `</div>`;
 
-        html += `
+            html += `
             <div class="diet-box">
                 <strong style="color: var(--primary-dark); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px;">Personalized Diet Plan</strong>
                 <p id="ptDietPlan" style="margin: 0; font-size: 0.95rem; color: var(--text-main); line-height: 1.4;"></p>
             </div>
         `;
 
-        container.innerHTML = html;
-    }
-
-    function updateUI(patientData, therapistSessions = []) {
-        if (!patientData) return;
-
-        // Render Timeline
-        renderDailyTimeline(patientData, therapistSessions);
-
-        // Populate UI
-        document.getElementById("ptName").textContent = patientData.name || "Guest";
-        document.getElementById("ptId").textContent = patientData.patientId || patientData._id || "N/A";
-        document.getElementById("ptRoom").textContent = patientData.roomNumber || "TBD";
-        
-        document.getElementById("ptDisease").textContent = patientData.disease || "Not specified";
-        
-        // Dates
-        document.getElementById("ptCheckIn").textContent = patientData.checkInDate ? new Date(patientData.checkInDate).toLocaleDateString() : "Not set";
-        document.getElementById("ptCheckOut").textContent = patientData.checkOutDate ? new Date(patientData.checkOutDate).toLocaleDateString() : "Not set";
-
-
-        document.getElementById("ptTreatment").textContent = patientData.treatmentPlan || "General Consultation";
-        document.getElementById("ptProtocol").textContent = patientData.treatmentProtocol || "No specific protocol assigned.";
-        document.getElementById("ptDietPlan").textContent = patientData.dietPlan || "Follow general hospital meals.";
-
-        // Handle Payment Modal on load
-        if (patientData.paymentMethod === 'pending') {
-            document.getElementById("paymentModal").style.display = "flex";
+            container.innerHTML = html;
         }
 
-        
-        // Treatment Details
-        document.getElementById("ptTreatmentTime").textContent = patientData.treatmentTime || "TBD";
-        document.getElementById("ptTreatmentRoom").textContent = patientData.treatmentRoom || "TBD";
-        document.getElementById("ptTherapist").textContent = patientData.assignedTherapist || "Please check with reception";
-        document.getElementById("ptDosDonts").textContent = patientData.dosAndDonts || "Follow general hospital guidelines.";
+        function updateUI(patientData, therapistSessions = []) {
+            if (!patientData) return;
+
+            // Render Timeline
+            renderDailyTimeline(patientData, therapistSessions);
+
+            // Populate UI
+            document.getElementById("ptName").textContent = patientData.name || "Guest";
+            document.getElementById("ptId").textContent = patientData.patientId || patientData._id || "N/A";
+            document.getElementById("ptRoom").textContent = patientData.roomNumber || "TBD";
+
+            document.getElementById("ptDisease").textContent = patientData.disease || "Not specified";
+
+            // Dates
+            document.getElementById("ptCheckIn").textContent = patientData.checkInDate ? new Date(patientData.checkInDate).toLocaleDateString() : "Not set";
+            document.getElementById("ptCheckOut").textContent = patientData.checkOutDate ? new Date(patientData.checkOutDate).toLocaleDateString() : "Not set";
 
 
-        
-        // Queries
-        const pqContainer = document.getElementById("patientQueriesContainer");
-        if (patientData.queries && patientData.queries.length > 0) {
-            pqContainer.innerHTML = "";
-            patientData.queries.slice().reverse().forEach(q => {
-                const qDiv = document.createElement("div");
-                qDiv.style.cssText = "border: 1px solid var(--border); border-radius: 10px; padding: 15px; background: #fafcfa;";
-                
-                const answeredHtml = q.status === "Answered" 
-                    ? `<div style="margin-top: 10px; padding: 10px; background: #e8f5e9; border-radius: 8px; color: var(--primary-dark);">
+            document.getElementById("ptTreatment").textContent = patientData.treatmentPlan || "General Consultation";
+            document.getElementById("ptProtocol").textContent = patientData.treatmentProtocol || "No specific protocol assigned.";
+            document.getElementById("ptDietPlan").textContent = patientData.dietPlan || "Follow general hospital meals.";
+
+            // Handle Payment Modal on load
+            if (patientData.paymentMethod === 'pending') {
+                document.getElementById("paymentModal").style.display = "flex";
+            }
+
+
+            // Treatment Details
+            document.getElementById("ptTreatmentTime").textContent = patientData.treatmentTime || "TBD";
+            document.getElementById("ptTreatmentRoom").textContent = patientData.treatmentRoom || "TBD";
+            document.getElementById("ptTherapist").textContent = patientData.assignedTherapist || "Please check with reception";
+            document.getElementById("ptDosDonts").textContent = patientData.dosAndDonts || "Follow general hospital guidelines.";
+
+
+
+            // Queries
+            const pqContainer = document.getElementById("patientQueriesContainer");
+            if (patientData.queries && patientData.queries.length > 0) {
+                pqContainer.innerHTML = "";
+                patientData.queries.slice().reverse().forEach(q => {
+                    const qDiv = document.createElement("div");
+                    qDiv.style.cssText = "border: 1px solid var(--border); border-radius: 10px; padding: 15px; background: #fafcfa;";
+
+                    const answeredHtml = q.status === "Answered"
+                        ? `<div style="margin-top: 10px; padding: 10px; background: #e8f5e9; border-radius: 8px; color: var(--primary-dark);">
                            <strong>Reply:</strong> ${q.answer}
                        </div>`
-                    : `<div style="margin-top: 10px; padding: 5px; color: var(--text-muted); font-size: 0.9rem;">
+                        : `<div style="margin-top: 10px; padding: 5px; color: var(--text-muted); font-size: 0.9rem;">
                            <em>Waiting for admin response...</em>
                        </div>`;
 
-                qDiv.innerHTML = `
+                    qDiv.innerHTML = `
                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                         <strong style="color: var(--text-main);">Q: ${q.question}</strong>
                         <small style="color: var(--text-muted);">${new Date(q.date).toLocaleString()}</small>
                     </div>
                     ${answeredHtml}
                 `;
-                pqContainer.appendChild(qDiv);
-            });
-        } else {
-            pqContainer.innerHTML = `<div class="empty-state"><span>💬</span><p>No questions asked yet.</p></div>`;
-        }
+                    pqContainer.appendChild(qDiv);
+                });
+            } else {
+                pqContainer.innerHTML = `<div class="empty-state"><span>💬</span><p>No questions asked yet.</p></div>`;
+            }
 
-        // Medicines
-        const medContainer = document.getElementById("medicinesContainer");
-        if (patientData.medicines && patientData.medicines.length > 0) {
-            medContainer.innerHTML = "";
-            patientData.medicines.forEach(med => {
-                const medDiv = document.createElement("div");
-                medDiv.className = "medicine-item";
-                medDiv.innerHTML = `
+            // Medicines
+            const medContainer = document.getElementById("medicinesContainer");
+            if (patientData.medicines && patientData.medicines.length > 0) {
+                medContainer.innerHTML = "";
+                patientData.medicines.forEach(med => {
+                    const medDiv = document.createElement("div");
+                    medDiv.className = "medicine-item";
+                    medDiv.innerHTML = `
                     <div class="med-info">
                         <h4>${med.name}</h4>
                         <p>Dosage: ${med.dosage}</p>
                     </div>
                     <div class="med-time">🕒 ${med.time}</div>
                 `;
-                medContainer.appendChild(medDiv);
-            });
-        } else {
-            medContainer.innerHTML = `
+                    medContainer.appendChild(medDiv);
+                });
+            } else {
+                medContainer.innerHTML = `
                 <div class="empty-state">
                     <span style="font-size: 2rem; display: block; margin-bottom: 10px;">🍃</span>
                     No specific medicines assigned currently.
                 </div>
             `;
-        }
-    }
-
-    
-    async function submitQuery() {
-        const input = document.getElementById("queryInput");
-        const question = input.value.trim();
-        if (!question) return alert("Please type a question.");
-
-        const btn = document.getElementById("submitQueryBtn");
-        btn.textContent = "Sending...";
-        btn.disabled = true;
-
-        try {
-            const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/queries`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ question })
-            });
-            if (res.ok) {
-                input.value = "";
-                await fetchLatestData();
-            } else {
-                alert("Failed to submit question");
             }
-        } catch (err) {
-            console.error(err);
-            alert("Error submitting question");
-        } finally {
-            btn.textContent = "Ask";
-            btn.disabled = false;
-        }
-    }
-
-    async function fetchLatestData() {
-        if (!patient || !patient._id) {
-            updateUI(patient, []);
-            return;
         }
 
-        try {
-            const res = await fetch(`http://localhost:5001/api/patients/${patient._id}`);
-            if (res.ok) {
-                const latestData = await res.json();
-                patient = latestData; // UPDATE GLOBAL
-                
-                // Fetch therapist-scheduled sessions for this patient
-                let therapistSessions = [];
-                const patientIdField = latestData.patientId || latestData._id;
-                try {
-                    const sessRes = await fetch(`http://localhost:5001/api/sessions/patient/${patientIdField}`);
-                    if (sessRes.ok) {
-                        therapistSessions = await sessRes.json();
-                    }
-                } catch (sessErr) {
-                    console.error("Failed to fetch therapist sessions", sessErr);
+
+        async function submitQuery() {
+            const input = document.getElementById("queryInput");
+            const question = input.value.trim();
+            if (!question) return alert("Please type a question.");
+
+            const btn = document.getElementById("submitQueryBtn");
+            btn.textContent = "Sending...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/queries`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question })
+                });
+                if (res.ok) {
+                    input.value = "";
+                    await fetchLatestData();
+                } else {
+                    alert("Failed to submit question");
                 }
+            } catch (err) {
+                console.error(err);
+                alert("Error submitting question");
+            } finally {
+                btn.textContent = "Ask";
+                btn.disabled = false;
+            }
+        }
 
-                // Update local storage with fresh data
-                localStorage.setItem('patientData', JSON.stringify(latestData));
-                updateUI(latestData, therapistSessions);
-            } else {
-                console.warn("Failed to fetch latest data, using cached data.");
+        async function fetchLatestData() {
+            if (!patient || !patient._id) {
+                updateUI(patient, []);
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:5001/api/patients/${patient._id}`);
+                if (res.ok) {
+                    const latestData = await res.json();
+                    patient = latestData; // UPDATE GLOBAL
+
+                    // Fetch therapist-scheduled sessions for this patient
+                    let therapistSessions = [];
+                    const patientIdField = latestData.patientId || latestData._id;
+                    try {
+                        const sessRes = await fetch(`http://localhost:5001/api/sessions/patient/${patientIdField}`);
+                        if (sessRes.ok) {
+                            therapistSessions = await sessRes.json();
+                        }
+                    } catch (sessErr) {
+                        console.error("Failed to fetch therapist sessions", sessErr);
+                    }
+
+                    // Update local storage with fresh data
+                    localStorage.setItem('patientData', JSON.stringify(latestData));
+                    updateUI(latestData, therapistSessions);
+                } else {
+                    console.warn("Failed to fetch latest data, using cached data.");
+                    updateUI(patient, []);
+                }
+            } catch (err) {
+                console.error("Error fetching live data, falling back to cache:", err);
                 updateUI(patient, []);
             }
-        } catch (err) {
-            console.error("Error fetching live data, falling back to cache:", err);
-            updateUI(patient, []);
         }
-    }
 
-    // Initial render with cache, then fetch fresh data
-    if (patient) {
-        updateUI(patient, []);
-        fetchLatestData();
-    }
+        // Initial render with cache, then fetch fresh data
+        if (patient) {
+            updateUI(patient, []);
+            fetchLatestData();
+        }
 
-    
-    // --- Notification Engine ---
-    let activeAlerts = new Set();
 
-    function showNotification(title, message, icon) {
-        // Prevent duplicate alerts for the same event
-        if (activeAlerts.has(title)) return;
-        activeAlerts.add(title);
-        
-        const notif = document.createElement("div");
-        notif.className = "fade-in-up";
-        notif.style.cssText = `
+        // --- Notification Engine ---
+        let activeAlerts = new Set();
+
+        function showNotification(title, message, icon) {
+            // Prevent duplicate alerts for the same event
+            if (activeAlerts.has(title)) return;
+            activeAlerts.add(title);
+
+            const notif = document.createElement("div");
+            notif.className = "fade-in-up";
+            notif.style.cssText = `
             position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px); border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             padding: 20px; border-radius: 16px; z-index: 9999; display: flex; gap: 15px; align-items: center; max-width: 350px;
         `;
-        notif.innerHTML = `
+            notif.innerHTML = `
             <div style="font-size: 2.5rem;">${icon}</div>
             <div>
                 <h4 style="margin-bottom: 5px; color: var(--primary-dark);">${title}</h4>
@@ -880,87 +1306,87 @@
             </div>
             <button style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.2rem; cursor: pointer;" onclick="this.parentElement.remove()">✕</button>
         `;
-        document.body.appendChild(notif);
-        
-        // Auto remove after 15 seconds
-        setTimeout(() => { if(document.body.contains(notif)) notif.remove(); activeAlerts.delete(title); }, 15000);
-    }
+            document.body.appendChild(notif);
 
-    async function checkSchedules() {
-        if (!patient) return;
-        await fetchLatestData(); // ALWAYS GET FRESH DATA
-        const now = new Date();
-        const currentHours = now.getHours();
-        const currentMinutes = now.getMinutes();
-
-        // Helper to parse HH:MM AM/PM to comparable minutes
-        const parseTime = (timeStr) => {
-            if (!timeStr) return -1;
-            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-            if(!match) return -1;
-            let [_, h, m, ampm] = match;
-            h = parseInt(h); m = parseInt(m);
-            if (ampm && ampm.toUpperCase() === 'PM' && h !== 12) h += 12;
-            if (ampm && ampm.toUpperCase() === 'AM' && h === 12) h = 0;
-            return h * 60 + m;
-        };
-
-        const nowMinutes = currentHours * 60 + currentMinutes;
-
-        // Check Treatment (within 15 min warning)
-        const treatMins = parseTime(patient.treatmentTime);
-        if (treatMins !== -1 && (treatMins - nowMinutes) <= 15 && (treatMins - nowMinutes) > 0) {
-            showNotification("Upcoming Treatment", `Your treatment starts soon at ${patient.treatmentRoom || 'your room'}.`, "🌸");
+            // Auto remove after 15 seconds
+            setTimeout(() => { if (document.body.contains(notif)) notif.remove(); activeAlerts.delete(title); }, 15000);
         }
 
-        // Check Meals (within 5 mins)
-        if (patient.mealTimings) {
-            if (parseTime(patient.mealTimings.breakfast) !== -1 && Math.abs(parseTime(patient.mealTimings.breakfast) - nowMinutes) <= 5) showNotification("Breakfast Time", "Your breakfast is ready. Please proceed to the dining area.", "🌅");
-            if (parseTime(patient.mealTimings.lunch) !== -1 && Math.abs(parseTime(patient.mealTimings.lunch) - nowMinutes) <= 5) showNotification("Lunch Time", "Your lunch is ready. Enjoy your meal.", "☀️");
-            if (parseTime(patient.mealTimings.dinner) !== -1 && Math.abs(parseTime(patient.mealTimings.dinner) - nowMinutes) <= 5) showNotification("Dinner Time", "Your dinner is ready. Remember to eat light.", "🌙");
+        async function checkSchedules() {
+            if (!patient) return;
+            await fetchLatestData(); // ALWAYS GET FRESH DATA
+            const now = new Date();
+            const currentHours = now.getHours();
+            const currentMinutes = now.getMinutes();
+
+            // Helper to parse HH:MM AM/PM to comparable minutes
+            const parseTime = (timeStr) => {
+                if (!timeStr) return -1;
+                const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+                if (!match) return -1;
+                let [_, h, m, ampm] = match;
+                h = parseInt(h); m = parseInt(m);
+                if (ampm && ampm.toUpperCase() === 'PM' && h !== 12) h += 12;
+                if (ampm && ampm.toUpperCase() === 'AM' && h === 12) h = 0;
+                return h * 60 + m;
+            };
+
+            const nowMinutes = currentHours * 60 + currentMinutes;
+
+            // Check Treatment (within 15 min warning)
+            const treatMins = parseTime(patient.treatmentTime);
+            if (treatMins !== -1 && (treatMins - nowMinutes) <= 15 && (treatMins - nowMinutes) > 0) {
+                showNotification("Upcoming Treatment", `Your treatment starts soon at ${patient.treatmentRoom || 'your room'}.`, "🌸");
+            }
+
+            // Check Meals (within 5 mins)
+            if (patient.mealTimings) {
+                if (parseTime(patient.mealTimings.breakfast) !== -1 && Math.abs(parseTime(patient.mealTimings.breakfast) - nowMinutes) <= 5) showNotification("Breakfast Time", "Your breakfast is ready. Please proceed to the dining area.", "🌅");
+                if (parseTime(patient.mealTimings.lunch) !== -1 && Math.abs(parseTime(patient.mealTimings.lunch) - nowMinutes) <= 5) showNotification("Lunch Time", "Your lunch is ready. Enjoy your meal.", "☀️");
+                if (parseTime(patient.mealTimings.dinner) !== -1 && Math.abs(parseTime(patient.mealTimings.dinner) - nowMinutes) <= 5) showNotification("Dinner Time", "Your dinner is ready. Remember to eat light.", "🌙");
+            }
+
+            // Check Medicines (Exact time)
+            if (patient.medicines && patient.medicines.length > 0) {
+                patient.medicines.forEach(med => {
+                    // If the medicine time matches exactly (e.g. "Morning", "08:00 AM" etc. Since it's free text, let's try to parse if it's a time)
+                    const medMins = parseTime(med.time);
+                    if (medMins === nowMinutes) {
+                        showNotification("Medicine Reminder", `It's time to take ${med.name} (${med.dosage}).`, "💊");
+                    }
+                });
+            }
         }
 
-        // Check Medicines (Exact time)
-        if (patient.medicines && patient.medicines.length > 0) {
-            patient.medicines.forEach(med => {
-                // If the medicine time matches exactly (e.g. "Morning", "08:00 AM" etc. Since it's free text, let's try to parse if it's a time)
-                const medMins = parseTime(med.time);
-                if (medMins === nowMinutes) {
-                    showNotification("Medicine Reminder", `It's time to take ${med.name} (${med.dosage}).`, "💊");
-                }
-            });
+        // Run every minute
+        setInterval(checkSchedules, 60000);
+        // Initial check just in case
+        setTimeout(checkSchedules, 2000);
+
+
+
+        async function selectPayment(method) {
+            try {
+                await fetch(`http://localhost:5001/api/patients/${patient._id}/payment-method`, {
+                    method: "PUT", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentMethod: method })
+                });
+                document.getElementById("paymentModal").style.display = "none";
+                patient.paymentMethod = method;
+                localStorage.setItem('patientData', JSON.stringify(patient));
+            } catch (e) { console.error(e); }
         }
-    }
 
-    // Run every minute
-    setInterval(checkSchedules, 60000);
-    // Initial check just in case
-    setTimeout(checkSchedules, 2000);
-
-
-
-    async function selectPayment(method) {
-        try {
-            await fetch(`http://localhost:5001/api/patients/${patient._id}/payment-method`, {
-                method: "PUT", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ paymentMethod: method })
-            });
-            document.getElementById("paymentModal").style.display = "none";
-            patient.paymentMethod = method;
-            localStorage.setItem('patientData', JSON.stringify(patient));
-        } catch(e) { console.error(e); }
-    }
-
-    async function checkoutPatient() {
-        if (!confirm("Are you sure you want to checkout and generate your final summary?")) return;
-        try {
-            const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/checkout`, {
-                method: "POST"
-            });
-            const data = await res.json();
-            if(res.ok) {
-                const s = data.dischargeSummary;
-                document.getElementById("dischargeContent").innerHTML = `
+        async function checkoutPatient() {
+            if (!confirm("Are you sure you want to checkout and generate your final summary?")) return;
+            try {
+                const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/checkout`, {
+                    method: "POST"
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const s = data.dischargeSummary;
+                    document.getElementById("dischargeContent").innerHTML = `
                     <p><strong>Stay Duration:</strong> ${s.stayDuration}</p>
                     <p><strong>Treatments:</strong> ${s.treatmentsReceived.join(", ")}</p>
                     <div style="margin: 15px 0; border-top: 1px dashed #ccc; padding-top: 15px;">
@@ -970,18 +1396,44 @@
                     </div>
                     <p style="font-style: italic; color: var(--text-muted);">${s.notes}</p>
                 `;
-                document.getElementById("dischargeModal").style.display = "flex";
-            } else { alert(data.message); }
-        } catch(e) { console.error(e); }
-    }
+                    document.getElementById("dischargeModal").style.display = "flex";
+                } else { alert(data.message); }
+            } catch (e) { console.error(e); }
+        }
 
-    function logout() {
+        function logout() {
 
-        localStorage.removeItem('patientData');
-        window.location.href = "patient-login.html";
-    }
-</script>
+            localStorage.removeItem('patientData');
+            window.location.href = "patient-login.html";
+        }
+
+        function showSection(section) {
+            const sections = ['home', 'schedule', 'about'];
+            sections.forEach(s => {
+                const el = document.getElementById('section-' + s);
+                if (el) el.style.display = 'none';
+            });
+
+            const selectedEl = document.getElementById('section-' + section);
+            if (selectedEl) selectedEl.style.display = 'block';
+
+            sections.forEach(s => {
+                const btn = document.getElementById('btn-nav-' + s);
+                if (btn) {
+                    if (s === section) {
+                        btn.className = 'nav-btn tab-btn';
+                    } else {
+                        btn.className = 'nav-btn nav-btn-outline tab-btn';
+                    }
+                }
+            });
+        }
+
+        // Default to home tab on load
+        showSection('home');
+    </script>
 
     <script src="animations.js"></script>
 </body>
+
 </html>
