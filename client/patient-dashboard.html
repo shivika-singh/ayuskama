@@ -639,6 +639,174 @@
             top: -2px;
         }
 
+        /* Products Showcase Section */
+        .products-showcase-container {
+            margin-top: 2rem;
+        }
+        
+        .products-showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .showcase-product-card {
+            background: #faf7f2;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .showcase-product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(43, 89, 63, 0.08);
+            border-color: var(--ayuskama-green);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--ayuskama-gold);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+        
+        .product-icon-container {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            background: white;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+        }
+        
+        .product-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .product-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed var(--border);
+            padding-top: 0.8rem;
+            margin-top: auto;
+        }
+        
+        .product-price-label {
+            font-weight: 700;
+            color: var(--ayuskama-green);
+            font-size: 1.05rem;
+        }
+        
+        .product-view-btn {
+            font-size: 0.78rem;
+            color: var(--ayuskama-gold);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+        
+        .product-view-btn:hover {
+            color: var(--ayuskama-green);
+        }
+        
+        .explore-products-banner {
+            margin-top: 2rem;
+            background: linear-gradient(135deg, #f3ede2 0%, #eef5f0 100%);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--ayuskama-gold);
+            border-radius: 4px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .explore-banner-content {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .explore-banner-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+        
+        .explore-banner-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        
+        .explore-banner-btn {
+            background: var(--ayuskama-green);
+            color: white !important;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 2px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .explore-banner-btn:hover {
+            background: var(--ayuskama-gold);
+            transform: translateY(-2px);
+        }
+        
+        .explore-banner-btn.btn-gold {
+            background: var(--ayuskama-gold);
+        }
+        
+        .explore-banner-btn.btn-gold:hover {
+            background: var(--ayuskama-green);
+        }
+
         @media (max-width: 768px) {
             .diet-practices-container {
                 grid-template-columns: 1fr;
@@ -769,6 +937,9 @@
             </button>
             <button id="btn-nav-schedule" class="nav-btn nav-btn-outline tab-btn" onclick="showSection('schedule')">
                 📅 Schedule
+            </button>
+            <button id="btn-nav-products" class="nav-btn nav-btn-outline tab-btn" onclick="showSection('products')">
+                📦 Our Products
             </button>
             <button id="btn-nav-about" class="nav-btn nav-btn-outline tab-btn" onclick="showSection('about')">
                 🌿 About Institute
@@ -940,47 +1111,121 @@
             </div>
         </div>
 
-        <!-- 3) About Section -->
+        <!-- 3) Products Section -->
+        <div id="section-products" class="dashboard-section" style="display: none;">
+            <div class="about-card">
+                <h2 class="about-title" style="display: flex; align-items: center; gap: 10px;">
+                    <span>🌿</span> Our Authentic Products
+                </h2>
+                <p class="about-subtitle">Pure, authentic Ayurvedic remedies directly from Tapovan, Rishikesh.</p>
+                <p style="line-height: 1.6; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                    Bring the wisdom of Ayuskama into your home. We formulate organic herbal remedies and traditional daily care products guided by our chief doctors.
+                </p>
+                
+                <div class="products-showcase-grid">
+                    <div class="showcase-product-card">
+                        <span class="product-badge">Daily Care</span>
+                        <div class="product-icon-container">🧴</div>
+                        <div>
+                            <h3 class="product-name">Ayuskama Tejasvi Herbal Face Wash</h3>
+                            <p class="product-desc">A purifying daily cleanser enriched with neem, turmeric, and saffron to nourish skin, reduce blemishes, and bring out your natural glow.</p>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-price-label">₹350.00</span>
+                            <a href="https://products.ayuskamarishikesh.com/" target="_blank" class="product-view-btn">View Product →</a>
+                        </div>
+                    </div>
+                    
+                    <div class="showcase-product-card">
+                        <span class="product-badge">Herbal Medicine</span>
+                        <div class="product-icon-container">💊</div>
+                        <div>
+                            <h3 class="product-name">Ayuskama Arogyavardhini Vati</h3>
+                            <p class="product-desc">A classical, 100% natural Ayurvedic tablet formulation that supports liver function, aids digestion, and promotes internal purification.</p>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-price-label">₹450.00</span>
+                            <a href="https://products.ayuskamarishikesh.com/" target="_blank" class="product-view-btn">View Product →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="explore-products-banner">
+                    <div class="explore-banner-content">
+                        <h4 class="explore-banner-title">Want to explore our full pharmacy?</h4>
+                        <p class="explore-banner-desc">Review our full selection of therapeutic herbal oils, organic daily remedies, and custom tablet formulations online.</p>
+                    </div>
+                    <a href="https://products.ayuskamarishikesh.com/" target="_blank" class="explore-banner-btn btn-gold">
+                        Explore Authentic Products <span>→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4) About Section -->
         <div id="section-about" class="dashboard-section" style="display: none;">
             <div class="about-grid">
                 <!-- Left Column: About Institute & Philosophy -->
-                <div class="about-card">
-                    <h2 class="about-title">Ayuskama Ayurveda & Panchakarma Institute</h2>
-                    <p class="about-subtitle">Nestled in the spiritual heart of Rishikesh, Ayuskama is devoted to
-                        reviving and sharing the profound science of Ayurveda.</p>
-                    <p style="line-height: 1.6; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.95rem;">
-                        Through authentic Ayurvedic practices, personalized therapies, and carefully curated wellness
-                        programs, we help you reconnect with your inner self and the natural rhythms of the universe.
-                        Our institute offers a sanctuary for holistic wellness, detoxification, and spiritual alignment.
-                    </p>
+                <div>
+                    <div class="about-card">
+                        <h2 class="about-title">Ayuskama Ayurveda & Panchakarma Institute</h2>
+                        <p class="about-subtitle">Nestled in the spiritual heart of Rishikesh, Ayuskama is devoted to
+                            reviving and sharing the profound science of Ayurveda.</p>
+                        <p style="line-height: 1.6; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                            Through authentic Ayurvedic practices, personalized therapies, and carefully curated wellness
+                            programs, we help you reconnect with your inner self and the natural rhythms of the universe.
+                            Our institute offers a sanctuary for holistic wellness, detoxification, and spiritual alignment.
+                        </p>
 
-                    <h3
-                        style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--ayuskama-green); margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px dashed var(--border); padding-bottom: 8px;">
-                        Our Core Philosophy Pillars</h3>
-                    <div class="pillars-list">
-                        <div class="pillar-item">
-                            <div class="pillar-title"><span>🌿</span> Healthy Body</div>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
-                                Restoring balance and boosting immunity through Panchakarma detox and individualized
-                                therapies.</p>
+                        <h3
+                            style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--ayuskama-green); margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px dashed var(--border); padding-bottom: 8px;">
+                            Our Core Philosophy Pillars</h3>
+                        <div class="pillars-list">
+                            <div class="pillar-item">
+                                <div class="pillar-title"><span>🌿</span> Healthy Body</div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                    Restoring balance and boosting immunity through Panchakarma detox and individualized
+                                    therapies.</p>
+                            </div>
+                            <div class="pillar-item">
+                                <div class="pillar-title"><span>🧘‍♀️</span> Calm Mind</div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                    Reducing stress and attaining mental clarity via yoga, meditation, and nervous-system
+                                    calming herbs.</p>
+                            </div>
+                            <div class="pillar-item">
+                                <div class="pillar-title"><span>✨</span> Spirituality</div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                    Aligning with nature, chanting mantras, and performing sacred rituals to awaken the
+                                    soul.</p>
+                            </div>
+                            <div class="pillar-item">
+                                <div class="pillar-title"><span>🤝</span> Relations</div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                                    Cultivating conscious connections with yourself, loved ones, and the universe around us.
+                                </p>
+                            </div>
                         </div>
-                        <div class="pillar-item">
-                            <div class="pillar-title"><span>🧘‍♀️</span> Calm Mind</div>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
-                                Reducing stress and attaining mental clarity via yoga, meditation, and nervous-system
-                                calming herbs.</p>
-                        </div>
-                        <div class="pillar-item">
-                            <div class="pillar-title"><span>✨</span> Spirituality</div>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
-                                Aligning with nature, chanting mantras, and performing sacred rituals to awaken the
-                                soul.</p>
-                        </div>
-                        <div class="pillar-item">
-                            <div class="pillar-title"><span>🤝</span> Relations</div>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
-                                Cultivating conscious connections with yourself, loved ones, and the universe around us.
-                            </p>
+                    </div>
+
+                    <!-- Packages banner under the left column -->
+                    <div class="about-card">
+                        <h2 class="about-title" style="display: flex; align-items: center; gap: 10px;">
+                            <span>🌸</span> Explore Wellness Packages & Courses
+                        </h2>
+                        <p class="about-subtitle">Experience authentic Ayurvedic therapies and professional certification courses.</p>
+                        <p style="line-height: 1.6; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                            Discover our range of comprehensive detoxification, weight loss, and healing therapies, or join our online yoga and nutrition courses to deepen your knowledge of natural wellness.
+                        </p>
+                        
+                        <div class="explore-products-banner" style="background: linear-gradient(135deg, #eef5f0 0%, #f3ede2 100%); border-left: 4px solid var(--ayuskama-green);">
+                            <div class="explore-banner-content">
+                                <h4 class="explore-banner-title">Looking for wellness packages or professional courses?</h4>
+                                <p class="explore-banner-desc">Visit our official website to view the complete selection of certification programs, detox therapies, and wellness stays.</p>
+                            </div>
+                            <a href="https://ayuskamarishikesh.com/" target="_blank" class="explore-banner-btn">
+                                Explore More Packages <span>→</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1578,7 +1823,7 @@
         }
 
         function showSection(section) {
-            const sections = ['home', 'schedule', 'about'];
+            const sections = ['home', 'schedule', 'products', 'about'];
             sections.forEach(s => {
                 const el = document.getElementById('section-' + s);
                 if (el) el.style.display = 'none';

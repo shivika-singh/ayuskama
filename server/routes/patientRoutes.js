@@ -160,7 +160,8 @@ router.post("/login", async (req, res) => {
         // Wait, the client used `patientId`. Let's support both `_id` and custom `patientId`.
         let patient;
         if (patientId.startsWith("ayush_") || patientId.startsWith("AYUR-")) {
-            patient = await Patient.findOne({ patientId: patientId });
+            // Sort by createdAt descending to fetch the most recent patient in that room
+            patient = await Patient.findOne({ patientId: patientId }).sort({ createdAt: -1 });
         } else {
             try {
                 patient = await Patient.findById(patientId);
