@@ -645,6 +645,40 @@
                 gap: 1.5rem;
             }
         }
+
+        /* Print styling for Discharge Summary */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #dischargeModal, #dischargeModal * {
+                visibility: visible;
+            }
+            #dischargeModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: white !important;
+                z-index: 99999;
+                display: block !important;
+                padding: 0 !important;
+            }
+            .discharge-modal-container {
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+            /* Hide close & print buttons in the printout */
+            #dischargeModal button, #dischargeModal .nav-btn, #dischargeModal h2 {
+                display: none !important;
+            }
+        }
     </style>
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="ayuskama-theme.css">
@@ -671,13 +705,21 @@
 
     <!-- Discharge Summary Modal -->
     <div id="dischargeModal" class="modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-        <div style="background: var(--card-bg); padding: 3rem; border-radius: 20px; max-width: 600px; width: 90%;">
-            <h2 style="margin-bottom: 1rem; color: var(--primary-dark); text-align: center;">Discharge Summary & Invoice
-            </h2>
-            <div id="dischargeContent" style="margin-bottom: 2rem; line-height: 1.6;"></div>
-            <button onclick="logout()" class="nav-btn nav-btn-solid"
-                style="width: 100%; padding: 15px; font-size: 1.1rem;">Acknowledge & Logout</button>
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="discharge-modal-container" style="background: white; padding: 2.5rem; border-radius: 12px; max-width: 850px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 20px;">
+                <h2 style="color: var(--primary-dark); margin: 0; font-family: 'Cormorant Garamond', serif !important; font-size: 1.8rem; font-weight: bold;">Patient Checkout Summary</h2>
+                <button onclick="window.print()" class="nav-btn" style="background: var(--accent); color: white; padding: 10px 20px; border: none; border-radius: 6px; display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+                    🖨️ Print Summary
+                </button>
+            </div>
+            
+            <div id="dischargeContent"></div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <button onclick="logout()" class="nav-btn nav-btn-solid" style="flex: 1; padding: 12px; font-size: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Acknowledge & Logout</button>
+                <button onclick="document.getElementById('dischargeModal').style.display='none'" class="nav-btn nav-btn-outline" style="padding: 12px 24px; font-size: 1rem; border: 1px solid var(--primary); border-radius: 8px; cursor: pointer;">Close Preview</button>
+            </div>
         </div>
     </div>
 
@@ -1386,15 +1428,143 @@
                 const data = await res.json();
                 if (res.ok) {
                     const s = data.dischargeSummary;
+                    const p = data.patient || patient; // Fallback to current patient if backend doesn't send it
+
+                    // Format dates beautifully
+                    const formatDate = (dateStr) => {
+                        if (!dateStr) return "NA";
+                        const d = new Date(dateStr);
+                        return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        }) + " " + d.toLocaleTimeString('en-IN', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: true
+                        });
+                    };
+
                     document.getElementById("dischargeContent").innerHTML = `
-                    <p><strong>Stay Duration:</strong> ${s.stayDuration}</p>
-                    <p><strong>Treatments:</strong> ${s.treatmentsReceived.join(", ")}</p>
-                    <div style="margin: 15px 0; border-top: 1px dashed #ccc; padding-top: 15px;">
-                        <p style="font-size: 1.2rem;"><strong>Total Amount:</strong> ₹${s.totalAmount}</p>
-                        <p style="color: var(--primary-dark);"><strong>Paid:</strong> ₹${s.paidAmount}</p>
-                        <p style="color: #d84b5b;"><strong>Due:</strong> ₹${s.totalAmount - s.paidAmount}</p>
+                    <div style="font-family: Arial, sans-serif; color: #000; padding: 20px; line-height: 1.4; border: 1px solid #ddd; background: white;">
+                        <!-- Hospital Header -->
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="font-size: 2rem; font-weight: bold; font-family: 'Cormorant Garamond', serif; color: #1b3022; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <img src="assets/logo.jpg" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%;"> Ayuskama
+                            </div>
+                            <div style="font-size: 0.95rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">
+                                Ayurvedic Clinic & Panchakarma Center
+                            </div>
+                            <div style="font-size: 0.8rem; color: #666; margin-top: 3px;">
+                                Secret Waterfall Road, Upper Tapovan, Rishikesh, Uttarakhand 249201
+                            </div>
+                            <hr style="border: 0; border-top: 2px solid #1b3022; margin-top: 15px;">
+                        </div>
+
+                        <!-- Metadata Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.85rem; margin-bottom: 20px;">
+                            <!-- Column 1 -->
+                            <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 6px;">
+                                <div style="font-weight: bold; color: #444;">IPD No</div><div>: ${p.ipdNo || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444;">UHID</div><div>: ${p.uhid || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444;">Patient Name</div><div style="text-transform: uppercase; font-weight: 600;">: ${p.name}</div>
+                                <div style="font-weight: bold; color: #444;">S/D/W/O</div><div>: ${p.guardianName || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444;">Age/Gen</div><div>: ${p.age}Y / ${p.gender || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444; vertical-align: top;">Address</div><div style="line-height: 1.3;">: ${p.address}</div>
+                                <div style="font-weight: bold; color: #444;">Contact No</div><div>: ${p.phone}</div>
+                                <div style="font-weight: bold; color: #444;">Allocation</div><div>: PRIVATE ROOM Unit No : ${p.roomNumber}</div>
+                                <div style="font-weight: bold; color: #444;">Billing Category</div><div>: ${p.paymentMethod === 'advanced' ? 'Advanced / Cash' : 'Cash / Post-paid'}</div>
+                            </div>
+                            <!-- Column 2 -->
+                            <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 6px;">
+                                <div style="font-weight: bold; color: #444;">ABHA Number</div><div>: ${p.abhaNumber || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444;">ABHA Address</div><div>: ${p.abhaAddress || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444;">Panel</div><div>: ${p.panel || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444;">AL/CCN No.</div><div>: ${p.policyNo || 'NA'}</div>
+                                <div style="font-weight: bold; color: #444;">Department</div><div>: ${p.department || 'AYURVEDA CONSULTANT'}</div>
+                                <div style="font-weight: bold; color: #444;">Consultation</div><div>: ${p.consultant || 'Dr. VINOD KUMAR'}</div>
+                                <div style="font-weight: bold; color: #444;">Admission Date</div><div>: ${formatDate(p.checkInDate)}</div>
+                                <div style="font-weight: bold; color: #444;">Discharge Date</div><div>: ${formatDate(p.checkOutDate || new Date())}</div>
+                            </div>
+                        </div>
+
+                        <!-- Title Bar -->
+                        <div style="background: #f0f0f0; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; text-align: center; padding: 6px; font-weight: bold; font-size: 1rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Discharge on Patient Request Summary
+                        </div>
+
+                        <!-- Medical Details Section -->
+                        <div style="font-size: 0.85rem; display: grid; row-gap: 12px; margin-bottom: 25px;">
+                            <div>
+                                <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Discharge Type:</span>
+                                <span style="display: inline-block; width: calc(100% - 190px);">${p.dischargeType || 'DISCHARGE ON PATIENT REQUEST'}</span>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Symptoms & Complaints:</span>
+                                <span style="display: inline-block; width: calc(100% - 190px); line-height: 1.4;">${p.symptoms || p.disease || 'NA'}</span>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Medical History:</span>
+                                <span style="display: inline-block; width: calc(100% - 190px); line-height: 1.4;">${p.medicalHistory || p.disease || 'NA'}</span>
+                            </div>
+                            <div style="border-top: 1px dashed #ccc; padding-top: 12px; margin-top: 5px;">
+                                <div style="font-weight: bold; margin-bottom: 6px;">Summary of Key Investigation(s) during hospitalization:-</div>
+                                <div style="margin-left: 20px; line-height: 1.4;">
+                                    <p>As per health issues and after having doctor consultation we recommend some treatments such as:</p>
+                                    <ul style="margin-top: 5px; padding-left: 20px;">
+                                        <li><strong>Treatment Plan:</strong> ${p.treatmentPlan || 'General Wellness'}</li>
+                                        ${p.treatmentProtocol ? `<li><strong>Treatment Protocol:</strong> ${p.treatmentProtocol}</li>` : ''}
+                                        ${p.dietPlan ? `<li><strong>Dietary Guidelines:</strong> ${p.dietPlan}</li>` : ''}
+                                        ${p.dosAndDonts ? `<li><strong>Precautions / Guidelines:</strong> ${p.dosAndDonts}</li>` : ''}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style="border-top: 1px dashed #ccc; padding-top: 12px;">
+                                <div style="font-weight: bold; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; color: #444;">Acknowledgement Patient</div>
+                                <ol style="font-size: 0.75rem; padding-left: 20px; line-height: 1.4; color: #555;">
+                                    <li>I have received the DISCHARGE SUMMARY and all documents related to this IPD admission.</li>
+                                    <li>I have been clearly explained, in my own language, about the discharge medicines, diet and precautions to be taken at home and follow up visit.</li>
+                                    <li>I am fully satisfied with the treatment and have no complaint against Doctors / Staff at Ayurveda Clinic & Panchakarma Center</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- Billing Summary Section -->
+                        <div style="background: #faf7f2; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 30px; font-size: 0.85rem; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <div style="font-weight: bold; color: var(--primary-dark); border-bottom: 1px dashed #ddd; padding-bottom: 5px; margin-bottom: 8px;">Stay Summary</div>
+                                <div><strong>Duration of Stay:</strong> ${s.stayDuration}</div>
+                                <div><strong>Status:</strong> Checked Out / Completed</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; color: var(--primary-dark); border-bottom: 1px dashed #ddd; padding-bottom: 5px; margin-bottom: 8px;">Invoice Summary</div>
+                                <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 4px;">
+                                    <div>Total Amount:</div><div style="font-weight: bold;">₹${s.totalAmount}</div>
+                                    <div>Paid Amount:</div><div style="color: green; font-weight: bold;">₹${s.paidAmount}</div>
+                                    <div>Outstanding:</div><div style="color: ${s.totalAmount - s.paidAmount > 0 ? '#d32f2f' : 'green'}; font-weight: bold;">₹${s.totalAmount - s.paidAmount}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sign-off Block -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 0.85rem;">
+                            <div style="text-align: center; width: 220px;">
+                                <div style="border-top: 1px solid #000; padding-top: 8px; font-weight: 500;">Patient/Attendant Signature</div>
+                            </div>
+                            <div style="text-align: center; width: 260px;">
+                                <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: bold; color: #1b3022; text-transform: uppercase;">${p.consultant || 'Dr. VINOD KUMAR'}</div>
+                                <div style="font-size: 0.75rem; color: #555; font-style: italic;">(B.A.M.S)</div>
+                                <div style="border-top: 1px solid #000; padding-top: 8px; font-weight: bold; margin-top: 5px;">Treating Doctor / Authorised Signatory</div>
+                            </div>
+                        </div>
+
+                        <!-- Footer branding -->
+                        <div style="text-align: center; font-size: 0.7rem; color: #999; margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; display: flex; justify-content: space-between;">
+                            <div>Designed by www.softcure.in</div>
+                            <div>${p.ipdNo || 'IP-NA'} Mr. ${p.name ? p.name.toUpperCase() : ''}</div>
+                        </div>
                     </div>
-                    <p style="font-style: italic; color: var(--text-muted);">${s.notes}</p>
                 `;
                     document.getElementById("dischargeModal").style.display = "flex";
                 } else { alert(data.message); }

@@ -536,8 +536,12 @@
                 <div class="card-body">
                     <ul class="info-list">
                         <li class="info-item">
-                            <span class="info-label">Age</span>
-                            <span class="info-value" id="patientAge">-</span>
+                            <span class="info-label">Age & Gender</span>
+                            <span class="info-value"><span id="patientAge">-</span> / <span id="patientGender">-</span></span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Guardian Name (S/D/W/O)</span>
+                            <span class="info-value" id="patientGuardian">-</span>
                         </li>
                         <li class="info-item">
                             <span class="info-label">Contact Number</span>
@@ -562,10 +566,17 @@
                 </div>
                 <div class="card-body">
                     <ul class="info-list">
-                        
                         <li class="info-item">
                             <span class="info-label">Disease / Condition</span>
                             <span class="info-value" id="patientDisease" style="color: var(--primary-dark); font-weight: 600;">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Symptoms & Complaints</span>
+                            <span class="info-value" id="patientSymptoms" style="line-height: 1.4; color: var(--text-muted);">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Medical History</span>
+                            <span class="info-value" id="patientMedicalHistory" style="line-height: 1.4; color: var(--text-muted);">-</span>
                         </li>
                         <li class="info-item">
                             <span class="info-label">Treatment Plan</span>
@@ -578,6 +589,49 @@
                         <li class="info-item">
                             <span class="info-label">Known Allergens</span>
                             <span class="info-value" id="patientAllergens" style="color: #d84b5b;">-</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Hospitalization & Insurance Details -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <h2>🆔 Hospitalization & Insurance Details</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="info-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <li class="info-item">
+                            <span class="info-label">UHID</span>
+                            <span class="info-value" id="patientUhid" style="font-weight: 600; color: var(--primary-dark);">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">IPD Number</span>
+                            <span class="info-value" id="patientIpdNo" style="font-weight: 600; color: var(--primary-dark);">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">ABHA Number</span>
+                            <span class="info-value" id="patientAbhaNumber">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">ABHA Address</span>
+                            <span class="info-value" id="patientAbhaAddress">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Insurance Panel</span>
+                            <span class="info-value" id="patientPanel">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Policy / CCN Number</span>
+                            <span class="info-value" id="patientPolicyNo">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Treating Consultant</span>
+                            <span class="info-value" id="patientConsultant" style="font-weight: 600;">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label">Department</span>
+                            <span class="info-value" id="patientDepartment">-</span>
                         </li>
                     </ul>
                 </div>
@@ -754,6 +808,90 @@
                     <label>Dos and Don'ts</label>
                     <textarea id="inputDosDonts" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);" placeholder="What to eat, what to avoid..."></textarea>
                 </div>
+                <div style="border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 15px;">
+                    <h3 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 10px;">Patient Profile & Insurance Info</h3>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="inputAge" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="inputGender" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Guardian Name (S/D/W/O)</label>
+                    <input type="text" id="inputGuardianName" style="width: 100%; padding: 10px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="inputPhone" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact</label>
+                        <input type="text" id="inputEmergencyContact" style="width: 100%; padding: 10px;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Residential Address</label>
+                    <textarea id="inputAddress" rows="2" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>ABHA Number</label>
+                        <input type="text" id="inputAbhaNumber" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>ABHA Address</label>
+                        <input type="text" id="inputAbhaAddress" style="width: 100%; padding: 10px;">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Insurance Panel</label>
+                        <input type="text" id="inputPanel" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Policy / CCN Number</label>
+                        <input type="text" id="inputPolicyNo" style="width: 100%; padding: 10px;">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Treating Consultant</label>
+                        <select id="inputConsultant" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                            <option value="Dr. VINOD KUMAR">Dr. VINOD KUMAR</option>
+                            <option value="Dr. NEETU SINGH">Dr. NEETU SINGH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input type="text" id="inputDepartment" style="width: 100%; padding: 10px;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Primary Condition / Disease</label>
+                    <input type="text" id="inputDisease" style="width: 100%; padding: 10px;">
+                </div>
+                <div class="form-group">
+                    <label>Symptoms & Complaints</label>
+                    <textarea id="inputSymptoms" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Medical History</label>
+                    <textarea id="inputMedicalHistory" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Allotted Room / Ward</label>
+                    <input type="text" id="inputRoomNumber" style="width: 100%; padding: 10px;">
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="nav-btn nav-btn-outline" onclick="closeRoutineModal()">Cancel</button>
@@ -858,13 +996,25 @@
         document.getElementById("patientDate").textContent = formatDate(patient.createdAt);
 
         document.getElementById("patientAge").textContent = patient.age ? patient.age + " yrs" : "N/A";
+        document.getElementById("patientGender").textContent = patient.gender || "N/A";
+        document.getElementById("patientGuardian").textContent = patient.guardianName || "N/A";
         document.getElementById("patientPhone").textContent = patient.phone || "N/A";
         document.getElementById("patientEmergency").textContent = patient.emergencyContact || "N/A";
         document.getElementById("patientAddress").textContent = patient.address || "N/A";
 
-        
         document.getElementById("patientDisease").textContent = patient.disease || "Not specified";
+        document.getElementById("patientSymptoms").textContent = patient.symptoms || "None";
+        document.getElementById("patientMedicalHistory").textContent = patient.medicalHistory || "None";
         
+        document.getElementById("patientUhid").textContent = patient.uhid || "N/A";
+        document.getElementById("patientIpdNo").textContent = patient.ipdNo || "N/A";
+        document.getElementById("patientAbhaNumber").textContent = patient.abhaNumber || "NA";
+        document.getElementById("patientAbhaAddress").textContent = patient.abhaAddress || "NA";
+        document.getElementById("patientPanel").textContent = patient.panel || "NA";
+        document.getElementById("patientPolicyNo").textContent = patient.policyNo || "NA";
+        document.getElementById("patientConsultant").textContent = patient.consultant || "Dr. VINOD KUMAR";
+        document.getElementById("patientDepartment").textContent = patient.department || "AYURVEDA CONSULTANT";
+
         document.getElementById("dispTherapist").textContent = patient.assignedTherapist || "Unassigned";
         document.getElementById("dispRoom").textContent = patient.treatmentRoom || "Unassigned";
         document.getElementById("dispTreatmentTime").textContent = patient.treatmentTime || "Unassigned";
@@ -992,6 +1142,26 @@
             document.getElementById("inputLunch").value = currentPatient.mealTimings.lunch || "";
             document.getElementById("inputDinner").value = currentPatient.mealTimings.dinner || "";
         }
+        document.getElementById("inputAge").value = currentPatient.age || "";
+        document.getElementById("inputGender").value = currentPatient.gender || "Male";
+        document.getElementById("inputGuardianName").value = currentPatient.guardianName || "";
+        document.getElementById("inputPhone").value = currentPatient.phone || "";
+        document.getElementById("inputEmergencyContact").value = currentPatient.emergencyContact || "";
+        document.getElementById("inputAddress").value = currentPatient.address || "";
+        document.getElementById("inputAbhaNumber").value = currentPatient.abhaNumber || "NA";
+        document.getElementById("inputAbhaAddress").value = currentPatient.abhaAddress || "NA";
+        document.getElementById("inputPanel").value = currentPatient.panel || "NA";
+        document.getElementById("inputPolicyNo").value = currentPatient.policyNo || "NA";
+        document.getElementById("inputConsultant").value = currentPatient.consultant || "Dr. VINOD KUMAR";
+        document.getElementById("inputDepartment").value = currentPatient.department || "AYURVEDA CONSULTANT";
+        document.getElementById("inputDisease").value = currentPatient.disease || "";
+        document.getElementById("inputSymptoms").value = currentPatient.symptoms || "";
+        document.getElementById("inputMedicalHistory").value = currentPatient.medicalHistory || "";
+        document.getElementById("inputRoomNumber").value = currentPatient.roomNumber || "";
+        
+        // Also ensure option exists or select defaults
+        document.getElementById("inputTreatment").value = currentPatient.treatmentPlan || "";
+
         routineModal.style.display = "flex";
     }
 
@@ -1055,7 +1225,23 @@
                 dosAndDonts: document.getElementById("inputDosDonts").value,
                 treatmentPlan: treatmentPlan,
                 dietPlan: dietPlan,
-                treatmentProtocol: treatmentProtocol
+                treatmentProtocol: treatmentProtocol,
+                age: parseInt(document.getElementById("inputAge").value) || currentPatient.age,
+                gender: document.getElementById("inputGender").value,
+                guardianName: document.getElementById("inputGuardianName").value.trim(),
+                phone: document.getElementById("inputPhone").value.trim(),
+                emergencyContact: document.getElementById("inputEmergencyContact").value.trim(),
+                address: document.getElementById("inputAddress").value.trim(),
+                abhaNumber: document.getElementById("inputAbhaNumber").value.trim(),
+                abhaAddress: document.getElementById("inputAbhaAddress").value.trim(),
+                panel: document.getElementById("inputPanel").value.trim(),
+                policyNo: document.getElementById("inputPolicyNo").value.trim(),
+                consultant: document.getElementById("inputConsultant").value,
+                department: document.getElementById("inputDepartment").value.trim(),
+                disease: document.getElementById("inputDisease").value.trim(),
+                symptoms: document.getElementById("inputSymptoms").value.trim(),
+                medicalHistory: document.getElementById("inputMedicalHistory").value.trim(),
+                roomNumber: document.getElementById("inputRoomNumber").value.trim()
             };
 
 

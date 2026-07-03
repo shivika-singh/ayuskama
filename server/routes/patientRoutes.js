@@ -21,6 +21,16 @@ router.post("/register", async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         patientData.password = await bcrypt.hash(patientData.password, salt);
         
+        const count = await Patient.countDocuments();
+        const checkInDateVal = patientData.checkInDate ? new Date(patientData.checkInDate) : new Date();
+        const year = checkInDateVal.getFullYear();
+        if (!patientData.uhid) {
+            patientData.uhid = `U-${count + 1}/${year}`;
+        }
+        if (!patientData.ipdNo) {
+            patientData.ipdNo = `IP-${count + 1}/${year}`;
+        }
+
         const patient = new Patient(patientData);
         await patient.save();
         res.json({ message: "Patient Registered Successfully", patientId: patient.patientId });
@@ -78,6 +88,23 @@ router.put("/:id/routine", async (req, res) => {
         if (req.body.checkOutDate !== undefined) patient.checkOutDate = req.body.checkOutDate;
         if (req.body.dietPlan !== undefined) patient.dietPlan = req.body.dietPlan;
         if (req.body.treatmentProtocol !== undefined) patient.treatmentProtocol = req.body.treatmentProtocol;
+
+        if (req.body.guardianName !== undefined) patient.guardianName = req.body.guardianName;
+        if (req.body.gender !== undefined) patient.gender = req.body.gender;
+        if (req.body.abhaNumber !== undefined) patient.abhaNumber = req.body.abhaNumber;
+        if (req.body.abhaAddress !== undefined) patient.abhaAddress = req.body.abhaAddress;
+        if (req.body.panel !== undefined) patient.panel = req.body.panel;
+        if (req.body.policyNo !== undefined) patient.policyNo = req.body.policyNo;
+        if (req.body.consultant !== undefined) patient.consultant = req.body.consultant;
+        if (req.body.department !== undefined) patient.department = req.body.department;
+        if (req.body.symptoms !== undefined) patient.symptoms = req.body.symptoms;
+        if (req.body.medicalHistory !== undefined) patient.medicalHistory = req.body.medicalHistory;
+        if (req.body.disease !== undefined) patient.disease = req.body.disease;
+        if (req.body.age !== undefined) patient.age = req.body.age;
+        if (req.body.phone !== undefined) patient.phone = req.body.phone;
+        if (req.body.emergencyContact !== undefined) patient.emergencyContact = req.body.emergencyContact;
+        if (req.body.address !== undefined) patient.address = req.body.address;
+        if (req.body.roomNumber !== undefined) patient.roomNumber = req.body.roomNumber;
 
         await patient.save();
         res.json({ message: "Routine updated successfully", patient });
@@ -204,7 +231,7 @@ router.post("/:id/checkout", async (req, res) => {
         patient.checkOutDate = checkOut;
         await patient.save();
         
-        res.json({ message: "Checkout successful", dischargeSummary: patient.dischargeSummary });
+        res.json({ message: "Checkout successful", dischargeSummary: patient.dischargeSummary, patient });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

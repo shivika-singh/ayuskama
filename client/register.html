@@ -382,33 +382,70 @@
 
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input type="text" id="name" placeholder="E.g. Rajesh Kumar" required>
+                    <input type="text" id="name" placeholder="E.g. Mr. Ajay Gupta" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianName">Guardian Name (S/D/W/O)</label>
+                    <input type="text" id="guardianName" placeholder="E.g. Mr. Janeshwar Prasad" required>
                 </div>
 
                 <div class="form-group">
                     <label for="age">Age</label>
-                    <input type="number" id="age" placeholder="E.g. 45" required min="1" max="150">
+                    <input type="number" id="age" placeholder="E.g. 74" required min="1" max="150">
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" placeholder="+91 xxxxx xxxxx" required>
+                    <label for="gender">Gender</label>
+                    <select id="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone / Contact Number</label>
+                    <input type="tel" id="phone" placeholder="E.g. 9137413315" required>
                 </div>
 
                 <div class="form-group">
                     <label for="emergencyContact">Emergency Contact</label>
-                    <input type="tel" id="emergencyContact" placeholder="+91 xxxxx xxxxx" required>
+                    <input type="tel" id="emergencyContact" placeholder="E.g. +91 xxxxx xxxxx" required>
                 </div>
 
                 <div class="form-group full-width">
                     <label for="address">Residential Address</label>
-                    <textarea id="address" placeholder="Complete address..." required></textarea>
+                    <textarea id="address" placeholder="E.g. A2/75 Asmita jyoti chs marve road, Malad West, Mumbai, Maharashtra" required></textarea>
+                </div>
+
+                <div class="section-title">Identity & Billing (Optional)</div>
+
+                <div class="form-group">
+                    <label for="abhaNumber">ABHA Number</label>
+                    <input type="text" id="abhaNumber" placeholder="E.g. 14-digit ABHA Number or NA" value="NA">
+                </div>
+
+                <div class="form-group">
+                    <label for="abhaAddress">ABHA Address</label>
+                    <input type="text" id="abhaAddress" placeholder="E.g. username@abdm or NA" value="NA">
+                </div>
+
+                <div class="form-group">
+                    <label for="panel">Insurance Panel</label>
+                    <input type="text" id="panel" placeholder="E.g. TPA Name, Panel Name or NA" value="NA">
+                </div>
+
+                <div class="form-group">
+                    <label for="policyNo">Policy / Service / AL CCN No.</label>
+                    <input type="text" id="policyNo" placeholder="E.g. Policy / CCN number or NA" value="NA">
                 </div>
 
                 <div class="section-title">Stay & Logistics</div>
                 
                 <div class="form-group">
-                    <label for="checkInDate">Check-In Date</label>
+                    <label for="checkInDate">Check-In / Admission Date</label>
                     <input type="date" id="checkInDate" required>
                 </div>
 
@@ -417,11 +454,34 @@
                     <input type="date" id="checkOutDate" required>
                 </div>
 
+                <div class="form-group">
+                    <label for="consultant">Treating Consultant</label>
+                    <select id="consultant" required>
+                        <option value="Dr. VINOD KUMAR">Dr. VINOD KUMAR (B.A.M.S)</option>
+                        <option value="Dr. NEETU SINGH">Dr. NEETU SINGH</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" value="AYURVEDA CONSULTANT" required>
+                </div>
+
                 <div class="section-title">Medical & Treatment Details</div>
 
                 <div class="form-group full-width">
                     <label for="disease">Primary Condition / Disease Name</label>
-                    <input type="text" id="disease" placeholder="What is happening to the patient? (E.g. Arthritis, Insomnia)" required>
+                    <input type="text" id="disease" placeholder="What is happening to the patient? (E.g. Prostate problem, frequent urine issues)" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="symptoms">Symptoms & Complaints</label>
+                    <textarea id="symptoms" placeholder="List all current symptoms and complaints..." required></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="medicalHistory">Medical History</label>
+                    <textarea id="medicalHistory" placeholder="List any past medical history..." required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -432,19 +492,18 @@
                         <!-- Populated by JS -->
                     </select>
                 </div>
+                
                 <div class="form-group">
                     <label for="dietPlan">Diet Plan</label>
                     <input type="text" id="dietPlan" placeholder="E.g. Vata Pacifying Diet">
                 </div>
 
                 <div class="form-group">
-                    <label for="roomNumber">Allotted Room / Ward</label>
-                    <input type="text" id="roomNumber" placeholder="E.g. Ward A-12" required>
+                    <label for="roomNumber">Allotted Room / Ward (Allocation)</label>
+                    <input type="text" id="roomNumber" placeholder="E.g. PRIVATE ROOM Unit No : 5" required>
                 </div>
 
-
-
-                <div class="form-group full-width">
+                <div class="form-group">
                     <label for="allergens">Known Allergies (if any)</label>
                     <input type="text" id="allergens" placeholder="E.g. Dust, certain herbs (leave blank if none)">
                 </div>
@@ -495,16 +554,26 @@
 
         const patientData = {
             name: document.getElementById("name").value.trim(),
+            guardianName: document.getElementById("guardianName").value.trim(),
             age: parseInt(document.getElementById("age").value),
+            gender: document.getElementById("gender").value,
             phone: document.getElementById("phone").value.trim(),
             emergencyContact: document.getElementById("emergencyContact").value.trim(),
             address: document.getElementById("address").value.trim(),
             checkInDate: document.getElementById("checkInDate").value,
             checkOutDate: document.getElementById("checkOutDate").value,
+            abhaNumber: document.getElementById("abhaNumber").value.trim() || "NA",
+            abhaAddress: document.getElementById("abhaAddress").value.trim() || "NA",
+            panel: document.getElementById("panel").value.trim() || "NA",
+            policyNo: document.getElementById("policyNo").value.trim() || "NA",
+            consultant: document.getElementById("consultant").value,
+            department: document.getElementById("department").value.trim() || "AYURVEDA CONSULTANT",
+            disease: document.getElementById("disease").value.trim(),
+            symptoms: document.getElementById("symptoms").value.trim(),
+            medicalHistory: document.getElementById("medicalHistory").value.trim(),
             treatmentPlan: document.getElementById("treatmentPlan").value,
             dietPlan: document.getElementById("dietPlan").value.trim(),
             roomNumber: document.getElementById("roomNumber").value.trim(),
-            disease: document.getElementById("disease").value.trim(),
             allergens: document.getElementById("allergens").value.trim()
         };
 
