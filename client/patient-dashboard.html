@@ -847,9 +847,115 @@
                 display: none !important;
             }
         }
+
+        /* Custom Animated Modals styling */
+        .custom-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 32, 23, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-popup-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .custom-popup-container {
+            background: white;
+            border-radius: 16px;
+            max-width: 440px;
+            width: 90%;
+            padding: 2.2rem;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(18, 32, 23, 0.2);
+            border: 1px solid var(--border);
+            transform: scale(0.85) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .custom-popup-overlay.active .custom-popup-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .custom-popup-icon {
+            width: 60px;
+            height: 60px;
+            background: #faf7f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.5rem auto;
+            border: 1px solid var(--border);
+        }
+
+        .custom-popup-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.8rem;
+        }
+
+        .custom-popup-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+
+        .custom-popup-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .custom-popup-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .custom-popup-btn-confirm {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .custom-popup-btn-confirm:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .custom-popup-btn-cancel {
+            background: #f0f0f0;
+            color: #555;
+            flex: 1;
+        }
+
+        .custom-popup-btn-cancel:hover {
+            background: #e5e5e5;
+        }
     </style>
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="ayuskama-theme.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 
 <body>
@@ -887,6 +993,116 @@
             <div style="display: flex; gap: 15px; margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
                 <button onclick="logout()" class="nav-btn nav-btn-solid" style="flex: 1; padding: 12px; font-size: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Acknowledge & Logout</button>
                 <button onclick="document.getElementById('dischargeModal').style.display='none'" class="nav-btn nav-btn-outline" style="padding: 12px 24px; font-size: 1rem; border: 1px solid var(--primary); border-radius: 8px; cursor: pointer;">Close Preview</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Gateway Modal -->
+    <div id="gatewayModal" class="modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1010; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: white; border-radius: 16px; max-width: 500px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.4); border: 1px solid var(--border); overflow: hidden; position: relative;">
+            
+            <!-- Gateway Header -->
+            <div style="background: #1b3022; padding: 1.5rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5rem;">🔒</span>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: bold; letter-spacing: 0.5px; color: white;">Ayuskama Pay Secure</h3>
+                        <p style="margin: 0; font-size: 0.75rem; opacity: 0.8; color: white;">Secure Payment Gateway</p>
+                    </div>
+                </div>
+                <button onclick="closeGatewayModal()" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer; padding: 5px;">✕</button>
+            </div>
+
+            <!-- Gateway Body -->
+            <div style="padding: 2rem; display: flex; flex-direction: column; gap: 20px;">
+                <!-- Summary Card -->
+                <div style="background: #f7faf7; border: 1px solid #e2ece7; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="margin: 0; font-size: 0.8rem; color: #666; text-transform: uppercase;">Outstanding Dues</p>
+                        <h2 style="margin: 5px 0 0 0; color: #1b3022; font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: bold;" id="gatewayOutstandingAmount">₹0.00</h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0; font-size: 0.8rem; color: #666;">Total Stay Cost</p>
+                        <p style="margin: 3px 0 0 0; font-weight: bold; color: #444;" id="gatewayTotalCost">₹0.00</p>
+                    </div>
+                </div>
+
+                <!-- Payment Method Tabs -->
+                <div style="display: flex; border-bottom: 2px solid #eee; margin-bottom: 5px;">
+                    <button onclick="switchGatewayTab('card')" id="tabBtn-card" class="gateway-tab-btn active" style="flex: 1; padding: 10px; background: none; border: none; border-bottom: 2px solid #1b3022; font-weight: bold; color: #1b3022; cursor: pointer;">💳 Card</button>
+                    <button onclick="switchGatewayTab('upi')" id="tabBtn-upi" class="gateway-tab-btn" style="flex: 1; padding: 10px; background: none; border: none; font-weight: 500; color: #777; cursor: pointer;">📱 UPI / QR</button>
+                    <button onclick="switchGatewayTab('net')" id="tabBtn-net" class="gateway-tab-btn" style="flex: 1; padding: 10px; background: none; border: none; font-weight: 500; color: #777; cursor: pointer;">🏦 NetBanking</button>
+                </div>
+
+                <!-- CARD FORM -->
+                <div id="gatewayForm-card" class="gateway-form-section" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: 600; color: #444; text-align: left;">Cardholder Name</label>
+                        <input type="text" id="payCardName" placeholder="John Doe" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.95rem;">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: 600; color: #444; text-align: left;">Card Number</label>
+                        <input type="text" id="payCardNo" placeholder="4111 2222 3333 4444" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.95rem;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: #444; text-align: left;">Expiry Date</label>
+                            <input type="text" id="payCardExpiry" placeholder="MM/YY" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.95rem;">
+                        </div>
+                        <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: #444; text-align: left;">CVV</label>
+                            <input type="password" id="payCardCvv" placeholder="•••" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.95rem;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UPI FORM -->
+                <div id="gatewayForm-upi" class="gateway-form-section" style="display: none; flex-direction: column; gap: 15px; text-align: center;">
+                    <div style="background: #fafafa; border: 1px dashed #ccc; padding: 15px; border-radius: 8px; display: inline-block; margin: 0 auto;">
+                        <div style="font-size: 3rem; line-height: 1;">📱</div>
+                        <div style="font-size: 0.75rem; color: #666; margin-top: 10px;">Scan using any UPI App (GPay, PhonePe, Paytm)</div>
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 5px; text-align: left;">
+                        <label style="font-size: 0.85rem; font-weight: 600; color: #444;">UPI ID (Virtual Payment Address)</label>
+                        <input type="text" id="payUpiId" placeholder="username@okhdfcbank" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.95rem;">
+                    </div>
+                </div>
+
+                <!-- NET BANKING FORM -->
+                <div id="gatewayForm-net" class="gateway-form-section" style="display: none; flex-direction: column; gap: 15px;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: 600; color: #444; text-align: left;">Select Your Bank</label>
+                        <select id="payBank" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.95rem; background: white;">
+                            <option value="SBI">State Bank of India</option>
+                            <option value="HDFC">HDFC Bank</option>
+                            <option value="ICICI">ICICI Bank</option>
+                            <option value="AXIS">Axis Bank</option>
+                            <option value="KOTAK">Kotak Mahindra Bank</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Payment Action -->
+                <button onclick="submitGatewayPayment()" id="gatewayPayBtn" class="nav-btn" style="background: #1b3022; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">
+                    Pay ₹0.00 Securely
+                </button>
+
+                <!-- Secure Badges -->
+                <div style="display: flex; justify-content: center; align-items: center; gap: 15px; opacity: 0.6; font-size: 0.75rem; color: #666; margin-top: 5px;">
+                    <span>🔒 PCI-DSS Compliant</span>
+                    <span>•</span>
+                    <span>256-bit SSL Encryption</span>
+                </div>
+            </div>
+
+            <!-- Loading overlay during transaction simulation -->
+            <div id="gatewayLoadingOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 1020; align-items: center; justify-content: center; flex-direction: column; gap: 15px; text-align: center;">
+                <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #1b3022; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+                <div>
+                    <h3 style="margin: 0; color: #1b3022;" id="gatewayStatusTitle">Authorizing Transaction...</h3>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #666;">Do not close this window or click back.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1499,7 +1715,7 @@
         async function submitQuery() {
             const input = document.getElementById("queryInput");
             const question = input.value.trim();
-            if (!question) return alert("Please type a question.");
+            if (!question) return showCustomAlert("Question Required", "Please type a question before sending.", "💬");
 
             const btn = document.getElementById("submitQueryBtn");
             btn.textContent = "Sending...";
@@ -1515,11 +1731,11 @@
                     input.value = "";
                     await fetchLatestData();
                 } else {
-                    alert("Failed to submit question");
+                    showCustomAlert("Error", "Failed to submit question.", "❌");
                 }
             } catch (err) {
                 console.error(err);
-                alert("Error submitting question");
+                showCustomAlert("Error", "Error submitting question. Please try again.", "❌");
             } finally {
                 btn.textContent = "Ask";
                 btn.disabled = false;
@@ -1664,8 +1880,182 @@
             } catch (e) { console.error(e); }
         }
 
+        // --- Payment Gateway Simulation ---
+        let currentGatewayTab = 'card';
+        let gatewayPendingAmount = 0;
+
+        function openGatewayModal(outstanding, totalCost) {
+            gatewayPendingAmount = outstanding;
+            document.getElementById("gatewayOutstandingAmount").textContent = `₹${outstanding.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById("gatewayTotalCost").textContent = `₹${totalCost.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById("gatewayPayBtn").textContent = `Pay ₹${outstanding.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Securely`;
+            document.getElementById("gatewayModal").style.display = "flex";
+            switchGatewayTab('card');
+        }
+
+        function closeGatewayModal() {
+            document.getElementById("gatewayModal").style.display = "none";
+        }
+
+        function switchGatewayTab(tab) {
+            currentGatewayTab = tab;
+            // Reset tab button states
+            document.querySelectorAll(".gateway-tab-btn").forEach(btn => {
+                btn.classList.remove("active");
+                btn.style.borderBottom = "none";
+                btn.style.color = "#777";
+                btn.style.fontWeight = "500";
+            });
+            // Set active button
+            const activeBtn = document.getElementById(`tabBtn-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.add("active");
+                activeBtn.style.borderBottom = "2px solid #1b3022";
+                activeBtn.style.color = "#1b3022";
+                activeBtn.style.fontWeight = "bold";
+            }
+            // Hide all sections
+            document.querySelectorAll(".gateway-form-section").forEach(sec => {
+                sec.style.display = "none";
+            });
+            // Show active section
+            document.getElementById(`gatewayForm-${tab}`).style.display = "flex";
+        }
+
+        async function submitGatewayPayment() {
+            // Disable payment button to avoid duplicate clicks
+            const payBtn = document.getElementById("gatewayPayBtn");
+            const originalText = payBtn.textContent;
+            payBtn.textContent = "Initiating Secure Payment...";
+            payBtn.disabled = true;
+
+            try {
+                // Step 1: Create Razorpay Order on server
+                const orderRes = await fetch(`http://localhost:5001/api/patients/${patient._id}/razorpay-order`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: gatewayPendingAmount })
+                });
+                
+                const orderData = await orderRes.json();
+                if (!orderRes.ok) {
+                    throw new Error(orderData.error || orderData.message || "Failed to create Razorpay order");
+                }
+
+                const order = orderData.order;
+                const keyId = orderData.keyId;
+
+                // Step 2: Configure Razorpay Options
+                const options = {
+                    "key": keyId,
+                    "amount": order.amount,
+                    "currency": order.currency,
+                    "name": "Ayuskama Clinic",
+                    "description": "Hospitalization Outstanding Dues",
+                    "order_id": order.id,
+                    "handler": async function (response) {
+                        // Show verification overlay
+                        const overlay = document.getElementById("gatewayLoadingOverlay");
+                        const statusTitle = document.getElementById("gatewayStatusTitle");
+                        overlay.style.display = "flex";
+                        statusTitle.textContent = "Verifying Signature...";
+
+                        try {
+                            // Step 3: Verify Razorpay Signature on server
+                            const verifyRes = await fetch(`http://localhost:5001/api/patients/${patient._id}/razorpay-verify`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    amount: gatewayPendingAmount
+                                })
+                            });
+
+                            const verifyData = await verifyRes.json();
+                            if (verifyRes.ok) {
+                                // Update local storage with verified payment
+                                patient.paidAmount = verifyData.patient.paidAmount;
+                                patient.payments = verifyData.patient.payments;
+                                localStorage.setItem('patientData', JSON.stringify(patient));
+
+                                statusTitle.textContent = "Payment Verified! 🎉";
+                                setTimeout(() => {
+                                    overlay.style.display = "none";
+                                    closeGatewayModal();
+                                    showCustomAlert("Success", "Your payment of ₹" + gatewayPendingAmount + " was verified successfully. Proceeding with checkout.", "💚").then(() => {
+                                        checkoutPatient();
+                                    });
+                                }, 1500);
+                            } else {
+                                overlay.style.display = "none";
+                                showCustomAlert("Verification Failed", verifyData.message || "Signature mismatch.", "❌");
+                            }
+                        } catch (e) {
+                            console.error(e);
+                            overlay.style.display = "none";
+                            showCustomAlert("Error", "Could not verify transaction with the server.", "❌");
+                        }
+                    },
+                    "prefill": {
+                        "name": patient.name,
+                        "contact": patient.phone
+                    },
+                    "theme": {
+                        "color": "#1b3022"
+                    },
+                    "modal": {
+                        "ondismiss": function() {
+                            payBtn.textContent = originalText;
+                            payBtn.disabled = false;
+                        }
+                    }
+                };
+
+                // Close gateway selection modal
+                closeGatewayModal();
+
+                // Open Razorpay Standard Checkout overlay
+                const rzp = new Razorpay(options);
+                rzp.open();
+
+            } catch (err) {
+                console.error(err);
+                payBtn.textContent = originalText;
+                payBtn.disabled = false;
+                showCustomAlert("Payment Error", err.message || "Failed to initialize payment gateway.", "❌");
+            }
+        }
+
         async function checkoutPatient() {
-            if (!confirm("Are you sure you want to checkout and generate your final summary?")) return;
+            // Calculate stay duration and costs first to block checkout if outstanding > 0
+            const checkIn = patient.checkInDate ? new Date(patient.checkInDate) : new Date(patient.createdAt);
+            const today = new Date();
+            const diffTime = Math.abs(today - checkIn);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+            
+            const totalCost = diffDays * 5000;
+            const paid = patient.paidAmount || 0;
+            const outstanding = totalCost - paid;
+
+            if (outstanding > 0) {
+                showCustomAlert(
+                    "Outstanding Dues", 
+                    `Pending payment detected: ₹${outstanding.toLocaleString('en-IN', { minimumFractionDigits: 2 })}. You must clear all outstanding fees before you can checkout and view your discharge summary.`,
+                    "💳"
+                ).then(() => {
+                    openGatewayModal(outstanding, totalCost);
+                });
+                return;
+            }
+
+            const confirmed = await showCustomConfirm(
+                "Confirm Checkout",
+                "Are you sure you want to checkout and generate your final summary?"
+            );
+            if (!confirmed) return;
+
             try {
                 const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/checkout`, {
                     method: "POST"
@@ -1792,6 +2182,33 @@
                             </div>
                         </div>
 
+                        <!-- Payment History Section -->
+                        ${p.payments && p.payments.length > 0 ? `
+                        <div style="margin-bottom: 25px;">
+                            <div style="font-weight: bold; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; color: #444; border-bottom: 1px dashed #ccc; padding-bottom: 4px;">Payment History</div>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+                                <thead>
+                                    <tr style="background: #f7faf7; border-bottom: 1px solid #ddd;">
+                                        <th style="padding: 6px; font-weight: bold;">Date</th>
+                                        <th style="padding: 6px; font-weight: bold;">Transaction ID</th>
+                                        <th style="padding: 6px; font-weight: bold;">Method</th>
+                                        <th style="padding: 6px; font-weight: bold; text-align: right;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${p.payments.map(pym => `
+                                        <tr style="border-bottom: 1px solid #eee;">
+                                            <td style="padding: 6px;">${formatDate(pym.date)}</td>
+                                            <td style="padding: 6px; font-family: monospace;">${pym.transactionId}</td>
+                                            <td style="padding: 6px;">${pym.method}</td>
+                                            <td style="padding: 6px; text-align: right; font-weight: bold;">₹${pym.amount}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ` : ''}
+
                         <!-- Sign-off Block -->
                         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 0.85rem;">
                             <div style="text-align: center; width: 220px;">
@@ -1812,8 +2229,13 @@
                     </div>
                 `;
                     document.getElementById("dischargeModal").style.display = "flex";
-                } else { alert(data.message); }
-            } catch (e) { console.error(e); }
+                } else { 
+                    showCustomAlert("Checkout Failed", data.message || "Failed to complete checkout process.", "❌"); 
+                }
+            } catch (e) { 
+                console.error(e); 
+                showCustomAlert("Error", "An unexpected error occurred during checkout.", "❌");
+            }
         }
 
         function logout() {
@@ -1844,9 +2266,79 @@
             });
         }
 
+        // --- Promise-Based Custom Popups ---
+        function showCustomConfirm(title, desc) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById("customConfirmModal");
+                document.getElementById("confirmTitle").textContent = title;
+                document.getElementById("confirmDesc").textContent = desc;
+                
+                const btnOk = document.getElementById("btnConfirmOk");
+                const btnCancel = document.getElementById("btnConfirmCancel");
+                
+                const cleanUp = (result) => {
+                    overlay.classList.remove("active");
+                    btnOk.replaceWith(btnOk.cloneNode(true));
+                    btnCancel.replaceWith(btnCancel.cloneNode(true));
+                    resolve(result);
+                };
+                
+                document.getElementById("btnConfirmOk").addEventListener("click", () => cleanUp(true));
+                document.getElementById("btnConfirmCancel").addEventListener("click", () => cleanUp(false));
+                
+                overlay.classList.add("active");
+            });
+        }
+
+        function showCustomAlert(title, desc, icon = "⚠️") {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById("customAlertModal");
+                document.getElementById("alertTitle").textContent = title;
+                document.getElementById("alertDesc").textContent = desc;
+                document.getElementById("alertIcon").textContent = icon;
+                
+                const btnOk = document.getElementById("btnAlertOk");
+                
+                const cleanUp = () => {
+                    overlay.classList.remove("active");
+                    btnOk.replaceWith(btnOk.cloneNode(true));
+                    resolve();
+                };
+                
+                document.getElementById("btnAlertOk").addEventListener("click", () => cleanUp());
+                
+                overlay.classList.add("active");
+            });
+        }
+
         // Default to home tab on load
         showSection('home');
     </script>
+
+    <!-- Custom Animated Confirm Modal -->
+    <div id="customConfirmModal" class="custom-popup-overlay">
+        <div class="custom-popup-container">
+            <div class="custom-popup-icon" style="color: var(--primary);">🌿</div>
+            <h3 class="custom-popup-title" id="confirmTitle">Confirm Action</h3>
+            <p class="custom-popup-desc" id="confirmDesc">Are you sure you want to proceed?</p>
+            <div class="custom-popup-actions">
+                <button class="custom-popup-btn custom-popup-btn-cancel" id="btnConfirmCancel">Cancel</button>
+                <button class="custom-popup-btn custom-popup-btn-confirm" id="btnConfirmOk">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Animated Alert Modal -->
+    <div id="customAlertModal" class="custom-popup-overlay">
+        <div class="custom-popup-container">
+            <div class="custom-popup-icon" id="alertIcon" style="color: var(--accent);">⚠️</div>
+            <h3 class="custom-popup-title" id="alertTitle">Attention</h3>
+            <p class="custom-popup-desc" id="alertDesc">An alert message has occurred.</p>
+            <div class="custom-popup-actions">
+                <button class="custom-popup-btn custom-popup-btn-confirm" style="width: 100%; flex: none;" id="btnAlertOk">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script src="animations.js"></script>
 </body>

@@ -1,7 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const Razorpay = require("razorpay");
 const Patient = require("../models/patient");
+
+// Initialize Razorpay
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_T9mqUCv06QmVeD',
+    key_secret: process.env.RAZORPAY_KEY_SECRET || 'tJEcNFJvnnoFP37SfbConMak'
+});
 
 router.post("/register", async (req, res) => {
     try {
@@ -204,6 +212,97 @@ router.put("/:id/payment-method", async (req, res) => {
     }
 });
 
+// Submit payment transaction
+router.post("/:id/pay", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+        const amount = Number(req.body.amount);
+        if (isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ message: "Invalid payment amount" });
+        }
+
+        const transactionId = "TXN-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+        
+        patient.payments.push({
+            amount,
+            method: req.body.method || "Card",
+            transactionId,
+            date: new Date()
+        });
+
+        patient.paidAmount = (patient.paidAmount || 0) + amount;
+        await patient.save();
+
+        res.json({ message: "Payment processed successfully", patient, transactionId });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Create Razorpay Order
+router.post("/:id/razorpay-order", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+        const amount = Number(req.body.amount);
+        if (isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ message: "Invalid order amount" });
+        }
+
+        const options = {
+            amount: Math.round(amount * 100), // in paise
+            currency: "INR",
+            receipt: `receipt_order_${patient._id.toString().substring(0, 10)}`,
+            payment_capture: 1
+        };
+
+        const order = await razorpay.orders.create(options);
+        res.json({ order, keyId: razorpay.key_id });
+    } catch (err) {
+        console.error("Razorpay order creation error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Verify Razorpay Signature and log payment
+router.post("/:id/razorpay-verify", async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = req.body;
+
+        // Generate expected signature
+        const hmac = crypto.createHmac("sha256", razorpay.key_secret);
+        hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+        const expectedSignature = hmac.digest("hex");
+
+        if (expectedSignature !== razorpay_signature) {
+            return res.status(400).json({ message: "Payment verification failed. Signature mismatch." });
+        }
+
+        // Add payment transaction to list
+        const paymentAmount = Number(amount);
+        patient.payments.push({
+            amount: paymentAmount,
+            method: "Razorpay (Online)",
+            transactionId: razorpay_payment_id,
+            date: new Date()
+        });
+
+        patient.paidAmount = (patient.paidAmount || 0) + paymentAmount;
+        await patient.save();
+
+        res.json({ message: "Payment verified and recorded successfully", patient, transactionId: razorpay_payment_id });
+    } catch (err) {
+        console.error("Razorpay verification error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Checkout and generate discharge summary
 router.post("/:id/checkout", async (req, res) => {
     try {
@@ -216,9 +315,15 @@ router.post("/:id/checkout", async (req, res) => {
         const diffTime = Math.abs(checkOut - checkIn);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1; // at least 1 day
         
-        // Mock payment calculation
-        const totalAmount = diffDays * 5000; // 5000 per day mock cost
-        const paidAmount = patient.paymentMethod === 'advanced' ? totalAmount : 0;
+        const totalAmount = diffDays * 5000; // 5000 per day cost
+        const paidAmount = patient.paidAmount || 0;
+        const outstanding = totalAmount - paidAmount;
+
+        if (outstanding > 0) {
+            return res.status(400).json({ 
+                message: `Checkout blocked. Outstanding fees of ₹${outstanding} must be paid before discharge.` 
+            });
+        }
 
         patient.dischargeSummary = {
             stayDuration: `${diffDays} Days`,

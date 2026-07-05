@@ -51,6 +51,13 @@ const PatientSchema = new mongoose.Schema({
     symptoms: String,
     medicalHistory: String,
     dischargeType: { type: String, default: "DISCHARGE ON PATIENT REQUEST" },
+    paidAmount: { type: Number, default: 0 },
+    payments: [{
+        amount: Number,
+        method: String,
+        transactionId: String,
+        date: { type: Date, default: Date.now }
+    }],
     dischargeSummary: {
         stayDuration: String,
         treatmentsReceived: [String],

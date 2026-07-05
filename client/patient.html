@@ -473,6 +473,111 @@
             border-radius: 4px;
             margin-top: 1.5rem;
         }
+
+        /* Custom Animated Modals styling */
+        .custom-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 32, 23, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-popup-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .custom-popup-container {
+            background: white;
+            border-radius: 16px;
+            max-width: 440px;
+            width: 90%;
+            padding: 2.2rem;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(18, 32, 23, 0.2);
+            border: 1px solid var(--border);
+            transform: scale(0.85) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .custom-popup-overlay.active .custom-popup-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .custom-popup-icon {
+            width: 60px;
+            height: 60px;
+            background: #faf7f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.5rem auto;
+            border: 1px solid var(--border);
+        }
+
+        .custom-popup-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.8rem;
+        }
+
+        .custom-popup-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+
+        .custom-popup-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .custom-popup-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .custom-popup-btn-confirm {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .custom-popup-btn-confirm:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .custom-popup-btn-cancel {
+            background: #f0f0f0;
+            color: #555;
+            flex: 1;
+        }
+
+        .custom-popup-btn-cancel:hover {
+            background: #e5e5e5;
+        }
     </style>
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="ayuskama-theme.css">
@@ -634,6 +739,55 @@
                             <span class="info-value" id="patientDepartment">-</span>
                         </li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- Billing & Payments -->
+            <div class="card full-width">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>💰 Billing & Payment Status</h2>
+                    <button class="nav-btn" style="padding: 6px 12px; font-size: 0.9rem; background: var(--primary); color: white;" onclick="openAddPaymentModal()">Record Payment</button>
+                </div>
+                <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h3 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 5px;">Dues Summary</h3>
+                        <ul class="info-list">
+                            <li class="info-item">
+                                <span class="info-label">Stay Duration</span>
+                                <span class="info-value" id="dispStayDuration">-</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Total Cost (₹5000/day)</span>
+                                <span class="info-value" id="dispTotalCost" style="font-weight: 600;">₹0.00</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Total Paid Amount</span>
+                                <span class="info-value" id="dispPaidAmount" style="color: green; font-weight: 600;">₹0.00</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Outstanding Balance</span>
+                                <span class="info-value" id="dispOutstanding" style="font-weight: bold;">₹0.00</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 5px;">Transaction History</h3>
+                        <div style="overflow-x: auto; max-height: 180px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border); font-weight: 600;">
+                                        <th style="padding: 6px;">Date</th>
+                                        <th style="padding: 6px;">ID</th>
+                                        <th style="padding: 6px;">Method</th>
+                                        <th style="padding: 6px; text-align: right;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminPaymentsTableBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -919,6 +1073,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Record Payment Modal -->
+    <div id="addPaymentModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Record Patient Payment</h2>
+                <button class="close-btn" onclick="closeAddPaymentModal()">✕</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-weight: 600; color: #444; text-align: left;">Amount (₹)</label>
+                    <input type="number" id="inputPayAmount" placeholder="Enter amount to pay" style="width: 100%; padding: 10px;">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-weight: 600; color: #444; text-align: left;">Payment Method</label>
+                    <select id="inputPayMethod" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: white;">
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="UPI">UPI</option>
+                        <option value="NetBanking">Net Banking</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="nav-btn nav-btn-outline" onclick="closeAddPaymentModal()">Cancel</button>
+                <button class="nav-btn" style="background: var(--primary); color: white;" onclick="submitManualPayment()" id="btnSubmitManualPay">Record Payment</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -1039,6 +1222,49 @@
         // Map Dates
         document.getElementById("dispCheckIn").textContent = patient.checkInDate ? new Date(patient.checkInDate).toLocaleDateString() : "Not set";
         document.getElementById("dispCheckOut").textContent = patient.checkOutDate ? new Date(patient.checkOutDate).toLocaleDateString() : "Not set";
+
+        // Dynamic Billing Cost Calculation
+        const checkIn = patient.checkInDate ? new Date(patient.checkInDate) : new Date(patient.createdAt);
+        const checkOut = patient.checkOutDate ? new Date(patient.checkOutDate) : new Date();
+        const diffTime = Math.abs(checkOut - checkIn);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+        
+        const totalCost = diffDays * 5000;
+        const paid = patient.paidAmount || 0;
+        const outstanding = totalCost - paid;
+
+        document.getElementById("dispStayDuration").textContent = `${diffDays} Days`;
+        document.getElementById("dispTotalCost").textContent = `₹${totalCost.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById("dispPaidAmount").textContent = `₹${paid.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        
+        const outstandingEl = document.getElementById("dispOutstanding");
+        outstandingEl.textContent = `₹${outstanding.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        if (outstanding > 0) {
+            outstandingEl.style.color = "#d32f2f";
+            outstandingEl.style.fontWeight = "bold";
+        } else {
+            outstandingEl.style.color = "green";
+            outstandingEl.style.fontWeight = "bold";
+        }
+
+        // Render Transaction History
+        const payBody = document.getElementById("adminPaymentsTableBody");
+        payBody.innerHTML = "";
+        if (patient.payments && patient.payments.length > 0) {
+            patient.payments.forEach(pym => {
+                const tr = document.createElement("tr");
+                tr.style.borderBottom = "1px solid var(--border)";
+                tr.innerHTML = `
+                    <td style="padding: 6px;">${new Date(pym.date).toLocaleDateString('en-IN')}</td>
+                    <td style="padding: 6px; font-family: monospace; font-size: 0.8rem;">${pym.transactionId}</td>
+                    <td style="padding: 6px;">${pym.method}</td>
+                    <td style="padding: 6px; text-align: right; font-weight: bold;">₹${pym.amount.toLocaleString('en-IN')}</td>
+                `;
+                payBody.appendChild(tr);
+            });
+        } else {
+            payBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">No transactions recorded.</td></tr>`;
+        }
 
         // Render Queries
         const queriesContainer = document.getElementById("queriesContainer");
@@ -1169,7 +1395,7 @@
     async function answerQuery(queryId) {
         const answerInput = document.getElementById(`answer-${queryId}`);
         const answer = answerInput.value.trim();
-        if (!answer) return alert("Please type an answer first.");
+        if (!answer) return showCustomAlert("Answer Required", "Please type an answer first.", "💬");
 
         answerInput.disabled = true;
         try {
@@ -1183,18 +1409,64 @@
                 currentPatient = data.patient;
                 renderPatient(currentPatient);
             } else {
-                alert("Failed to submit answer");
+                showCustomAlert("Error", "Failed to submit answer", "❌");
                 answerInput.disabled = false;
             }
         } catch (err) {
             console.error(err);
-            alert("Error submitting answer");
+            showCustomAlert("Error", "Error submitting answer", "❌");
             answerInput.disabled = false;
         }
     }
 
     function closeRoutineModal() {
         routineModal.style.display = "none";
+    }
+
+    function openAddPaymentModal() {
+        document.getElementById("inputPayAmount").value = "";
+        document.getElementById("inputPayMethod").value = "Cash";
+        document.getElementById("addPaymentModal").style.display = "flex";
+    }
+
+    function closeAddPaymentModal() {
+        document.getElementById("addPaymentModal").style.display = "none";
+    }
+
+    async function submitManualPayment() {
+        const amount = Number(document.getElementById("inputPayAmount").value);
+        if (isNaN(amount) || amount <= 0) {
+            showCustomAlert("Invalid Amount", "Please enter a valid amount.", "⚠️");
+            return;
+        }
+
+        const method = document.getElementById("inputPayMethod").value;
+        const btn = document.getElementById("btnSubmitManualPay");
+        btn.textContent = "Recording...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/patients/${patientId}/pay`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount, method })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                currentPatient = data.patient;
+                renderPatient(currentPatient);
+                closeAddPaymentModal();
+                showCustomAlert("Success", "Payment of ₹" + amount + " successfully recorded!", "💚");
+            } else {
+                showCustomAlert("Error", "Failed to record payment: " + data.message, "❌");
+            }
+        } catch (err) {
+            console.error(err);
+            showCustomAlert("Error", "Error processing manual payment.", "❌");
+        } finally {
+            btn.textContent = "Record Payment";
+            btn.disabled = false;
+        }
     }
 
     async function saveRoutine() {
@@ -1256,12 +1528,13 @@
                 currentPatient = data.patient;
                 renderPatient(currentPatient);
                 closeRoutineModal();
+                showCustomAlert("Success", "Daily routine details updated successfully.", "💚");
             } else {
-                alert("Failed to save routine");
+                showCustomAlert("Error", "Failed to save routine.", "❌");
             }
         } catch (err) {
             console.error(err);
-            alert("Error saving routine");
+            showCustomAlert("Error", "Error saving routine.", "❌");
         } finally {
             btn.textContent = "Save Routine";
         }
@@ -1367,8 +1640,78 @@
         }
     }
 
+        // --- Promise-Based Custom Popups ---
+        function showCustomConfirm(title, desc) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById("customConfirmModal");
+                document.getElementById("confirmTitle").textContent = title;
+                document.getElementById("confirmDesc").textContent = desc;
+                
+                const btnOk = document.getElementById("btnConfirmOk");
+                const btnCancel = document.getElementById("btnConfirmCancel");
+                
+                const cleanUp = (result) => {
+                    overlay.classList.remove("active");
+                    btnOk.replaceWith(btnOk.cloneNode(true));
+                    btnCancel.replaceWith(btnCancel.cloneNode(true));
+                    resolve(result);
+                };
+                
+                document.getElementById("btnConfirmOk").addEventListener("click", () => cleanUp(true));
+                document.getElementById("btnConfirmCancel").addEventListener("click", () => cleanUp(false));
+                
+                overlay.classList.add("active");
+            });
+        }
+
+        function showCustomAlert(title, desc, icon = "⚠️") {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById("customAlertModal");
+                document.getElementById("alertTitle").textContent = title;
+                document.getElementById("alertDesc").textContent = desc;
+                document.getElementById("alertIcon").textContent = icon;
+                
+                const btnOk = document.getElementById("btnAlertOk");
+                
+                const cleanUp = () => {
+                    overlay.classList.remove("active");
+                    btnOk.replaceWith(btnOk.cloneNode(true));
+                    resolve();
+                };
+                
+                document.getElementById("btnAlertOk").addEventListener("click", () => cleanUp());
+                
+                overlay.classList.add("active");
+            });
+        }
+
     window.onload = init;
 </script>
+
+    <!-- Custom Animated Confirm Modal -->
+    <div id="customConfirmModal" class="custom-popup-overlay">
+        <div class="custom-popup-container">
+            <div class="custom-popup-icon" style="color: var(--primary);">🌿</div>
+            <h3 class="custom-popup-title" id="confirmTitle">Confirm Action</h3>
+            <p class="custom-popup-desc" id="confirmDesc">Are you sure you want to proceed?</p>
+            <div class="custom-popup-actions">
+                <button class="custom-popup-btn custom-popup-btn-cancel" id="btnConfirmCancel">Cancel</button>
+                <button class="custom-popup-btn custom-popup-btn-confirm" id="btnConfirmOk">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Animated Alert Modal -->
+    <div id="customAlertModal" class="custom-popup-overlay">
+        <div class="custom-popup-container">
+            <div class="custom-popup-icon" id="alertIcon" style="color: var(--accent);">⚠️</div>
+            <h3 class="custom-popup-title" id="alertTitle">Attention</h3>
+            <p class="custom-popup-desc" id="alertDesc">An alert message has occurred.</p>
+            <div class="custom-popup-actions">
+                <button class="custom-popup-btn custom-popup-btn-confirm" style="width: 100%; flex: none;" id="btnAlertOk">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script src="animations.js"></script>
 </body>
