@@ -65,6 +65,11 @@ const PatientSchema = new mongoose.Schema({
         paidAmount: Number,
         notes: String
     },
+    feedback: {
+        rating: Number,
+        comment: String,
+        date: { type: Date, default: Date.now }
+    },
     status: { type: String, default: 'active' },
     createdAt: { type: Date, default: Date.now }
 });

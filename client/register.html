@@ -331,6 +331,83 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Custom Multiselect styles */
+        .multiselect-container {
+            position: relative;
+            width: 100%;
+        }
+        .multiselect-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #fafcfa;
+            cursor: pointer;
+            min-height: 48px;
+            align-items: center;
+        }
+        .multiselect-select:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(43, 89, 63, 0.1);
+        }
+        .multiselect-placeholder {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .multiselect-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 5px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .multiselect-dropdown.show {
+            display: block;
+        }
+        .multiselect-option {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .multiselect-option:hover {
+            background: var(--hover-bg);
+        }
+        .multiselect-option input {
+            width: auto !important;
+            margin: 0;
+            cursor: pointer;
+        }
+        .multiselect-badge {
+            background: var(--primary);
+            color: white !important;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .multiselect-badge span.remove-badge {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+        }
     </style>
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="ayuskama-theme.css">
@@ -485,12 +562,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="treatmentPlan">Proposed Treatment Plan</label>
-                    <select id="treatmentPlan" required>
-                        <option value="">Select Predefined Treatment</option>
-                        <option value="General Wellness">General Wellness</option>
-                        <!-- Populated by JS -->
-                    </select>
+                    <label>Proposed Treatment Plan</label>
+                    <div id="treatmentsMultiselectContainer" class="multiselect-container">
+                        <div id="treatmentsSelectBtn" class="multiselect-select">
+                            <span id="multiselectPlaceholder" class="multiselect-placeholder">Select Predefined Treatments</span>
+                        </div>
+                        <div id="treatmentsDropdown" class="multiselect-dropdown">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -517,20 +597,90 @@
 </div>
 
 <script>
+    let selectedTreatments = [];
+    window.predefinedTreatments = [];
+
     document.addEventListener("DOMContentLoaded", async () => {
+        const selectBtn = document.getElementById("treatmentsSelectBtn");
+        const dropdown = document.getElementById("treatmentsDropdown");
+        const placeholder = document.getElementById("multiselectPlaceholder");
+
+        // Toggle dropdown
+        selectBtn.addEventListener("click", (e) => {
+            dropdown.classList.toggle("show");
+            e.stopPropagation();
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!selectBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove("show");
+            }
+        });
+
         try {
             const res = await fetch("http://localhost:5001/api/treatments");
             if (res.ok) {
                 const treatments = await res.json();
-                const select = document.getElementById("treatmentPlan");
+                window.predefinedTreatments = treatments;
+                
+                // Add a default General Wellness treatment option if it doesn't exist
+                if (!treatments.some(t => t.name.toLowerCase() === "general wellness")) {
+                    treatments.unshift({
+                        name: "General Wellness",
+                        protocol: "General wellness check and dietary maintenance.",
+                        defaultDosAndDonts: "Eat warm, fresh meals. Avoid iced drinks."
+                    });
+                }
+
+                dropdown.innerHTML = "";
                 treatments.forEach(t => {
-                    const opt = document.createElement("option");
-                    opt.value = t.name;
-                    opt.textContent = t.name;
-                    select.appendChild(opt);
+                    const optionDiv = document.createElement("div");
+                    optionDiv.className = "multiselect-option";
+                    optionDiv.innerHTML = `
+                        <input type="checkbox" id="chk-${t._id || 'gen-well'}" value="${t.name}">
+                        <label for="chk-${t._id || 'gen-well'}" style="margin: 0; cursor: pointer; flex: 1; font-size: 0.95rem;">${t.name}</label>
+                    `;
+                    dropdown.appendChild(optionDiv);
+
+                    const chk = optionDiv.querySelector("input");
+                    chk.addEventListener("change", () => {
+                        updateSelectedTreatmentsDisplay();
+                    });
                 });
             }
         } catch (e) { console.log(e); }
+
+        window.updateSelectedTreatmentsDisplay = function() {
+            const checkedBoxes = dropdown.querySelectorAll("input[type='checkbox']:checked");
+            selectedTreatments = Array.from(checkedBoxes).map(cb => cb.value);
+
+            selectBtn.innerHTML = "";
+            if (selectedTreatments.length === 0) {
+                selectBtn.appendChild(placeholder);
+            } else {
+                selectedTreatments.forEach(name => {
+                    const badge = document.createElement("span");
+                    badge.className = "multiselect-badge";
+                    badge.innerHTML = `${name} <span class="remove-badge" data-name="${name}">×</span>`;
+                    selectBtn.appendChild(badge);
+
+                    badge.querySelector(".remove-badge").addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const cb = Array.from(dropdown.querySelectorAll("input[type='checkbox']")).find(i => i.value === name);
+                        if (cb) {
+                            cb.checked = false;
+                            updateSelectedTreatmentsDisplay();
+                        }
+                    });
+                });
+            }
+        };
+
+        window.clearMultiselect = function() {
+            selectedTreatments = [];
+            dropdown.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+            updateSelectedTreatmentsDisplay();
+        };
     });
 </script>
 <script>
@@ -546,11 +696,30 @@
         // Reset states
         successMsg.style.display = "none";
         errorMsg.style.display = "none";
+
+        if (selectedTreatments.length === 0) {
+            alert("Please select at least one treatment plan.");
+            return;
+        }
         
         // Button loading state
         submitBtn.innerHTML = "Processing... <span>⏳</span>";
         submitBtn.style.opacity = "0.8";
         submitBtn.disabled = true;
+
+        // Construct treatment plan, protocols, and dos/donts
+        const treatmentPlan = selectedTreatments.join(", ");
+        let selectedProtocols = [];
+        let selectedDosDonts = [];
+        selectedTreatments.forEach(name => {
+            const selected = window.predefinedTreatments.find(t => t.name === name);
+            if (selected) {
+                if (selected.protocol) selectedProtocols.push(`${name}:\n${selected.protocol}`);
+                if (selected.defaultDosAndDonts) selectedDosDonts.push(`${name}:\n${selected.defaultDosAndDonts}`);
+            }
+        });
+        const treatmentProtocol = selectedProtocols.join("\n\n");
+        const dosAndDonts = selectedDosDonts.join("\n\n");
 
         const patientData = {
             name: document.getElementById("name").value.trim(),
@@ -571,7 +740,9 @@
             disease: document.getElementById("disease").value.trim(),
             symptoms: document.getElementById("symptoms").value.trim(),
             medicalHistory: document.getElementById("medicalHistory").value.trim(),
-            treatmentPlan: document.getElementById("treatmentPlan").value,
+            treatmentPlan: treatmentPlan,
+            treatmentProtocol: treatmentProtocol,
+            dosAndDonts: dosAndDonts,
             dietPlan: document.getElementById("dietPlan").value.trim(),
             roomNumber: document.getElementById("roomNumber").value.trim(),
             allergens: document.getElementById("allergens").value.trim()
@@ -588,6 +759,7 @@
 
             successMsg.style.display = "flex";
             form.reset();
+            if (window.clearMultiselect) window.clearMultiselect();
             
             // Scroll to top of form to see success message
             document.querySelector('.form-header').scrollIntoView({ behavior: 'smooth' });

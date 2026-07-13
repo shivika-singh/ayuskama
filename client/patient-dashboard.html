@@ -803,8 +803,52 @@
             background: var(--ayuskama-gold);
         }
         
-        .explore-banner-btn.btn-gold:hover {
-            background: var(--ayuskama-green);
+        .feedback-star {
+            transition: transform 0.2s, color 0.2s;
+        }
+        .feedback-star:hover {
+            transform: scale(1.3) !important;
+        }
+        
+        /* Feedback Card styling in About Section */
+        .feedback-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feedback-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .feedback-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .feedback-card-name {
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+        .feedback-card-stars {
+            color: #ffb400;
+            font-size: 1rem;
+        }
+        .feedback-card-comment {
+            color: var(--text-main);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .feedback-card-date {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-align: right;
+            margin-top: 6px;
         }
 
         @media (max-width: 768px) {
@@ -997,6 +1041,48 @@
         </div>
     </div>
 
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1020; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: white; padding: 2.5rem; border-radius: 12px; max-width: 550px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--border);">
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; text-align: center;">
+                <h2 style="color: var(--primary-dark); margin: 0; font-family: 'Cormorant Garamond', serif !important; font-size: 2rem; font-weight: bold;">Share Your Feedback</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; margin-bottom: 0;">Your feedback helps us improve and guides others seeking authentic healing.</p>
+            </div>
+            
+            <form id="feedbackForm" onsubmit="submitFeedbackAndCheckout(event)">
+                <!-- Star Rating Field -->
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 10px; color: var(--primary-dark);">How would you rate your stay & treatment? *</label>
+                    <div id="starRatingContainer" style="display: flex; justify-content: center; gap: 15px; font-size: 2rem; cursor: pointer;">
+                        <span class="feedback-star" data-value="1" onclick="setFeedbackRating(1)" style="color: #ccc; transition: transform 0.2s;">★</span>
+                        <span class="feedback-star" data-value="2" onclick="setFeedbackRating(2)" style="color: #ccc; transition: transform 0.2s;">★</span>
+                        <span class="feedback-star" data-value="3" onclick="setFeedbackRating(3)" style="color: #ccc; transition: transform 0.2s;">★</span>
+                        <span class="feedback-star" data-value="4" onclick="setFeedbackRating(4)" style="color: #ccc; transition: transform 0.2s;">★</span>
+                        <span class="feedback-star" data-value="5" onclick="setFeedbackRating(5)" style="color: #ccc; transition: transform 0.2s;">★</span>
+                    </div>
+                    <input type="hidden" id="feedbackRatingInput" required value="0">
+                </div>
+
+                <!-- Written Feedback Field -->
+                <div style="margin-bottom: 25px;">
+                    <label for="feedbackCommentInput" style="display: block; font-weight: bold; margin-bottom: 8px; color: var(--primary-dark);">Tell us about your experience *</label>
+                    <textarea id="feedbackCommentInput" required placeholder="Describe your experience with the treatments, diet, doctors, and staff..." 
+                        style="width: 100%; height: 120px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; line-height: 1.5; resize: none; outline: none; box-sizing: border-box; transition: border-color 0.2s;"></textarea>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; text-align: right;">This feedback is mandatory to complete checkout.</div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 15px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    <button type="submit" class="nav-btn nav-btn-solid" 
+                        style="flex: 1; padding: 12px; font-size: 1rem; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">Submit & Checkout</button>
+                    <button type="button" onclick="closeFeedbackModal()" class="nav-btn nav-btn-outline" 
+                        style="padding: 12px 24px; font-size: 1rem; border: 1px solid var(--primary); border-radius: 8px; cursor: pointer; background: transparent;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Payment Gateway Modal -->
     <div id="gatewayModal" class="modal"
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1010; align-items: center; justify-content: center; padding: 20px;">
@@ -1108,7 +1194,7 @@
         </a>
         <div class="nav-links">
 
-            <button onclick="checkoutPatient()" class="nav-btn"
+            <button id="checkoutNavBtn" onclick="checkoutPatient()" class="nav-btn"
                 style="background: var(--accent); color: white; border: none;">Checkout</button>
             <button onclick="logout()" class="nav-btn nav-btn-outline">Logout</button>
 
@@ -1495,6 +1581,16 @@
                             </li>
                         </ul>
                     </div>
+                    <!-- Patient Feedbacks Card -->
+                    <div class="about-card" style="margin-top: 2rem;">
+                        <h2 class="about-title" style="font-size: 1.6rem; display: flex; align-items: center; gap: 10px;">
+                            <span>💬</span> Patient Feedbacks
+                        </h2>
+                        <p class="about-subtitle">Here is what our patients say about their healing journey.</p>
+                        <div id="aboutReviewsContainer" style="max-height: 400px; overflow-y: auto; padding-right: 5px; margin-top: 15px;">
+                            <!-- Dynamically populated reviews -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1614,6 +1710,16 @@
 
         function updateUI(patientData, therapistSessions = []) {
             if (!patientData) return;
+
+            // Populate Checkout Button Text
+            const checkoutBtn = document.getElementById("checkoutNavBtn");
+            if (checkoutBtn) {
+                if (patientData.status === 'checked-out') {
+                    checkoutBtn.textContent = "View Discharge Summary";
+                } else {
+                    checkoutBtn.textContent = "Checkout";
+                }
+            }
 
             // Render Timeline
             renderDailyTimeline(patientData, therapistSessions);
@@ -2122,7 +2228,259 @@
             }
         }
 
+        let currentRating = 0;
+        function setFeedbackRating(rating) {
+            currentRating = rating;
+            document.getElementById("feedbackRatingInput").value = rating;
+            const stars = document.querySelectorAll(".feedback-star");
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.style.color = "#ffb400"; // gold
+                    star.style.transform = "scale(1.2)";
+                } else {
+                    star.style.color = "#ccc";
+                    star.style.transform = "scale(1.0)";
+                }
+            });
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById("feedbackModal").style.display = "none";
+        }
+
+        async function submitFeedbackAndCheckout(event) {
+            event.preventDefault();
+            
+            const rating = Number(document.getElementById("feedbackRatingInput").value);
+            const comment = document.getElementById("feedbackCommentInput").value.trim();
+            
+            if (rating < 1 || rating > 5) {
+                showCustomAlert("Validation Error", "Please select a star rating from 1 to 5.", "⚠️");
+                return;
+            }
+            if (!comment) {
+                showCustomAlert("Validation Error", "Please provide your feedback comments.", "⚠️");
+                return;
+            }
+            
+            closeFeedbackModal();
+            
+            try {
+                const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/checkout`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ rating, comment })
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    const s = data.dischargeSummary;
+                    const p = data.patient || patient;
+                    
+                    // Save to local storage
+                    localStorage.setItem('patientData', JSON.stringify(p));
+                    patient = p; // update global
+                    
+                    // Update the UI/buttons
+                    updateUI(patient, []);
+                    
+                    // Copy comment to clipboard for convenience
+                    try {
+                        await navigator.clipboard.writeText(comment);
+                        showCustomAlert("Review Copied", "We have copied your feedback to the clipboard. Please paste it on the Google Reviews page that opens next!", "📋");
+                    } catch (clipErr) {
+                        console.error("Clipboard copy failed:", clipErr);
+                    }
+                    
+                    // Open Google reviews page in a new window/tab
+                    window.open("https://search.google.com/local/writereview?placeid=ChIJ77FOny4WCTkRgrv5-3n3jSI", "_blank");
+                    
+                    // Render and display discharge summary
+                    renderDischargeSummaryHTML(patient, s);
+                    document.getElementById("dischargeModal").style.display = "flex";
+                } else {
+                    showCustomAlert("Checkout Failed", data.message || "Failed to complete checkout process.", "❌");
+                }
+            } catch (e) {
+                console.error(e);
+                showCustomAlert("Error", "An unexpected error occurred during checkout.", "❌");
+            }
+        }
+
+        function renderDischargeSummaryHTML(p, s) {
+            const formatDate = (dateStr) => {
+                if (!dateStr) return "NA";
+                const d = new Date(dateStr);
+                return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }) + " " + d.toLocaleTimeString('en-IN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+            };
+
+            document.getElementById("dischargeContent").innerHTML = `
+            <div style="font-family: Arial, sans-serif; color: #000; padding: 20px; line-height: 1.4; border: 1px solid #ddd; background: white;">
+                <!-- Hospital Header -->
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 2rem; font-weight: bold; font-family: 'Cormorant Garamond', serif; color: #1b3022; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <img src="assets/logo.jpg" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%;"> Ayuskama
+                    </div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">
+                        Ayurvedic Clinic & Panchakarma Center
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666; margin-top: 3px;">
+                        Secret Waterfall Road, Upper Tapovan, Rishikesh, Uttarakhand 249201
+                    </div>
+                    <hr style="border: 0; border-top: 2px solid #1b3022; margin-top: 15px;">
+                </div>
+
+                <!-- Metadata Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.85rem; margin-bottom: 20px;">
+                    <!-- Column 1 -->
+                    <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 6px;">
+                        <div style="font-weight: bold; color: #444;">IPD No</div><div>: ${p.ipdNo || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444;">UHID</div><div>: ${p.uhid || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444;">Patient Name</div><div style="text-transform: uppercase; font-weight: 600;">: ${p.name}</div>
+                        <div style="font-weight: bold; color: #444;">S/D/W/O</div><div>: ${p.guardianName || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444;">Age/Gen</div><div>: ${p.age}Y / ${p.gender || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444; vertical-align: top;">Address</div><div style="line-height: 1.3;">: ${p.address}</div>
+                        <div style="font-weight: bold; color: #444;">Contact No</div><div>: ${p.phone}</div>
+                        <div style="font-weight: bold; color: #444;">Allocation</div><div>: PRIVATE ROOM Unit No : ${p.roomNumber}</div>
+                        <div style="font-weight: bold; color: #444;">Billing Category</div><div>: ${p.paymentMethod === 'advanced' ? 'Advanced / Cash' : 'Cash / Post-paid'}</div>
+                    </div>
+                    <!-- Column 2 -->
+                    <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 6px;">
+                        <div style="font-weight: bold; color: #444;">ABHA Number</div><div>: ${p.abhaNumber || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444;">ABHA Address</div><div>: ${p.abhaAddress || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444;">Panel</div><div>: ${p.panel || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444;">AL/CCN No.</div><div>: ${p.policyNo || 'NA'}</div>
+                        <div style="font-weight: bold; color: #444;">Department</div><div>: ${p.department || 'AYURVEDA CONSULTANT'}</div>
+                        <div style="font-weight: bold; color: #444;">Consultation</div><div>: ${p.consultant || 'Dr. VINOD KUMAR'}</div>
+                        <div style="font-weight: bold; color: #444;">Admission Date</div><div>: ${formatDate(p.checkInDate)}</div>
+                        <div style="font-weight: bold; color: #444;">Discharge Date</div><div>: ${formatDate(p.checkOutDate || new Date())}</div>
+                    </div>
+                </div>
+
+                <!-- Title Bar -->
+                <div style="background: #f0f0f0; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; text-align: center; padding: 6px; font-weight: bold; font-size: 1rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Discharge on Patient Request Summary
+                </div>
+
+                <!-- Medical Details Section -->
+                <div style="font-size: 0.85rem; display: grid; row-gap: 12px; margin-bottom: 25px;">
+                    <div>
+                        <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Discharge Type:</span>
+                        <span style="display: inline-block; width: calc(100% - 190px);">${p.dischargeType || 'DISCHARGE ON PATIENT REQUEST'}</span>
+                    </div>
+                    <div>
+                        <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Symptoms & Complaints:</span>
+                        <span style="display: inline-block; width: calc(100% - 190px); line-height: 1.4;">${p.symptoms || p.disease || 'NA'}</span>
+                    </div>
+                    <div>
+                        <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Medical History:</span>
+                        <span style="display: inline-block; width: calc(100% - 190px); line-height: 1.4;">${p.medicalHistory || p.disease || 'NA'}</span>
+                    </div>
+                    <div style="border-top: 1px dashed #ccc; padding-top: 12px; margin-top: 5px;">
+                        <div style="font-weight: bold; margin-bottom: 6px;">Summary of Key Investigation(s) during hospitalization:-</div>
+                        <div style="margin-left: 20px; line-height: 1.4;">
+                            <p>As per health issues and after having doctor consultation we recommend some treatments such as:</p>
+                            <ul style="margin-top: 5px; padding-left: 20px;">
+                                <li><strong>Treatment Plan:</strong> ${p.treatmentPlan || 'General Wellness'}</li>
+                                ${p.treatmentProtocol ? `<li><strong>Treatment Protocol:</strong> ${p.treatmentProtocol}</li>` : ''}
+                                ${p.dietPlan ? `<li><strong>Dietary Guidelines:</strong> ${p.dietPlan}</li>` : ''}
+                                ${p.dosAndDonts ? `<li><strong>Precautions / Guidelines:</strong> ${p.dosAndDonts}</li>` : ''}
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="border-top: 1px dashed #ccc; padding-top: 12px;">
+                        <div style="font-weight: bold; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; color: #444;">Acknowledgement Patient</div>
+                        <ol style="font-size: 0.75rem; padding-left: 20px; line-height: 1.4; color: #555;">
+                            <li>I have received the DISCHARGE SUMMARY and all documents related to this IPD admission.</li>
+                            <li>I have been clearly explained, in my own language, about the discharge medicines, diet and precautions to be taken at home and follow up visit.</li>
+                            <li>I am fully satisfied with the treatment and have no complaint against Doctors / Staff at Ayurveda Clinic & Panchakarma Center</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Billing Summary Section -->
+                <div style="background: #faf7f2; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 30px; font-size: 0.85rem; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <div style="font-weight: bold; color: var(--primary-dark); border-bottom: 1px dashed #ddd; padding-bottom: 5px; margin-bottom: 8px;">Stay Summary</div>
+                        <div><strong>Duration of Stay:</strong> ${s.stayDuration}</div>
+                        <div><strong>Status:</strong> Checked Out / Completed</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: bold; color: var(--primary-dark); border-bottom: 1px dashed #ddd; padding-bottom: 5px; margin-bottom: 8px;">Invoice Summary</div>
+                        <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 4px;">
+                            <div>Total Amount:</div><div style="font-weight: bold;">₹${s.totalAmount}</div>
+                            <div>Paid Amount:</div><div style="color: green; font-weight: bold;">₹${s.paidAmount}</div>
+                            <div>Outstanding:</div><div style="color: ${s.totalAmount - s.paidAmount > 0 ? '#d32f2f' : 'green'}; font-weight: bold;">₹${s.totalAmount - s.paidAmount}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment History Section -->
+                ${p.payments && p.payments.length > 0 ? `
+                <div style="margin-bottom: 25px;">
+                    <div style="font-weight: bold; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; color: #444; border-bottom: 1px dashed #ccc; padding-bottom: 4px;">Payment History</div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+                        <thead>
+                            <tr style="background: #f7faf7; border-bottom: 1px solid #ddd;">
+                                <th style="padding: 6px; font-weight: bold;">Date</th>
+                                <th style="padding: 6px; font-weight: bold;">Transaction ID</th>
+                                <th style="padding: 6px; font-weight: bold;">Method</th>
+                                <th style="padding: 6px; font-weight: bold; text-align: right;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${p.payments.map(pym => `
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 6px;">${formatDate(pym.date)}</td>
+                                    <td style="padding: 6px; font-family: monospace;">${pym.transactionId}</td>
+                                    <td style="padding: 6px;">${pym.method}</td>
+                                    <td style="padding: 6px; text-align: right; font-weight: bold;">₹${pym.amount}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ` : ''}
+
+                <!-- Sign-off Block -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 0.85rem;">
+                    <div style="text-align: center; width: 220px;">
+                        <div style="border-top: 1px solid #000; padding-top: 8px; font-weight: 500;">Patient/Attendant Signature</div>
+                    </div>
+                    <div style="text-align: center; width: 260px;">
+                        <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: bold; color: #1b3022; text-transform: uppercase;">${p.consultant || 'Dr. VINOD KUMAR'}</div>
+                        <div style="font-size: 0.75rem; color: #555; font-style: italic;">(B.A.M.S)</div>
+                        <div style="border-top: 1px solid #000; padding-top: 8px; font-weight: bold; margin-top: 5px;">Treating Doctor / Authorised Signatory</div>
+                    </div>
+                </div>
+
+                <!-- Footer branding -->
+                <div style="text-align: center; font-size: 0.7rem; color: #999; margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; display: flex; justify-content: space-between;">
+                    <div>Designed by www.softcure.in</div>
+                    <div>${p.ipdNo || 'IP-NA'} Mr. ${p.name ? p.name.toUpperCase() : ''}</div>
+                </div>
+            </div>
+            `;
+        }
+
         async function checkoutPatient() {
+            if (patient.status === 'checked-out' && patient.dischargeSummary) {
+                renderDischargeSummaryHTML(patient, patient.dischargeSummary);
+                document.getElementById("dischargeModal").style.display = "flex";
+                return;
+            }
+
             // Calculate stay duration and costs first to block checkout if outstanding > 0
             const checkIn = patient.checkInDate ? new Date(patient.checkInDate) : new Date(patient.createdAt);
             const today = new Date();
@@ -2151,192 +2509,59 @@
             );
             if (!confirmed) return;
 
-            try {
-                const res = await fetch(`http://localhost:5001/api/patients/${patient._id}/checkout`, {
-                    method: "POST"
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    const s = data.dischargeSummary;
-                    const p = data.patient || patient; // Fallback to current patient if backend doesn't send it
-
-                    // Format dates beautifully
-                    const formatDate = (dateStr) => {
-                        if (!dateStr) return "NA";
-                        const d = new Date(dateStr);
-                        return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('en-IN', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric'
-                        }) + " " + d.toLocaleTimeString('en-IN', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            hour12: true
-                        });
-                    };
-
-                    document.getElementById("dischargeContent").innerHTML = `
-                    <div style="font-family: Arial, sans-serif; color: #000; padding: 20px; line-height: 1.4; border: 1px solid #ddd; background: white;">
-                        <!-- Hospital Header -->
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="font-size: 2rem; font-weight: bold; font-family: 'Cormorant Garamond', serif; color: #1b3022; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                                <img src="assets/logo.jpg" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%;"> Ayuskama
-                            </div>
-                            <div style="font-size: 0.95rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">
-                                Ayurvedic Clinic & Panchakarma Center
-                            </div>
-                            <div style="font-size: 0.8rem; color: #666; margin-top: 3px;">
-                                Secret Waterfall Road, Upper Tapovan, Rishikesh, Uttarakhand 249201
-                            </div>
-                            <hr style="border: 0; border-top: 2px solid #1b3022; margin-top: 15px;">
-                        </div>
-
-                        <!-- Metadata Grid -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.85rem; margin-bottom: 20px;">
-                            <!-- Column 1 -->
-                            <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 6px;">
-                                <div style="font-weight: bold; color: #444;">IPD No</div><div>: ${p.ipdNo || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444;">UHID</div><div>: ${p.uhid || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444;">Patient Name</div><div style="text-transform: uppercase; font-weight: 600;">: ${p.name}</div>
-                                <div style="font-weight: bold; color: #444;">S/D/W/O</div><div>: ${p.guardianName || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444;">Age/Gen</div><div>: ${p.age}Y / ${p.gender || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444; vertical-align: top;">Address</div><div style="line-height: 1.3;">: ${p.address}</div>
-                                <div style="font-weight: bold; color: #444;">Contact No</div><div>: ${p.phone}</div>
-                                <div style="font-weight: bold; color: #444;">Allocation</div><div>: PRIVATE ROOM Unit No : ${p.roomNumber}</div>
-                                <div style="font-weight: bold; color: #444;">Billing Category</div><div>: ${p.paymentMethod === 'advanced' ? 'Advanced / Cash' : 'Cash / Post-paid'}</div>
-                            </div>
-                            <!-- Column 2 -->
-                            <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 6px;">
-                                <div style="font-weight: bold; color: #444;">ABHA Number</div><div>: ${p.abhaNumber || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444;">ABHA Address</div><div>: ${p.abhaAddress || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444;">Panel</div><div>: ${p.panel || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444;">AL/CCN No.</div><div>: ${p.policyNo || 'NA'}</div>
-                                <div style="font-weight: bold; color: #444;">Department</div><div>: ${p.department || 'AYURVEDA CONSULTANT'}</div>
-                                <div style="font-weight: bold; color: #444;">Consultation</div><div>: ${p.consultant || 'Dr. VINOD KUMAR'}</div>
-                                <div style="font-weight: bold; color: #444;">Admission Date</div><div>: ${formatDate(p.checkInDate)}</div>
-                                <div style="font-weight: bold; color: #444;">Discharge Date</div><div>: ${formatDate(p.checkOutDate || new Date())}</div>
-                            </div>
-                        </div>
-
-                        <!-- Title Bar -->
-                        <div style="background: #f0f0f0; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; text-align: center; padding: 6px; font-weight: bold; font-size: 1rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            Discharge on Patient Request Summary
-                        </div>
-
-                        <!-- Medical Details Section -->
-                        <div style="font-size: 0.85rem; display: grid; row-gap: 12px; margin-bottom: 25px;">
-                            <div>
-                                <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Discharge Type:</span>
-                                <span style="display: inline-block; width: calc(100% - 190px);">${p.dischargeType || 'DISCHARGE ON PATIENT REQUEST'}</span>
-                            </div>
-                            <div>
-                                <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Symptoms & Complaints:</span>
-                                <span style="display: inline-block; width: calc(100% - 190px); line-height: 1.4;">${p.symptoms || p.disease || 'NA'}</span>
-                            </div>
-                            <div>
-                                <span style="font-weight: bold; width: 180px; display: inline-block; vertical-align: top;">Medical History:</span>
-                                <span style="display: inline-block; width: calc(100% - 190px); line-height: 1.4;">${p.medicalHistory || p.disease || 'NA'}</span>
-                            </div>
-                            <div style="border-top: 1px dashed #ccc; padding-top: 12px; margin-top: 5px;">
-                                <div style="font-weight: bold; margin-bottom: 6px;">Summary of Key Investigation(s) during hospitalization:-</div>
-                                <div style="margin-left: 20px; line-height: 1.4;">
-                                    <p>As per health issues and after having doctor consultation we recommend some treatments such as:</p>
-                                    <ul style="margin-top: 5px; padding-left: 20px;">
-                                        <li><strong>Treatment Plan:</strong> ${p.treatmentPlan || 'General Wellness'}</li>
-                                        ${p.treatmentProtocol ? `<li><strong>Treatment Protocol:</strong> ${p.treatmentProtocol}</li>` : ''}
-                                        ${p.dietPlan ? `<li><strong>Dietary Guidelines:</strong> ${p.dietPlan}</li>` : ''}
-                                        ${p.dosAndDonts ? `<li><strong>Precautions / Guidelines:</strong> ${p.dosAndDonts}</li>` : ''}
-                                    </ul>
-                                </div>
-                            </div>
-                            <div style="border-top: 1px dashed #ccc; padding-top: 12px;">
-                                <div style="font-weight: bold; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; color: #444;">Acknowledgement Patient</div>
-                                <ol style="font-size: 0.75rem; padding-left: 20px; line-height: 1.4; color: #555;">
-                                    <li>I have received the DISCHARGE SUMMARY and all documents related to this IPD admission.</li>
-                                    <li>I have been clearly explained, in my own language, about the discharge medicines, diet and precautions to be taken at home and follow up visit.</li>
-                                    <li>I am fully satisfied with the treatment and have no complaint against Doctors / Staff at Ayurveda Clinic & Panchakarma Center</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <!-- Billing Summary Section -->
-                        <div style="background: #faf7f2; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 30px; font-size: 0.85rem; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div>
-                                <div style="font-weight: bold; color: var(--primary-dark); border-bottom: 1px dashed #ddd; padding-bottom: 5px; margin-bottom: 8px;">Stay Summary</div>
-                                <div><strong>Duration of Stay:</strong> ${s.stayDuration}</div>
-                                <div><strong>Status:</strong> Checked Out / Completed</div>
-                            </div>
-                            <div>
-                                <div style="font-weight: bold; color: var(--primary-dark); border-bottom: 1px dashed #ddd; padding-bottom: 5px; margin-bottom: 8px;">Invoice Summary</div>
-                                <div style="display: grid; grid-template-columns: 120px 1fr; row-gap: 4px;">
-                                    <div>Total Amount:</div><div style="font-weight: bold;">₹${s.totalAmount}</div>
-                                    <div>Paid Amount:</div><div style="color: green; font-weight: bold;">₹${s.paidAmount}</div>
-                                    <div>Outstanding:</div><div style="color: ${s.totalAmount - s.paidAmount > 0 ? '#d32f2f' : 'green'}; font-weight: bold;">₹${s.totalAmount - s.paidAmount}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Payment History Section -->
-                        ${p.payments && p.payments.length > 0 ? `
-                        <div style="margin-bottom: 25px;">
-                            <div style="font-weight: bold; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; color: #444; border-bottom: 1px dashed #ccc; padding-bottom: 4px;">Payment History</div>
-                            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
-                                <thead>
-                                    <tr style="background: #f7faf7; border-bottom: 1px solid #ddd;">
-                                        <th style="padding: 6px; font-weight: bold;">Date</th>
-                                        <th style="padding: 6px; font-weight: bold;">Transaction ID</th>
-                                        <th style="padding: 6px; font-weight: bold;">Method</th>
-                                        <th style="padding: 6px; font-weight: bold; text-align: right;">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${p.payments.map(pym => `
-                                        <tr style="border-bottom: 1px solid #eee;">
-                                            <td style="padding: 6px;">${formatDate(pym.date)}</td>
-                                            <td style="padding: 6px; font-family: monospace;">${pym.transactionId}</td>
-                                            <td style="padding: 6px;">${pym.method}</td>
-                                            <td style="padding: 6px; text-align: right; font-weight: bold;">₹${pym.amount}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                        ` : ''}
-
-                        <!-- Sign-off Block -->
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 0.85rem;">
-                            <div style="text-align: center; width: 220px;">
-                                <div style="border-top: 1px solid #000; padding-top: 8px; font-weight: 500;">Patient/Attendant Signature</div>
-                            </div>
-                            <div style="text-align: center; width: 260px;">
-                                <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: bold; color: #1b3022; text-transform: uppercase;">${p.consultant || 'Dr. VINOD KUMAR'}</div>
-                                <div style="font-size: 0.75rem; color: #555; font-style: italic;">(B.A.M.S)</div>
-                                <div style="border-top: 1px solid #000; padding-top: 8px; font-weight: bold; margin-top: 5px;">Treating Doctor / Authorised Signatory</div>
-                            </div>
-                        </div>
-
-                        <!-- Footer branding -->
-                        <div style="text-align: center; font-size: 0.7rem; color: #999; margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; display: flex; justify-content: space-between;">
-                            <div>Designed by www.softcure.in</div>
-                            <div>${p.ipdNo || 'IP-NA'} Mr. ${p.name ? p.name.toUpperCase() : ''}</div>
-                        </div>
-                    </div>
-                `;
-                    document.getElementById("dischargeModal").style.display = "flex";
-                } else { 
-                    showCustomAlert("Checkout Failed", data.message || "Failed to complete checkout process.", "❌"); 
-                }
-            } catch (e) { 
-                console.error(e); 
-                showCustomAlert("Error", "An unexpected error occurred during checkout.", "❌");
-            }
+            // Show feedback modal instead of immediate checkout
+            document.getElementById("feedbackModal").style.display = "flex";
+            setFeedbackRating(0);
+            document.getElementById("feedbackCommentInput").value = "";
         }
 
         function logout() {
-
             localStorage.removeItem('patientData');
             window.location.href = "patient-login.html";
+        }
+
+        async function fetchFeedbacks() {
+            const container = document.getElementById("aboutReviewsContainer");
+            if (!container) return;
+            
+            container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px;">Loading patient feedbacks...</div>`;
+            
+            try {
+                const res = await fetch("http://localhost:5001/api/patients/feedbacks");
+                if (res.ok) {
+                    const feedbacks = await res.json();
+                    if (feedbacks.length === 0) {
+                        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">No feedbacks submitted yet. Be the first to share your experience!</div>`;
+                        return;
+                    }
+                    
+                    let html = "";
+                    feedbacks.forEach(f => {
+                        const stars = "⭐".repeat(f.rating) + "☆".repeat(5 - f.rating);
+                        const dateStr = new Date(f.date).toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        });
+                        html += `
+                            <div class="feedback-card">
+                                <div class="feedback-card-header">
+                                    <span class="feedback-card-name">${f.name}</span>
+                                    <span class="feedback-card-stars">${stars}</span>
+                                </div>
+                                <div class="feedback-card-comment">"${f.comment}"</div>
+                                <div class="feedback-card-date">${dateStr}</div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `<div style="text-align: center; color: red; padding: 20px;">Failed to load patient reviews.</div>`;
+                }
+            } catch (err) {
+                console.error("Error fetching feedbacks:", err);
+                container.innerHTML = `<div style="text-align: center; color: red; padding: 20px;">Error loading reviews.</div>`;
+            }
         }
 
         function showSection(section) {
@@ -2359,6 +2584,10 @@
                     }
                 }
             });
+            
+            if (section === 'about') {
+                fetchFeedbacks();
+            }
         }
 
         // --- Promise-Based Custom Popups ---

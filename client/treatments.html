@@ -39,7 +39,8 @@
                 <label>Default Dos and Don'ts</label>
                 <textarea id="tDosDonts" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn">Add Treatment</button>
+            <button type="submit" id="submitBtn" class="btn">Add Treatment</button>
+            <button type="button" id="cancelBtn" class="nav-btn nav-btn-outline" style="display: none; margin-left: 10px;">Cancel</button>
         </form>
 
         <table id="treatmentsTable">
@@ -47,6 +48,8 @@
                 <tr>
                     <th>Name</th>
                     <th>Protocol</th>
+                    <th>Default Dos and Don'ts</th>
+                    <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -54,29 +57,114 @@
     </div>
 
     <script>
+        let editMode = false;
+        let currentTreatmentId = null;
+        let allTreatments = [];
+
         const loadTreatments = async () => {
-            const res = await fetch("http://localhost:5001/api/treatments");
-            const data = await res.json();
-            const tbody = document.querySelector("#treatmentsTable tbody");
-            tbody.innerHTML = "";
-            data.forEach(t => {
-                tbody.innerHTML += `<tr><td>${t.name}</td><td>${t.protocol}</td></tr>`;
-            });
+            try {
+                const res = await fetch("http://localhost:5001/api/treatments");
+                allTreatments = await res.json();
+                const tbody = document.querySelector("#treatmentsTable tbody");
+                tbody.innerHTML = "";
+                allTreatments.forEach(t => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td style="font-weight: 600;">${t.name}</td>
+                        <td style="white-space: pre-line;">${t.protocol}</td>
+                        <td style="white-space: pre-line;">${t.defaultDosAndDonts || '-'}</td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button class="nav-btn nav-btn-outline" style="padding: 5px 10px; font-size: 0.75rem; min-height: auto;" onclick="startEdit('${t._id}')">Edit</button>
+                            <button class="nav-btn" style="padding: 5px 10px; font-size: 0.75rem; min-height: auto; background-color: #d32f2f !important; border-color: #d32f2f !important;" onclick="deleteTreatment('${t._id}')">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                console.error("Error loading treatments:", e);
+            }
+        };
+
+        const startEdit = (id) => {
+            const treatment = allTreatments.find(t => t._id === id);
+            if (!treatment) return;
+            
+            editMode = true;
+            currentTreatmentId = id;
+            
+            document.getElementById("tName").value = treatment.name;
+            document.getElementById("tProtocol").value = treatment.protocol;
+            document.getElementById("tDosDonts").value = treatment.defaultDosAndDonts || "";
+            
+            document.getElementById("submitBtn").textContent = "Update Treatment";
+            document.getElementById("cancelBtn").style.display = "inline-block";
+            
+            // Scroll to the form
+            document.getElementById("treatmentForm").scrollIntoView({ behavior: 'smooth' });
+        };
+
+        const cancelEdit = () => {
+            editMode = false;
+            currentTreatmentId = null;
+            
+            document.getElementById("treatmentForm").reset();
+            document.getElementById("submitBtn").textContent = "Add Treatment";
+            document.getElementById("cancelBtn").style.display = "none";
+        };
+
+        document.getElementById("cancelBtn").onclick = cancelEdit;
+
+        const deleteTreatment = async (id) => {
+            if (!confirm("Are you sure you want to delete this treatment?")) return;
+            
+            try {
+                const res = await fetch(`http://localhost:5001/api/treatments/${id}`, {
+                    method: "DELETE"
+                });
+                if (res.ok) {
+                    if (editMode && currentTreatmentId === id) {
+                        cancelEdit();
+                    }
+                    loadTreatments();
+                } else {
+                    alert("Failed to delete treatment");
+                }
+            } catch (e) {
+                console.error("Error deleting treatment:", e);
+                alert("Error deleting treatment");
+            }
         };
 
         document.getElementById("treatmentForm").onsubmit = async (e) => {
             e.preventDefault();
-            await fetch("http://localhost:5001/api/treatments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: document.getElementById("tName").value,
-                    protocol: document.getElementById("tProtocol").value,
-                    defaultDosAndDonts: document.getElementById("tDosDonts").value
-                })
-            });
-            document.getElementById("treatmentForm").reset();
-            loadTreatments();
+            const payload = {
+                name: document.getElementById("tName").value,
+                protocol: document.getElementById("tProtocol").value,
+                defaultDosAndDonts: document.getElementById("tDosDonts").value
+            };
+
+            const url = editMode 
+                ? `http://localhost:5001/api/treatments/${currentTreatmentId}` 
+                : "http://localhost:5001/api/treatments";
+            const method = editMode ? "PUT" : "POST";
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    cancelEdit();
+                    loadTreatments();
+                } else {
+                    alert("Failed to save treatment");
+                }
+            } catch (err) {
+                console.error("Error saving treatment:", err);
+                alert("Error saving treatment");
+            }
         };
 
         loadTreatments();

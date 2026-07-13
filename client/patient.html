@@ -577,6 +577,79 @@
 
         .custom-popup-btn-cancel:hover {
             background: #e5e5e5;
+
+        /* Custom Multiselect styles */
+        .multiselect-container {
+            position: relative;
+            width: 100%;
+        }
+        .multiselect-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 10px 16px;
+            border-radius: 2px !important;
+            border: 1px solid var(--border);
+            background: #fff;
+            cursor: pointer;
+            min-height: 40px;
+            align-items: center;
+        }
+        .multiselect-placeholder {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .multiselect-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1001;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .multiselect-dropdown.show {
+            display: block;
+        }
+        .multiselect-option {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-main);
+        }
+        .multiselect-option:hover {
+            background: var(--hover-bg);
+        }
+        .multiselect-option input {
+            width: auto !important;
+            margin: 0;
+            cursor: pointer;
+        }
+        .multiselect-badge {
+            background: var(--primary);
+            color: white !important;
+            padding: 2px 8px;
+            border-radius: 2px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .multiselect-badge span.remove-badge {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
         }
     </style>
     <link rel="stylesheet" href="animations.css">
@@ -917,9 +990,14 @@
 
                 <div class="form-group">
                     <label>Treatment Plan / Protocol</label>
-                    <select id="inputTreatment" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
-                        <option value="">Select Predefined Treatment</option>
-                    </select>
+                    <div id="treatmentsMultiselectContainer" class="multiselect-container">
+                        <div id="treatmentsSelectBtn" class="multiselect-select">
+                            <span id="multiselectPlaceholder" class="multiselect-placeholder">Select Predefined Treatments</span>
+                        </div>
+                        <div id="treatmentsDropdown" class="multiselect-dropdown">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Diet Plan</label>
@@ -1106,31 +1184,95 @@
 
 <script>
 
+    let selectedTreatments = [];
+    window.predefinedTreatments = [];
+
     document.addEventListener("DOMContentLoaded", async () => {
+        const selectBtn = document.getElementById("treatmentsSelectBtn");
+        const dropdown = document.getElementById("treatmentsDropdown");
+        const placeholder = document.getElementById("multiselectPlaceholder");
+
+        // Toggle dropdown
+        selectBtn.addEventListener("click", (e) => {
+            dropdown.classList.toggle("show");
+            e.stopPropagation();
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!selectBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove("show");
+            }
+        });
+
         try {
             const res = await fetch("http://localhost:5001/api/treatments");
             if (res.ok) {
                 const treatments = await res.json();
-                window.predefinedTreatments = treatments; // store globally for auto-filling
-                const select = document.getElementById("inputTreatment");
+                window.predefinedTreatments = treatments;
+
+                // Add default General Wellness option if not present
+                if (!treatments.some(t => t.name.toLowerCase() === "general wellness")) {
+                    treatments.unshift({
+                        name: "General Wellness",
+                        protocol: "General wellness check and dietary maintenance.",
+                        defaultDosAndDonts: "Eat warm, fresh meals. Avoid iced drinks."
+                    });
+                }
+
+                dropdown.innerHTML = "";
                 treatments.forEach(t => {
-                    const opt = document.createElement("option");
-                    opt.value = t.name;
-                    opt.textContent = t.name;
-                    select.appendChild(opt);
-                });
-                
-                // Auto-fill protocol and dos/donts when a treatment is selected
-                select.addEventListener("change", (e) => {
-                    const selected = window.predefinedTreatments.find(t => t.name === e.target.value);
-                    if (selected) {
-                        if (selected.defaultDosAndDonts) {
-                            document.getElementById("inputDosDonts").value = selected.defaultDosAndDonts;
-                        }
-                    }
+                    const optionDiv = document.createElement("div");
+                    optionDiv.className = "multiselect-option";
+                    optionDiv.innerHTML = `
+                        <input type="checkbox" id="chk-${t._id || 'gen-well'}" value="${t.name}">
+                        <label for="chk-${t._id || 'gen-well'}" style="margin: 0; cursor: pointer; flex: 1; font-size: 0.95rem;">${t.name}</label>
+                    `;
+                    dropdown.appendChild(optionDiv);
+
+                    const chk = optionDiv.querySelector("input");
+                    chk.addEventListener("change", () => {
+                        updateSelectedTreatmentsDisplay(true); // User checked manually, so overwrite dosAndDonts
+                    });
                 });
             }
         } catch (e) { console.log(e); }
+
+        window.updateSelectedTreatmentsDisplay = function(overwriteDosAndDonts = true) {
+            const checkedBoxes = dropdown.querySelectorAll("input[type='checkbox']:checked");
+            selectedTreatments = Array.from(checkedBoxes).map(cb => cb.value);
+
+            selectBtn.innerHTML = "";
+            if (selectedTreatments.length === 0) {
+                selectBtn.appendChild(placeholder);
+            } else {
+                selectedTreatments.forEach(name => {
+                    const badge = document.createElement("span");
+                    badge.className = "multiselect-badge";
+                    badge.innerHTML = `${name} <span class="remove-badge" data-name="${name}">×</span>`;
+                    selectBtn.appendChild(badge);
+
+                    badge.querySelector(".remove-badge").addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const cb = Array.from(dropdown.querySelectorAll("input[type='checkbox']")).find(i => i.value === name);
+                        if (cb) {
+                            cb.checked = false;
+                            updateSelectedTreatmentsDisplay(true);
+                        }
+                    });
+                });
+            }
+
+            if (overwriteDosAndDonts) {
+                let selectedDosDontsList = [];
+                selectedTreatments.forEach(name => {
+                    const selected = window.predefinedTreatments.find(t => t.name === name);
+                    if (selected && selected.defaultDosAndDonts) {
+                        selectedDosDontsList.push(`${name}:\n${selected.defaultDosAndDonts}`);
+                    }
+                });
+                document.getElementById("inputDosDonts").value = selectedDosDontsList.join("\n\n");
+            }
+        };
     });
 
     let currentPatient = null;
@@ -1385,8 +1527,15 @@
         document.getElementById("inputMedicalHistory").value = currentPatient.medicalHistory || "";
         document.getElementById("inputRoomNumber").value = currentPatient.roomNumber || "";
         
-        // Also ensure option exists or select defaults
-        document.getElementById("inputTreatment").value = currentPatient.treatmentPlan || "";
+        // Parse treatmentPlan (e.g. "Abhyanga, Nasya") and pre-select checkboxes
+        const plans = currentPatient.treatmentPlan ? currentPatient.treatmentPlan.split(", ").map(x => x.trim()) : [];
+        const checkboxes = document.querySelectorAll("#treatmentsDropdown input[type='checkbox']");
+        checkboxes.forEach(cb => {
+            cb.checked = plans.includes(cb.value);
+        });
+        if (window.updateSelectedTreatmentsDisplay) {
+            window.updateSelectedTreatmentsDisplay(false); // Do not overwrite custom dos/donts on modal open
+        }
 
         routineModal.style.display = "flex";
     }
@@ -1474,12 +1623,23 @@
         btn.textContent = "Saving...";
         
         
-            const treatmentPlan = document.getElementById("inputTreatment").value;
+            if (selectedTreatments.length === 0) {
+                showCustomAlert("Required", "Please select at least one treatment plan.", "⚠️");
+                btn.textContent = "Save Changes";
+                return;
+            }
+            const treatmentPlan = selectedTreatments.join(", ");
             const dietPlan = document.getElementById("inputDiet").value.trim();
             let treatmentProtocol = "";
             if (window.predefinedTreatments) {
-                const selected = window.predefinedTreatments.find(t => t.name === treatmentPlan);
-                if (selected) treatmentProtocol = selected.protocol;
+                let selectedProtocols = [];
+                selectedTreatments.forEach(name => {
+                    const selected = window.predefinedTreatments.find(t => t.name === name);
+                    if (selected && selected.protocol) {
+                        selectedProtocols.push(`${name}:\n${selected.protocol}`);
+                    }
+                });
+                treatmentProtocol = selectedProtocols.join("\n\n");
             }
             
             const payload = {

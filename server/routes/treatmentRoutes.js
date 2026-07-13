@@ -23,4 +23,30 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Update an existing predefined treatment
+router.put("/:id", async (req, res) => {
+    try {
+        const treatment = await Treatment.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!treatment) {
+            return res.status(404).json({ error: "Treatment not found" });
+        }
+        res.json(treatment);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Delete a predefined treatment
+router.delete("/:id", async (req, res) => {
+    try {
+        const treatment = await Treatment.findByIdAndDelete(req.params.id);
+        if (!treatment) {
+            return res.status(404).json({ error: "Treatment not found" });
+        }
+        res.json({ message: "Treatment deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;

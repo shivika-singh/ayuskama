@@ -14,10 +14,22 @@ const razorpay = new Razorpay({
 router.post("/register", async (req, res) => {
     try {
         const patientData = req.body;
-        // Generate a patientId if none is provided
-        if (!patientData.patientId) {
+        // Generate a patientId if none is provided, ensuring uniqueness
+        if (patientData.patientId) {
+            const existing = await Patient.findOne({ patientId: patientData.patientId });
+            if (existing) {
+                return res.status(400).json({ message: `Patient ID ${patientData.patientId} is already registered.` });
+            }
+        } else {
             const roomNum = patientData.roomNumber || Math.floor(100 + Math.random() * 900);
-            patientData.patientId = "ayush_" + roomNum;
+            const baseId = "ayush_" + roomNum;
+            let tempId = baseId;
+            let counter = 1;
+            while (await Patient.findOne({ patientId: tempId })) {
+                counter++;
+                tempId = `${baseId}_${counter}`;
+            }
+            patientData.patientId = tempId;
         }
         
         // Auto-generate password: first 3 letters of name + "-" + roomNumber
@@ -51,6 +63,26 @@ router.get("/", async (req, res) => {
     try {
         const patients = await Patient.find();
         res.json(patients);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get all patient feedbacks
+router.get("/feedbacks", async (req, res) => {
+    try {
+        const patients = await Patient.find({ "feedback.rating": { $exists: true, $ne: null } })
+            .select("name feedback checkOutDate")
+            .sort({ "feedback.date": -1 });
+        
+        const feedbacks = patients.map(p => ({
+            name: p.name,
+            rating: p.feedback.rating,
+            comment: p.feedback.comment,
+            date: p.feedback.date || p.checkOutDate || p.createdAt
+        }));
+        
+        res.json(feedbacks);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -324,6 +356,19 @@ router.post("/:id/checkout", async (req, res) => {
                 message: `Checkout blocked. Outstanding fees of ₹${outstanding} must be paid before discharge.` 
             });
         }
+
+        const { rating, comment } = req.body;
+        if (!rating || !comment || comment.trim() === "") {
+            return res.status(400).json({ 
+                message: "Feedback is mandatory. Please provide a rating and comment before checking out." 
+            });
+        }
+
+        patient.feedback = {
+            rating: Number(rating),
+            comment: comment.trim(),
+            date: new Date()
+        };
 
         patient.dischargeSummary = {
             stayDuration: `${diffDays} Days`,
