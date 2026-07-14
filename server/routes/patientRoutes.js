@@ -103,6 +103,10 @@ router.put("/:id/medicines", async (req, res) => {
         const patient = await Patient.findById(req.params.id);
         if (!patient) return res.status(404).json({ message: "Patient not found" });
         
+        if (patient.status === 'checked-out') {
+            return res.status(400).json({ message: "Patient has already checked out. Profile is locked and cannot be modified." });
+        }
+
         patient.medicines = req.body.medicines;
         await patient.save();
         
@@ -116,6 +120,10 @@ router.put("/:id/routine", async (req, res) => {
     try {
         const patient = await Patient.findById(req.params.id);
         if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+        if (patient.status === 'checked-out') {
+            return res.status(400).json({ message: "Patient has already checked out. Profile is locked and cannot be modified." });
+        }
         
         if (req.body.assignedTherapist !== undefined) patient.assignedTherapist = req.body.assignedTherapist;
         if (req.body.treatmentRoom !== undefined) patient.treatmentRoom = req.body.treatmentRoom;
@@ -250,6 +258,10 @@ router.post("/:id/pay", async (req, res) => {
         const patient = await Patient.findById(req.params.id);
         if (!patient) return res.status(404).json({ message: "Patient not found" });
 
+        if (patient.status === 'checked-out') {
+            return res.status(400).json({ message: "Patient has already checked out. Profile is locked and cannot be modified." });
+        }
+
         const amount = Number(req.body.amount);
         if (isNaN(amount) || amount <= 0) {
             return res.status(400).json({ message: "Invalid payment amount" });
@@ -340,6 +352,14 @@ router.post("/:id/checkout", async (req, res) => {
     try {
         const patient = await Patient.findById(req.params.id);
         if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+        if (patient.status === 'checked-out') {
+            return res.status(400).json({ 
+                message: "Patient is already checked out.", 
+                dischargeSummary: patient.dischargeSummary,
+                patient
+            });
+        }
 
         // Calculate stay duration
         const checkIn = patient.checkInDate ? new Date(patient.checkInDate) : patient.createdAt;

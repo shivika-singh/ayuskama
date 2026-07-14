@@ -163,6 +163,14 @@
             font-weight: 600;
         }
 
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
         /* Content Sections */
         .content-grid {
             display: grid;
@@ -660,7 +668,7 @@
 <!-- Navigation Bar -->
 <div class="navbar">
     <a href="dashboard.html" class="brand-logo">
-        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayus<span>kama</span> <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
+        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayuskama <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
     </a>
     <div class="nav-links">
         <a href="dashboard.html" class="nav-btn nav-btn-outline">← Back to Dashboard</a>
@@ -691,6 +699,7 @@
                 
                 <p>
                     <span class="status-badge" id="patientId">ID: Loading...</span>
+                    <span class="badge" id="patientStatus" style="margin-left: 10px; display: none;">Admitted</span>
                     Registered: <span id="patientDate">Loading...</span>
                 </p>
                 <div style="margin-top: 10px; display: flex; gap: 15px;">
@@ -703,6 +712,11 @@
                 </div>
 
             </div>
+        </div>
+
+        <div id="lockBanner" style="display: none; align-items: center; gap: 10px; background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; border: 1px solid #ef9a9a;">
+            <span>🔒</span>
+            <span>Checked Out - This patient profile is locked. Routine, medicines, and payments cannot be modified.</span>
         </div>
 
         <div class="content-grid">
@@ -819,7 +833,7 @@
             <div class="card full-width">
                 <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h2>💰 Billing & Payment Status</h2>
-                    <button class="nav-btn" style="padding: 6px 12px; font-size: 0.9rem; background: var(--primary); color: white;" onclick="openAddPaymentModal()">Record Payment</button>
+                    <button id="btnRecordPayment" class="nav-btn" style="padding: 6px 12px; font-size: 0.9rem; background: var(--primary); color: white;" onclick="openAddPaymentModal()">Record Payment</button>
                 </div>
                 <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                     <div>
@@ -869,7 +883,7 @@
             <div class="card full-width">
                 <div class="card-header">
                     <h2>🕒 Daily Routine & Logistics</h2>
-                    <button class="nav-btn nav-btn-outline" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openRoutineModal()">Edit Routine</button>
+                    <button id="btnEditRoutine" class="nav-btn nav-btn-outline" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openRoutineModal()">Edit Routine</button>
                 </div>
                 <div class="card-body">
                     <div class="routine-grid-container">
@@ -944,7 +958,7 @@
             <div class="card full-width">
                 <div class="card-header">
                     <h2>💊 Assigned Medicines</h2>
-                    <button class="nav-btn nav-btn-outline" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openMedicinesModal()">Edit Medicines</button>
+                    <button id="btnEditMedicines" class="nav-btn nav-btn-outline" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openMedicinesModal()">Edit Medicines</button>
                 </div>
                 <div style="overflow-x: auto;">
                     <table>
@@ -972,22 +986,7 @@
                 <button class="close-btn" onclick="closeRoutineModal()">✕</button>
             </div>
             <div class="modal-body" style="display: flex; flex-direction: column; gap: 15px;">
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Check-In Date</label>
-                        <input type="date" id="inputCheckIn" style="width: 100%; padding: 10px;">
-                    </div>
-                    <div class="form-group">
-                        <label>Check-Out Date</label>
-                        <input type="date" id="inputCheckOut" style="width: 100%; padding: 10px;">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Assigned Therapist</label>
-                    <input type="text" id="inputTherapist" placeholder="E.g. Dr. Neetu Singh" style="width: 100%; padding: 10px;">
-                </div>
-
+                <!-- Visible fields for adding/editing routine -->
                 <div class="form-group">
                     <label>Treatment Plan / Protocol</label>
                     <div id="treatmentsMultiselectContainer" class="multiselect-container">
@@ -999,130 +998,54 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group">
-                    <label>Diet Plan</label>
-                    <input type="text" id="inputDiet" placeholder="E.g. Vata Pacifying Diet" style="width: 100%; padding: 10px;">
+                    <label>Assigned Therapist</label>
+                    <input type="text" id="inputTherapist" placeholder="E.g. Dr. Neetu Singh" style="width: 100%; padding: 10px;">
                 </div>
-                <div class="form-group">
-                    <label>Treatment Room</label>
-                    <select id="inputRoom" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
-                        <option value="">Select Room</option>
-                        <option value="Ground Floor 1">Ground Floor 1</option>
-                        <option value="Ground Floor 2">Ground Floor 2</option>
-                        <option value="4th Floor 1">4th Floor 1</option>
-                        <option value="4th Floor 2">4th Floor 2</option>
-                        <option value="4th Floor 3">4th Floor 3</option>
-                    </select>
-                </div>
+
                 <div class="form-group">
                     <label>Treatment Time</label>
                     <input type="time" id="inputTreatmentTime" style="width: 100%; padding: 10px;">
                 </div>
-                <div class="form-group">
-                    <label>Yoga Timing</label>
-                    <input type="time" id="inputYoga" style="width: 100%; padding: 10px;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Breakfast</label>
-                        <input type="time" id="inputBreakfast" style="width: 100%; padding: 10px;">
-                    </div>
-                    <div class="form-group">
-                        <label>Lunch</label>
-                        <input type="time" id="inputLunch" style="width: 100%; padding: 10px;">
-                    </div>
-                    <div class="form-group">
-                        <label>Dinner</label>
-                        <input type="time" id="inputDinner" style="width: 100%; padding: 10px;">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Dos and Don'ts</label>
-                    <textarea id="inputDosDonts" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);" placeholder="What to eat, what to avoid..."></textarea>
-                </div>
-                <div style="border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 15px;">
-                    <h3 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 10px;">Patient Profile & Insurance Info</h3>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Age</label>
-                        <input type="number" id="inputAge" style="width: 100%; padding: 10px;">
-                    </div>
-                    <div class="form-group">
-                        <label>Gender</label>
-                        <select id="inputGender" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Guardian Name (S/D/W/O)</label>
-                    <input type="text" id="inputGuardianName" style="width: 100%; padding: 10px;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Contact Number</label>
-                        <input type="text" id="inputPhone" style="width: 100%; padding: 10px;">
-                    </div>
-                    <div class="form-group">
-                        <label>Emergency Contact</label>
-                        <input type="text" id="inputEmergencyContact" style="width: 100%; padding: 10px;">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Residential Address</label>
-                    <textarea id="inputAddress" rows="2" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>ABHA Number</label>
-                        <input type="text" id="inputAbhaNumber" style="width: 100%; padding: 10px;">
-                    </div>
-                    <div class="form-group">
-                        <label>ABHA Address</label>
-                        <input type="text" id="inputAbhaAddress" style="width: 100%; padding: 10px;">
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Insurance Panel</label>
-                        <input type="text" id="inputPanel" style="width: 100%; padding: 10px;">
-                    </div>
-                    <div class="form-group">
-                        <label>Policy / CCN Number</label>
-                        <input type="text" id="inputPolicyNo" style="width: 100%; padding: 10px;">
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Treating Consultant</label>
-                        <select id="inputConsultant" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
-                            <option value="Dr. VINOD KUMAR">Dr. VINOD KUMAR</option>
-                            <option value="Dr. NEETU SINGH">Dr. NEETU SINGH</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Department</label>
-                        <input type="text" id="inputDepartment" style="width: 100%; padding: 10px;">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Primary Condition / Disease</label>
-                    <input type="text" id="inputDisease" style="width: 100%; padding: 10px;">
-                </div>
-                <div class="form-group">
-                    <label>Symptoms & Complaints</label>
-                    <textarea id="inputSymptoms" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Medical History</label>
-                    <textarea id="inputMedicalHistory" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Allotted Room / Ward</label>
-                    <input type="text" id="inputRoomNumber" style="width: 100%; padding: 10px;">
+
+                <!-- Hidden inputs to preserve registration details and saveRoutine functionality -->
+                <div style="display: none;">
+                    <input type="date" id="inputCheckIn">
+                    <input type="date" id="inputCheckOut">
+                    <input type="text" id="inputDiet">
+                    <select id="inputRoom">
+                        <option value=""></option>
+                    </select>
+                    <input type="time" id="inputYoga">
+                    <input type="time" id="inputBreakfast">
+                    <input type="time" id="inputLunch">
+                    <input type="time" id="inputDinner">
+                    <textarea id="inputDosDonts"></textarea>
+                    
+                    <input type="number" id="inputAge">
+                    <select id="inputGender">
+                        <option value="Male"></option>
+                    </select>
+                    <input type="text" id="inputGuardianName">
+                    <input type="text" id="inputPhone">
+                    <input type="text" id="inputEmergencyContact">
+                    <textarea id="inputAddress"></textarea>
+                    
+                    <input type="text" id="inputAbhaNumber">
+                    <input type="text" id="inputAbhaAddress">
+                    <input type="text" id="inputPanel">
+                    <input type="text" id="inputPolicyNo">
+                    
+                    <select id="inputConsultant">
+                        <option value="Dr. VINOD KUMAR"></option>
+                    </select>
+                    <input type="text" id="inputDepartment">
+                    
+                    <input type="text" id="inputDisease">
+                    <textarea id="inputSymptoms"></textarea>
+                    <textarea id="inputMedicalHistory"></textarea>
+                    <input type="text" id="inputRoomNumber">
                 </div>
             </div>
             <div class="modal-footer">
@@ -1313,6 +1236,33 @@
         // Hide loader, show content
         loader.style.display = "none";
         content.style.display = "block";
+
+        // Check-out status & locking UI logic
+        const isCheckedOut = patient.status === 'checked-out';
+        const statusBadge = document.getElementById("patientStatus");
+        const lockBanner = document.getElementById("lockBanner");
+        
+        statusBadge.textContent = isCheckedOut ? "Checked Out" : "Admitted";
+        statusBadge.style.display = "inline-block";
+        if (isCheckedOut) {
+            statusBadge.style.background = "#eceff1";
+            statusBadge.style.color = "#455a64";
+            lockBanner.style.display = "flex";
+            
+            // Hide the buttons
+            document.getElementById("btnRecordPayment").style.display = "none";
+            document.getElementById("btnEditRoutine").style.display = "none";
+            document.getElementById("btnEditMedicines").style.display = "none";
+        } else {
+            statusBadge.style.background = "#e8f5e9";
+            statusBadge.style.color = "#2e7d32";
+            lockBanner.style.display = "none";
+            
+            // Show the buttons
+            document.getElementById("btnRecordPayment").style.display = "inline-block";
+            document.getElementById("btnEditRoutine").style.display = "inline-block";
+            document.getElementById("btnEditMedicines").style.display = "inline-block";
+        }
 
         // Map data (handling both real DB keys and dummy keys)
         document.getElementById("patientName").textContent = patient.name || "Unknown Patient";

@@ -296,6 +296,16 @@
             color: #b37322;
         }
 
+        .badge-admitted {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-checkout {
+            background: #eceff1;
+            color: #455a64;
+        }
+
         .action-link {
             color: var(--primary);
             text-decoration: none;
@@ -357,7 +367,7 @@
 <!-- Navigation Bar -->
 <div class="navbar">
     <a href="dashboard.html" class="brand-logo">
-        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayus<span>kama</span> <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
+        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayuskama <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
     </a>
     <div class="nav-links">
         <a href="treatments.html" class="nav-btn nav-btn-outline">⚙️ Treatments</a>
@@ -390,26 +400,31 @@
         <div class="stat-card">
             <div class="stat-icon gold">🛏️</div>
             <div class="stat-content">
-                <h3>12</h3>
+                <h3 id="availableRoomsCounter">12</h3>
                 <p>Available Rooms / Wards</p>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon blue">🌿</div>
             <div class="stat-content">
-                <h3>8</h3>
+                <h3 id="activeTreatmentsCounter">8</h3>
                 <p>Active Treatment Plans</p>
             </div>
         </div>
     </div>
 
-    <!-- Active Patients List -->
-    <div class="card">
+    <!-- Search Bar -->
+    <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+        <div style="display: flex; gap: 15px; align-items: center; width: 100%;">
+            <span style="font-size: 1.2rem;">🔍</span>
+            <input type="text" id="searchPatients" placeholder="Search patients by name, room, or treatment plan..." style="flex: 1; padding: 12px 18px; border-radius: 12px; border: 1px solid var(--border); font-size: 1.05rem; background: #fafcfa; transition: all 0.3s ease; outline: none;">
+        </div>
+    </div>
+
+    <!-- Currently Admitted Patients List -->
+    <div class="card" style="margin-bottom: 2rem;">
         <div class="card-header">
             <h2>Currently Admitted Patients</h2>
-            <div class="search-box">
-                <input type="text" id="searchPatients" placeholder="Search patients...">
-            </div>
         </div>
         
         <div class="table-responsive">
@@ -424,7 +439,32 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="patientTableBody">
+                <tbody id="activePatientsTableBody">
+                    <!-- Dynamic Content populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Checked Out Patients List -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Past Patients (Checked Out)</h2>
+        </div>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Age</th>
+                        <th>Room / Ward</th>
+                        <th>Treatment Plan</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="pastPatientsTableBody">
                     <!-- Dynamic Content populated by JS -->
                 </tbody>
             </table>
@@ -442,65 +482,119 @@
         { id: 4, name: "Priya Patel", age: 29, room: "Room 201", treatment: "Detoxification", phone: "+91 65432 10987" }
     ];
 
-    const tableBody = document.getElementById("patientTableBody");
+    const activeTableBody = document.getElementById("activePatientsTableBody");
+    const pastTableBody = document.getElementById("pastPatientsTableBody");
     const searchInput = document.getElementById("searchPatients");
     const counter = document.getElementById("totalPatientsCounter");
 
     function getInitials(name) {
+        if (!name) return "??";
         return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     }
 
-    function renderTable(patients) {
-        counter.textContent = patients.length;
-        tableBody.innerHTML = "";
+    function renderTables(patients) {
+        // Calculate dynamic stats based on ALL fetched patients (not filtered by search)
+        const allActivePatients = dummyPatients.filter(p => p.status !== 'checked-out');
+        counter.textContent = allActivePatients.length;
 
-        if (patients.length === 0) {
-            tableBody.innerHTML = `
+        // Active treatments count
+        const activeTreatments = allActivePatients.filter(p => p.treatmentPlan || p.treatment).length;
+        document.getElementById("activeTreatmentsCounter").textContent = activeTreatments;
+
+        // Available rooms (Total 15 minus occupied by active patients)
+        const occupiedRooms = new Set(
+            allActivePatients.map(p => p.roomNumber || p.room).filter(r => r && r !== 'N/A')
+        ).size;
+        const availableRooms = Math.max(0, 15 - occupiedRooms);
+        document.getElementById("availableRoomsCounter").textContent = availableRooms;
+
+        // Filter list for specific tables
+        const activePatients = patients.filter(p => p.status !== 'checked-out');
+        const pastPatients = patients.filter(p => p.status === 'checked-out');
+
+        // Render Active Patients Table
+        activeTableBody.innerHTML = "";
+        if (activePatients.length === 0) {
+            activeTableBody.innerHTML = `
                 <tr>
                     <td colspan="6">
                         <div class="empty-state">
                             <span>📭</span>
-                            <p>No patients found.</p>
+                            <p>No admitted patients found.</p>
                         </div>
                     </td>
                 </tr>
             `;
-            return;
+        } else {
+            activePatients.forEach(patient => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <div class="patient-name">
+                            <div class="avatar">${getInitials(patient.name)}</div>
+                            <span>${patient.name}</span>
+                        </div>
+                    </td>
+                    <td>${patient.age || 'N/A'} yrs</td>
+                    <td><span class="badge badge-room">${patient.roomNumber || patient.room || 'N/A'}</span></td>
+                    <td>${patient.treatmentPlan || patient.treatment || 'N/A'}</td>
+                    <td>${patient.phone || 'N/A'}</td>
+                    <td>
+                        <a href="patient.html?id=${patient._id || patient.id}" class="action-link">View Details</a>
+                    </td>
+                `;
+                activeTableBody.appendChild(tr);
+            });
         }
 
-        patients.forEach(patient => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>
-                    <div class="patient-name">
-                        <div class="avatar">${getInitials(patient.name)}</div>
-                        <span>${patient.name}</span>
-                    </div>
-                </td>
-                <td>${patient.age} yrs</td>
-                <td><span class="badge badge-room">${patient.roomNumber || patient.room || 'N/A'}</span></td>
-                <td>${patient.treatmentPlan || patient.treatment || 'N/A'}</td>
-                <td>${patient.phone || 'N/A'}</td>
-                <td>
-                    <a href="patient.html?id=${patient._id || patient.id}" class="action-link">View Details</a>
-                </td>
+        // Render Past Patients Table
+        pastTableBody.innerHTML = "";
+        if (pastPatients.length === 0) {
+            pastTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <span>📭</span>
+                            <p>No checked out patients found.</p>
+                        </div>
+                    </td>
+                </tr>
             `;
-            tableBody.appendChild(tr);
-        });
+        } else {
+            pastPatients.forEach(patient => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <div class="patient-name">
+                            <div class="avatar">${getInitials(patient.name)}</div>
+                            <span>${patient.name}</span>
+                        </div>
+                    </td>
+                    <td>${patient.age || 'N/A'} yrs</td>
+                    <td><span class="badge badge-room">${patient.roomNumber || patient.room || 'N/A'}</span></td>
+                    <td>${patient.treatmentPlan || patient.treatment || 'N/A'}</td>
+                    <td>${patient.phone || 'N/A'}</td>
+                    <td>
+                        <a href="patient.html?id=${patient._id || patient.id}" class="action-link">View Details</a>
+                    </td>
+                `;
+                pastTableBody.appendChild(tr);
+            });
+        }
     }
 
     // Initial render
-    renderTable(dummyPatients);
+    renderTables(dummyPatients);
 
     // Search functionality
     searchInput.addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = dummyPatients.filter(p => 
-            p.name.toLowerCase().includes(term) || 
-            p.room.toLowerCase().includes(term) ||
-            p.treatment.toLowerCase().includes(term)
+            (p.name && p.name.toLowerCase().includes(term)) || 
+            ((p.roomNumber || p.room || "").toLowerCase().includes(term)) ||
+            ((p.treatmentPlan || p.treatment || "").toLowerCase().includes(term))
         );
-        renderTable(filtered);
+        renderTables(filtered);
     });
 
     // Fetch real data from your backend
@@ -513,10 +607,10 @@
                     dummyPatients = data; // replace dummy data with real data
                 }
             }
-            renderTable(dummyPatients);
+            renderTables(dummyPatients);
         } catch(err) {
             console.error("Failed to fetch patients, using dummy data", err);
-            renderTable(dummyPatients);
+            renderTables(dummyPatients);
         }
     }
     window.onload = fetchPatients;
