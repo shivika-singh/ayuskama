@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayuskama - Admin Login</title>
+    <title>Ayuskama - Therapist Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -25,12 +25,10 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            
         }
 
         body {
@@ -63,7 +61,7 @@
             left: 0;
             width: 100%;
             height: 6px;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
         }
 
         .brand-header {
@@ -143,25 +141,10 @@
             gap: 10px;
         }
 
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: all 0.5s ease;
-        }
-
         .submit-btn:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(43, 89, 63, 0.2);
-        }
-
-        .submit-btn:hover::before {
-            left: 100%;
         }
 
         .alert-error {
@@ -174,8 +157,8 @@
             font-size: 0.95rem;
             align-items: center;
             gap: 10px;
-            background: var(--error-bg);
-            color: var(--error);
+            background: #fdf2f2;
+            color: #ec5959;
             border: 1px solid #f5c6cb;
         }
 
@@ -197,8 +180,11 @@
 
 <div class="login-container">
     <div class="brand-header">
-        <h1 style="display: flex; align-items: center; gap: 12px; justify-content: inherit;"><img src="assets/logo.jpg" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> Ayuskama</h1>
-        <p>Admin Portal Login</p>
+        <h1 style="display: flex; align-items: center; gap: 12px; justify-content: inherit;">
+            <img src="assets/logo.jpg" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> 
+            Ayuskama
+        </h1>
+        <p>Therapist Portal Login</p>
     </div>
 
     <div id="errorMsg" class="alert-error">
@@ -208,7 +194,7 @@
     <form id="loginForm">
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Enter your username" required autocomplete="username">
+            <input type="text" id="username" placeholder="Enter your therapist username" required autocomplete="username">
         </div>
 
         <div class="form-group">
@@ -220,12 +206,12 @@
             Sign In <span>→</span>
         </button>
     </form>
-    
+
     <div style="margin-top: 1.5rem; text-align: center; font-size: 0.95rem;">
-        <span style="color: var(--text-muted);">Are you a therapist?</span>
-        <a href="therapist-login.html" style="color: var(--primary-dark); font-weight: 600; text-decoration: none; margin-left: 5px; transition: color 0.2s;">Therapist Login</a>
+        <span style="color: var(--text-muted);">Are you an administrator?</span>
+        <a href="login.html" style="color: var(--primary-dark); font-weight: 600; text-decoration: none; margin-left: 5px; transition: color 0.2s;">Admin Login</a>
     </div>
-    
+
     <div style="margin-top: 1rem; text-align: center;">
         <a href="#" onclick="openResetModal(event)" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; transition: color 0.2s;">Forgot Password?</a>
     </div>
@@ -237,14 +223,18 @@
         <button onclick="closeResetModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
         <div class="brand-header" style="margin-bottom: 1.5rem;">
             <h2 style="font-size: 1.8rem; color: var(--primary-dark); font-weight: 600;">Reset Password</h2>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Enter your username to set a new password</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Verify credentials to set a new password</p>
         </div>
         <div id="resetErrorMsg" class="alert-error" style="margin-bottom: 15px; display: none;"></div>
         <div id="resetSuccessMsg" style="display: none; padding: 12px; background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; font-weight: 500;"></div>
         <form id="resetForm">
             <div class="form-group" style="margin-bottom: 1rem;">
                 <label for="resetUsername">Username</label>
-                <input type="text" id="resetUsername" placeholder="Enter admin username" required>
+                <input type="text" id="resetUsername" placeholder="Enter therapist username" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="resetPhone">Registered Phone Number</label>
+                <input type="text" id="resetPhone" placeholder="e.g. +91 xxxxx xxxxx" required>
             </div>
             <div class="form-group" style="margin-bottom: 1.5rem;">
                 <label for="resetNewPassword">New Password</label>
@@ -255,18 +245,34 @@
     </div>
 </div>
 
+<!-- First Time Login / Reset Password Modal -->
+<div id="firstTimeModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px);">
+    <div class="login-container" style="max-width: 420px; padding: 2.5rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); background: white; position: relative;">
+        <div class="brand-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.8rem; color: var(--primary-dark); font-weight: 600;">First Time Login</h2>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Set a new personal password for your account</p>
+        </div>
+        <div id="firstTimeErrorMsg" class="alert-error" style="margin-bottom: 15px; display: none;"></div>
+        <form id="firstTimeForm">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="firstTimePassword">New Password</label>
+                <input type="password" id="firstTimePassword" placeholder="Enter new password" required>
+            </div>
+            <button type="submit" class="submit-btn" id="firstTimeSubmitBtn" style="margin-top: 0; padding: 12px;">Update & Log In</button>
+        </form>
+    </div>
+</div>
+
 <script>
     const form = document.getElementById("loginForm");
     const errorMsg = document.getElementById("errorMsg");
     const loginBtn = document.getElementById("loginBtn");
-    
+    let tempTherapist = null;
+
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
-        
-        // Hide previous errors
         errorMsg.style.display = "none";
-        
-        // Add loading state
+
         const originalText = loginBtn.innerHTML;
         loginBtn.innerHTML = "Authenticating... <span>⏳</span>";
         loginBtn.style.opacity = "0.8";
@@ -276,7 +282,7 @@
         const password = document.getElementById("password").value;
 
         try {
-            const response = await fetch('http://localhost:5001/api/admin/login', {
+            const response = await fetch('http://localhost:5001/api/therapists/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -287,8 +293,20 @@
             const data = await response.json();
 
             if (response.ok) {
-                // Success - redirect to dashboard
-                window.location.href = "dashboard.html";
+                // If password hasn't been changed yet (first-time login)
+                if (data.therapist.passwordChanged === false) {
+                    tempTherapist = data.therapist;
+                    document.getElementById("firstTimeModal").style.display = "flex";
+                    document.getElementById("firstTimePassword").value = "";
+                    document.getElementById("firstTimeErrorMsg").style.display = "none";
+                } else {
+                    // Store therapist details in localStorage
+                    localStorage.setItem('therapistData', JSON.stringify(data.therapist));
+                    localStorage.setItem('role', 'therapist');
+                    
+                    // Redirect to therapist details schedule page
+                    window.location.href = `therapist-details.html?id=${data.therapist.id}&role=therapist`;
+                }
             } else {
                 showError(data.message || "Invalid username or password.");
             }
@@ -296,7 +314,6 @@
             console.error(err);
             showError("Unable to connect to server. Please try again.");
         } finally {
-            // Restore button
             loginBtn.innerHTML = originalText;
             loginBtn.style.opacity = "1";
             loginBtn.disabled = false;
@@ -307,23 +324,22 @@
         errorMsg.innerHTML = `<span>❌</span> ${msg}`;
         errorMsg.style.display = "flex";
         
-        // Shake effect on the container
         const container = document.querySelector('.login-container');
         container.style.transform = "translateX(5px)";
         setTimeout(() => container.style.transform = "translateX(-5px)", 100);
         setTimeout(() => container.style.transform = "translateX(5px)", 200);
         setTimeout(() => container.style.transform = "translateX(0)", 300);
         
-        // Clear password field on fail
         document.getElementById("password").value = "";
         document.getElementById("password").focus();
     }
 
-    // Modal controls for Forgot Password
+    // Modal controls
     function openResetModal(e) {
         e.preventDefault();
         document.getElementById("resetModal").style.display = "flex";
         document.getElementById("resetUsername").value = "";
+        document.getElementById("resetPhone").value = "";
         document.getElementById("resetNewPassword").value = "";
         document.getElementById("resetErrorMsg").style.display = "none";
         document.getElementById("resetSuccessMsg").style.display = "none";
@@ -344,6 +360,7 @@
         resetSuccessMsg.style.display = "none";
 
         const username = document.getElementById("resetUsername").value.trim();
+        const phone = document.getElementById("resetPhone").value.trim();
         const newPassword = document.getElementById("resetNewPassword").value;
 
         const originalText = resetBtn.innerHTML;
@@ -351,10 +368,10 @@
         resetBtn.disabled = true;
 
         try {
-            const res = await fetch('http://localhost:5001/api/admin/reset-password', {
+            const res = await fetch('http://localhost:5001/api/therapists/reset-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, newPassword })
+                body: JSON.stringify({ username, phone, newPassword })
             });
             const data = await res.json();
             if (res.ok) {
@@ -376,8 +393,51 @@
             resetBtn.disabled = false;
         }
     });
+
+    // First time password update submission
+    const firstTimeForm = document.getElementById("firstTimeForm");
+    const firstTimeErrorMsg = document.getElementById("firstTimeErrorMsg");
+    const firstTimeSubmitBtn = document.getElementById("firstTimeSubmitBtn");
+
+    firstTimeForm.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        firstTimeErrorMsg.style.display = "none";
+
+        const newPassword = document.getElementById("firstTimePassword").value;
+        if (!newPassword) return;
+
+        const originalText = firstTimeSubmitBtn.innerHTML;
+        firstTimeSubmitBtn.innerHTML = "Saving... <span>⏳</span>";
+        firstTimeSubmitBtn.disabled = true;
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/therapists/${tempTherapist.id}/password`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newPassword })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                // Successful update. Now complete log in!
+                tempTherapist.passwordChanged = true;
+                localStorage.setItem('therapistData', JSON.stringify(tempTherapist));
+                localStorage.setItem('role', 'therapist');
+                window.location.href = `therapist-details.html?id=${tempTherapist.id}&role=therapist`;
+            } else {
+                firstTimeErrorMsg.innerHTML = `<span>❌</span> ${data.message || "Failed to update password."}`;
+                firstTimeErrorMsg.style.display = "flex";
+            }
+        } catch (err) {
+            console.error(err);
+            firstTimeErrorMsg.innerHTML = `<span>❌</span> Connection error to server.`;
+            firstTimeErrorMsg.style.display = "flex";
+        } finally {
+            firstTimeSubmitBtn.innerHTML = originalText;
+            firstTimeSubmitBtn.disabled = false;
+        }
+    });
 </script>
 
-    <script src="animations.js"></script>
+<script src="animations.js"></script>
 </body>
 </html>

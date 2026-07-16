@@ -475,8 +475,11 @@
         <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayuskama <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
     </a>
     <div class="nav-links">
-        <a href="therapist.html" class="nav-btn nav-btn-outline">👨‍⚕️ Therapists</a>
-        <a href="dashboard.html" class="nav-btn nav-btn-outline">📊 Dashboard</a>
+        <a href="treatments.html" class="nav-btn nav-btn-outline">Treatments</a>
+        <a href="register.html" class="nav-btn nav-btn-outline">New Patient</a>
+        <a href="therapist.html" class="nav-btn nav-btn-outline">Therapists</a>
+        <a href="dashboard.html" class="nav-btn nav-btn-outline">Dashboard</a>
+        <a href="login.html" class="nav-btn nav-btn-solid">Logout</a>
     </div>
 </div>
 
@@ -493,7 +496,7 @@
     <div class="timetable-container">
         <div class="timetable-header">
             <h2>Today's Schedule</h2>
-            <button class="nav-btn nav-btn-solid" onclick="openAddModal()">+ Add Session</button>
+            <button class="nav-btn nav-btn-solid" id="addSessionBtn" onclick="openAddModal()">+ Add Session</button>
         </div>
 
         <div class="timetable-grid" id="timetableGrid">
@@ -516,6 +519,50 @@
             <div class="slots-container" id="slotsContainer"></div>
         </div>
     </div>
+
+    <!-- Daily Attendance Section -->
+    <div class="timetable-container" id="attendanceSection" style="margin-top: 2rem; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(43,89,63,0.05); background: white; border: 1px solid var(--border); display: none;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 0.5rem;">🕒 Daily Attendance</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Mark your check-in and check-out times for today.</p>
+        
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <button id="checkInBtn" class="nav-btn nav-btn-solid" onclick="handleCheckIn()" style="padding: 12px 24px; font-weight: 600;">Check In</button>
+            <button id="checkOutBtn" class="nav-btn nav-btn-outline" onclick="handleCheckOut()" style="padding: 12px 24px; font-weight: 600;" disabled>Check Out</button>
+            
+            <div id="attendanceStatus" style="font-size: 1rem; font-weight: 500; color: var(--text-main); margin-left: 10px;">
+                Status: Loading...
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance History Log Section -->
+    <div class="timetable-container" id="attendanceHistorySection" style="margin-top: 2rem; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(43,89,63,0.05); background: white; border: 1px solid var(--border);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 0.2rem;">Attendance History</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Record of daily check-in and check-out times.</p>
+            </div>
+            <button class="nav-btn nav-btn-outline" onclick="loadAttendanceHistory()" style="padding: 8px 16px; font-size: 0.9rem;">Refresh History</button>
+        </div>
+        
+        <div class="table-responsive">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border);">
+                        <th style="padding: 12px 10px; font-weight: 600; color: var(--primary-dark); font-family: 'Montserrat', sans-serif;">Date</th>
+                        <th style="padding: 12px 10px; font-weight: 600; color: var(--primary-dark); font-family: 'Montserrat', sans-serif;">Check In</th>
+                        <th style="padding: 12px 10px; font-weight: 600; color: var(--primary-dark); font-family: 'Montserrat', sans-serif;">Check Out</th>
+                        <th style="padding: 12px 10px; font-weight: 600; color: var(--primary-dark); font-family: 'Montserrat', sans-serif;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceHistoryTableBody">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">Loading history...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Add/Edit Session Modal -->
@@ -528,30 +575,65 @@
         <form id="sessionForm">
             <input type="hidden" id="sessionId">
             
-            <div class="form-group">
-                <label>Patient ID</label>
-                <input type="text" id="patientId" class="form-control" required placeholder="e.g. ayush_101">
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Select Admitted Patient</label>
+                <select id="patientSelect" class="form-control" onchange="onPatientSelectChange()" required>
+                    <option value="">-- Choose Patient --</option>
+                </select>
             </div>
+            
+            <input type="hidden" id="patientId">
 
-            <div class="form-group">
-                <label>Patient Name</label>
-                <input type="text" id="patientName" class="form-control" required placeholder="Enter patient name">
-            </div>
-
-            <div class="form-group">
-                <label>Treatment / Notes</label>
-                <input type="text" id="treatment" class="form-control" required placeholder="e.g. Abhyanga Massage">
-            </div>
-
-            <div class="form-row">
+            <div class="form-row" style="margin-bottom: 1rem;">
                 <div class="form-group">
-                    <label>Start Time</label>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Patient Name</label>
+                    <input type="text" id="patientName" class="form-control" required placeholder="Patient Name">
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Room / Ward No.</label>
+                    <input type="text" id="roomNumber" class="form-control" placeholder="e.g. Room 102">
+                </div>
+            </div>
+
+            <div class="form-row" style="margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Age</label>
+                    <input type="number" id="patientAge" class="form-control" placeholder="Age">
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Gender</label>
+                    <select id="patientGender" class="form-control">
+                        <option value="">-- Select Gender --</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Select Treatment</label>
+                <select id="treatmentSelect" class="form-control" required>
+                    <option value="">-- Choose Treatment --</option>
+                </select>
+            </div>
+            
+            <input type="hidden" id="treatment">
+
+            <div class="form-row" style="margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Start Time</label>
                     <input type="time" id="startTime" class="form-control" required min="09:00" max="18:00" value="09:00">
                 </div>
                 <div class="form-group">
-                    <label>End Time</label>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">End Time</label>
                     <input type="time" id="endTime" class="form-control" required min="09:00" max="18:00" value="10:00">
                 </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Medicines to be used specifically (Optional)</label>
+                <textarea id="specificMedicines" class="form-control" placeholder="Enter any other medicines to be used specifically..." style="min-height: 80px; resize: vertical;"></textarea>
             </div>
 
             <div class="modal-actions" id="modalActions">
@@ -564,9 +646,86 @@
     </div>
 </div>
 
-<script>
+<!-- Read-only Patient Details Modal for Therapist -->
+<div class="modal-overlay" id="patientDetailsModal" style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(8px);">
+    <div class="modal" style="max-width: 650px; width: 90%; padding: 2.5rem; border-radius: 24px; background: #ffffff; position: relative; box-shadow: 0 20px 50px rgba(27, 48, 34, 0.15); border: 1px solid rgba(76, 175, 80, 0.1); max-height: 90vh; overflow-y: auto; scrollbar-width: thin;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border); padding-bottom: 18px; margin-bottom: 20px;">
+            <div>
+                <h2 style="font-family: 'Cormorant Garamond', serif !important; font-size: 2.2rem; color: var(--primary-dark); font-weight: 700; margin: 0; line-height: 1.2;">Session Briefing</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Therapist View</p>
+            </div>
+            <button class="close-btn" onclick="closePatientModal()" style="background: rgba(0,0,0,0.03); border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">&times;</button>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 20px; font-family: 'Montserrat', sans-serif;">
+            
+            <!-- Patient Quick Info Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+                <!-- Left Details Card -->
+                <div style="background: #fafafa; border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">
+                        <span>👤</span> Patient Name: <span id="viewPatientName" style="font-weight: 500; color: var(--text-main); margin-left: auto;">Loading...</span>
+                    </div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">
+                        <span>🎂</span> Age / Gender: <span style="font-weight: 500; color: var(--text-main); margin-left: auto;"><span id="viewPatientAge">Loading...</span> Yrs / <span id="viewPatientGender">Loading...</span></span>
+                    </div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">
+                        <span>🚪</span> Room / Ward: <span id="viewPatientRoom" style="font-weight: 500; color: var(--text-main); margin-left: auto;">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Right Session Card -->
+                <div style="background: #fafafa; border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">
+                        <span>🌿</span> Treatment: <span id="viewPatientTreatment" style="font-weight: 500; color: var(--text-main); margin-left: auto;">Loading...</span>
+                    </div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">
+                        <span>⏱️</span> Session Time: <span id="viewSessionTime" style="font-weight: 500; color: var(--text-main); margin-left: auto;">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medicines specifically warning box -->
+            <div style="background: #fffdf5; border: 1px dashed var(--accent); border-radius: 16px; padding: 1.2rem; display: flex; flex-direction: column; gap: 6px;">
+                <h3 style="font-family: 'Cormorant Garamond', serif !important; font-size: 1.3rem; color: #b78a39; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 6px;">
+                    <span>💊</span> Medicines / Instructions specifically for this session
+                </h3>
+                <p id="viewSpecificMedicines" style="color: var(--text-main); font-size: 0.95rem; line-height: 1.5; margin: 0; font-style: italic;">
+                    No specific medicines or custom session instructions set.
+                </p>
+            </div>
+
+            <!-- Patient general Dos and Donts -->
+            <div style="background: #fafcfa; border: 1px solid rgba(76, 175, 80, 0.15); border-radius: 16px; padding: 1.2rem; display: flex; flex-direction: column; gap: 6px;">
+                <h3 style="font-family: 'Cormorant Garamond', serif !important; font-size: 1.3rem; color: var(--primary-dark); font-weight: 700; margin: 0; display: flex; align-items: center; gap: 6px;">
+                    <span>📋</span> Patient's General Do's & Don'ts
+                </h3>
+                <p id="viewPatientDos" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0; font-style: italic;">
+                    No general Do's & Don'ts specified for this patient.
+                </p>
+            </div>
+
+            <!-- Treatment Protocol -->
+            <div style="background: #f4f6f4; border: 1px solid rgba(76, 175, 80, 0.2); border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; gap: 8px; border-left: 5px solid var(--primary-dark);">
+                <h3 style="font-family: 'Cormorant Garamond', serif !important; font-size: 1.5rem; color: var(--primary-dark); font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span>📜</span> Treatment Protocol & Steps
+                </h3>
+                <div id="viewTreatmentProtocol" style="color: var(--text-main); font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; font-family: inherit;">
+                    Loading treatment protocol...
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="modal-actions" style="margin-top: 2.2rem; display: flex; gap: 10px;">
+            <button type="button" class="nav-btn nav-btn-solid" onclick="closePatientModal()" style="width: 100%; padding: 14px; font-weight: 600; border-radius: 12px;">Close Details</button>
+        </div><script>
     let currentSessions = [];
     let currentTherapistId = null;
+    let globalTherapistName = "";
+    let allPatients = [];
+    let allTreatments = [];
+    const notifiedSessions = new Set(JSON.parse(localStorage.getItem('notifiedSessions') || '[]'));
 
     // --- Initialization ---
     function getInitials(name) {
@@ -574,14 +733,69 @@
         return cleanName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     }
 
+    let userRole = 'admin'; // default
+
     async function init() {
         const urlParams = new URLSearchParams(window.location.search);
         currentTherapistId = urlParams.get('id');
+        userRole = urlParams.get('role') || 'admin';
         
+        if (userRole === 'therapist') {
+            // Hide back link and add button
+            const backLink = document.querySelector('.back-link');
+            if (backLink) backLink.style.display = 'none';
+
+            const addBtn = document.getElementById('addSessionBtn');
+            if (addBtn) addBtn.style.display = 'none';
+
+            // Change brand logo and title
+            const brandLogo = document.querySelector('.brand-logo');
+            if (brandLogo) {
+                brandLogo.href = 'javascript:void(0)';
+                brandLogo.innerHTML = `<img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayuskama <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Therapist</small>`;
+            }
+
+            // Customize navigation links
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks) {
+                navLinks.innerHTML = `
+                    <a href="therapist-details.html?id=${currentTherapistId}&role=therapist" class="nav-btn nav-btn-outline">My Schedule</a>
+                    <a href="therapist-login.html" onclick="localStorage.clear();" class="nav-btn nav-btn-solid">Logout</a>
+                `;
+            }
+        } else {
+            // Admin mode navigation links
+            const brandLogo = document.querySelector('.brand-logo');
+            if (brandLogo) {
+                brandLogo.href = 'dashboard.html';
+            }
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks) {
+                navLinks.innerHTML = `
+                    <a href="treatments.html" class="nav-btn nav-btn-outline">Treatments</a>
+                    <a href="register.html" class="nav-btn nav-btn-outline">New Patient</a>
+                    <a href="therapist.html" class="nav-btn nav-btn-outline">Therapists</a>
+                    <a href="dashboard.html" class="nav-btn nav-btn-outline">Dashboard</a>
+                    <a href="login.html" onclick="localStorage.clear();" class="nav-btn nav-btn-solid">Logout</a>
+                `;
+            }
+        }
+
         try {
             const res = await fetch(`http://localhost:5001/api/therapists/${currentTherapistId}`);
             if (!res.ok) throw new Error("Therapist not found");
             const therapist = await res.json();
+
+            globalTherapistName = therapist.name;
+
+            // Apply therapist-specific view adjustments
+            if (userRole === 'therapist') {
+                document.getElementById('attendanceSection').style.display = 'block';
+                loadAttendanceStatus();
+            }
+
+            // Load attendance logs history for the therapist (visible to both admin and therapist)
+            loadAttendanceHistory();
 
             // Render Header
             document.getElementById('therapistHeader').innerHTML = `
@@ -592,12 +806,55 @@
                         <p>
                             <span class="badge-therapy">${therapist.therapy}</span>
                             <span>|</span>
-                            <span>📞 ${therapist.phone}</span>
+                            <span>Phone: ${therapist.phone}</span>
+                            <span>|</span>
+                            <span style="color: var(--accent); font-weight: 500;">Username: ${therapist.username || 'Not set'}</span>
                         </p>
                     </div>
                 </div>
-                <button class="nav-btn nav-btn-outline" onclick="window.print()">🖨️ Print Schedule</button>
+                <button class="nav-btn nav-btn-outline" onclick="window.print()">Print Schedule</button>
             `;
+
+            // Fetch patients and populate patient dropdown
+            try {
+                const patientsRes = await fetch("http://localhost:5001/api/patients");
+                if (patientsRes.ok) {
+                    allPatients = await patientsRes.json();
+                    allPatients = allPatients.filter(p => p.status !== 'checked-out');
+                    const pSelect = document.getElementById('patientSelect');
+                    if (pSelect) {
+                        pSelect.innerHTML = '<option value="">-- Choose Patient --</option>';
+                        allPatients.forEach(p => {
+                            const opt = document.createElement('option');
+                            opt.value = p.patientId;
+                            opt.textContent = `${p.name} (${p.patientId})`;
+                            pSelect.appendChild(opt);
+                        });
+                    }
+                }
+            } catch(e) {
+                console.error("Failed to load patients:", e);
+            }
+
+            // Fetch treatments and populate treatment dropdown
+            try {
+                const treatRes = await fetch("http://localhost:5001/api/treatments");
+                if (treatRes.ok) {
+                    allTreatments = await treatRes.json();
+                    const tSelect = document.getElementById('treatmentSelect');
+                    if (tSelect) {
+                        tSelect.innerHTML = '<option value="">-- Choose Treatment --</option>';
+                        allTreatments.forEach(t => {
+                            const opt = document.createElement('option');
+                            opt.value = t.name;
+                            opt.textContent = t.name;
+                            tSelect.appendChild(opt);
+                        });
+                    }
+                }
+            } catch(e) {
+                console.error("Failed to load treatments:", e);
+            }
 
             // Fetch sessions
             const sessRes = await fetch(`http://localhost:5001/api/therapists/${currentTherapistId}/sessions`);
@@ -608,8 +865,210 @@
             renderTimetable();
             updateTimeIndicator();
             setInterval(updateTimeIndicator, 60000);
+
+            // Set up therapist session reminder checks
+            if (userRole === 'therapist') {
+                if ("Notification" in window && Notification.permission === "default") {
+                    Notification.requestPermission();
+                }
+                checkUpcomingSessions();
+                setInterval(checkUpcomingSessions, 60000);
+            }
         } catch (e) {
             document.getElementById('therapistHeader').innerHTML = `<h2>Error: ${e.message}</h2>`;
+        }
+    }
+
+    // --- Attendance Logic ---
+    async function loadAttendanceStatus() {
+        try {
+            const res = await fetch(`http://localhost:5001/api/attendance/status/${currentTherapistId}`);
+            if (res.ok) {
+                const data = await res.json();
+                const checkInBtn = document.getElementById('checkInBtn');
+                const checkOutBtn = document.getElementById('checkOutBtn');
+                const statusDiv = document.getElementById('attendanceStatus');
+
+                if (data.checkedOut) {
+                    checkInBtn.disabled = true;
+                    checkOutBtn.disabled = true;
+                    checkOutBtn.className = "nav-btn nav-btn-outline";
+                    const timeIn = new Date(data.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const timeOut = new Date(data.checkOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    statusDiv.innerHTML = `🟢 Checked Out <br><small style="color:var(--text-muted)">In: ${timeIn} | Out: ${timeOut}</small>`;
+                } else if (data.checkedIn) {
+                    checkInBtn.disabled = true;
+                    checkOutBtn.disabled = false;
+                    checkOutBtn.className = "nav-btn nav-btn-solid btn-danger";
+                    const timeIn = new Date(data.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    statusDiv.innerHTML = `🟡 Checked In <br><small style="color:var(--text-muted)">Since: ${timeIn}</small>`;
+                } else {
+                    checkInBtn.disabled = false;
+                    checkOutBtn.disabled = true;
+                    checkOutBtn.className = "nav-btn nav-btn-outline";
+                    statusDiv.innerHTML = `🔴 Not Checked In Today`;
+                }
+            }
+        } catch (err) {
+            console.error("Failed to load attendance status:", err);
+        }
+    }
+
+    async function handleCheckIn() {
+        try {
+            const res = await fetch(`http://localhost:5001/api/attendance/check-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ therapistId: currentTherapistId, therapistName: globalTherapistName })
+            });
+            if (res.ok) {
+                loadAttendanceStatus();
+                loadAttendanceHistory();
+            } else {
+                const data = await res.json();
+                alert(data.message || "Failed to check in");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function handleCheckOut() {
+        if (confirm("Are you sure you want to check out for today?")) {
+            try {
+                const res = await fetch(`http://localhost:5001/api/attendance/check-out`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ therapistId: currentTherapistId })
+                });
+                if (res.ok) {
+                     loadAttendanceStatus();
+                     loadAttendanceHistory();
+                } else {
+                    const data = await res.json();
+                    alert(data.message || "Failed to check out");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+
+    // --- Attendance History ---
+    async function loadAttendanceHistory() {
+        const tbody = document.getElementById('attendanceHistoryTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">Loading history... ⏳</td></tr>';
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/attendance/therapist/${currentTherapistId}`);
+            if (res.ok) {
+                const logs = await res.json();
+                tbody.innerHTML = '';
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">No attendance logs recorded yet.</td></tr>';
+                    return;
+                }
+
+                logs.forEach(log => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid var(--border)';
+                    
+                    const formatTime = (isoStr) => {
+                        if (!isoStr) return '<span style="color:var(--text-muted);font-style:italic;">Not marked</span>';
+                        return new Date(isoStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    };
+
+                    const statusBadge = log.checkOut 
+                        ? '<span style="background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; display: inline-block;">Completed</span>'
+                        : '<span style="background: #fff8e1; border: 1px solid #ffe082; color: #f57f17; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; display: inline-block;">Active</span>';
+
+                    tr.innerHTML = `
+                        <td style="padding: 12px 10px; font-weight: 500;">${log.date}</td>
+                        <td style="padding: 12px 10px;">${formatTime(log.checkIn)}</td>
+                        <td style="padding: 12px 10px;">${formatTime(log.checkOut)}</td>
+                        <td style="padding: 12px 10px;">${statusBadge}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #ec5959; padding: 20px;">Failed to load attendance history.</td></tr>';
+            }
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #ec5959; padding: 20px;">Connection error.</td></tr>';
+        }
+    }
+
+    // --- Read-only Patient Details for Therapist ---
+    function closePatientModal() {
+        document.getElementById('patientDetailsModal').classList.remove('active');
+    }
+
+    async function openPatientDetails(session) {
+        const modal = document.getElementById('patientDetailsModal');
+        modal.classList.add('active');
+        
+        // Helper to format 24h to 12h
+        const formatTimeBriefing = (time) => {
+            if (!time) return 'N/A';
+            let [h, m] = time.split(':');
+            h = parseInt(h);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            return `${h}:${m} ${ampm}`;
+        };
+
+        // Populate initial elements from session data
+        document.getElementById('viewPatientName').textContent = session.patientName || 'N/A';
+        document.getElementById('viewPatientAge').textContent = session.patientAge || 'N/A';
+        document.getElementById('viewPatientGender').textContent = session.patientGender || 'N/A';
+        document.getElementById('viewPatientRoom').textContent = session.roomNumber || 'N/A';
+        document.getElementById('viewPatientTreatment').textContent = session.treatment || 'N/A';
+        document.getElementById('viewSessionTime').textContent = `${formatTimeBriefing(session.startTime)} - ${formatTimeBriefing(session.endTime)}`;
+        
+        // Specific medicines
+        document.getElementById('viewSpecificMedicines').textContent = session.specificMedicines || 'No specific medicines or custom session instructions set.';
+        
+        // Reset patient-specific field to Loading initially
+        document.getElementById('viewPatientDos').textContent = 'Loading...';
+
+        // Load Treatment Protocol from the preloaded allTreatments array
+        const treatmentObj = allTreatments.find(t => t.name === session.treatment);
+        if (treatmentObj) {
+            document.getElementById('viewTreatmentProtocol').textContent = treatmentObj.protocol || 'No protocol specified for this treatment.';
+        } else {
+            document.getElementById('viewTreatmentProtocol').textContent = 'Protocol details not found.';
+        }
+
+        if (!session.patientId) {
+            document.getElementById('viewPatientDos').textContent = 'N/A';
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/patients/${session.patientId}`);
+            if (res.ok) {
+                const patient = await res.json();
+                
+                // Fallbacks if session fields were somehow left empty
+                if (!session.roomNumber && patient.roomNumber) {
+                    document.getElementById('viewPatientRoom').textContent = patient.roomNumber;
+                }
+                if (!session.patientAge && patient.age) {
+                    document.getElementById('viewPatientAge').textContent = patient.age;
+                }
+                if (!session.patientGender && patient.gender) {
+                    document.getElementById('viewPatientGender').textContent = patient.gender;
+                }
+
+                document.getElementById('viewPatientDos').textContent = patient.dosAndDonts || 'No general Do\'s & Don\'ts specified for this patient.';
+            } else {
+                document.getElementById('viewPatientDos').textContent = 'Patient record not found.';
+            }
+        } catch (e) {
+            console.error("Failed to load patient general details:", e);
+            document.getElementById('viewPatientDos').textContent = 'Error loading patient details.';
         }
     }
 
@@ -685,17 +1144,21 @@
 
             block.innerHTML = `
                 <div class="session-title">
-                    <span>👤 ${session.patientName}</span>
+                    <span>${session.patientName}</span>
                     ${pIdText}
                 </div>
                 <div class="session-meta">
-                    <span>🕒 ${formatTime(session.startTime)} - ${formatTime(session.endTime)}</span>
+                    <span>${formatTime(session.startTime)} - ${formatTime(session.endTime)}</span>
                     <span style="opacity: 0.5;">|</span>
-                    <span>🌿 ${session.treatment}</span>
+                    <span>${session.treatment}</span>
                 </div>
             `;
             
-            block.onclick = () => openEditModal(session);
+            if (userRole !== 'therapist') {
+                block.onclick = () => openEditModal(session);
+            } else {
+                block.onclick = () => openPatientDetails(session);
+            }
             
             container.appendChild(block);
         });
@@ -710,6 +1173,20 @@
         document.getElementById('deleteBtn').style.display = 'none';
         form.reset();
         document.getElementById('sessionId').value = ''; // empty means new
+        
+        if (document.getElementById('patientSelect')) {
+            document.getElementById('patientSelect').value = '';
+        }
+        if (document.getElementById('treatmentSelect')) {
+            document.getElementById('treatmentSelect').value = '';
+        }
+        document.getElementById('patientId').value = '';
+        document.getElementById('patientName').value = '';
+        document.getElementById('patientAge').value = '';
+        document.getElementById('patientGender').value = '';
+        document.getElementById('roomNumber').value = '';
+        document.getElementById('specificMedicines').value = '';
+        
         modal.classList.add('active');
     }
 
@@ -719,10 +1196,21 @@
         
         document.getElementById('sessionId').value = session.id;
         document.getElementById('patientId').value = session.patientId || '';
-        document.getElementById('patientName').value = session.patientName;
-        document.getElementById('treatment').value = session.treatment;
-        document.getElementById('startTime').value = session.startTime;
-        document.getElementById('endTime').value = session.endTime;
+        document.getElementById('patientName').value = session.patientName || '';
+        document.getElementById('patientAge').value = session.patientAge || '';
+        document.getElementById('patientGender').value = session.patientGender || '';
+        document.getElementById('roomNumber').value = session.roomNumber || '';
+        document.getElementById('treatment').value = session.treatment || '';
+        document.getElementById('startTime').value = session.startTime || '';
+        document.getElementById('endTime').value = session.endTime || '';
+        document.getElementById('specificMedicines').value = session.specificMedicines || '';
+
+        if (document.getElementById('patientSelect')) {
+            document.getElementById('patientSelect').value = session.patientId || '';
+        }
+        if (document.getElementById('treatmentSelect')) {
+            document.getElementById('treatmentSelect').value = session.treatment || '';
+        }
         
         modal.classList.add('active');
     }
@@ -756,12 +1244,17 @@
             return;
         }
 
+        const ageVal = document.getElementById('patientAge').value;
         const sessionData = {
             patientId: document.getElementById('patientId').value,
             patientName: document.getElementById('patientName').value,
+            patientAge: ageVal ? parseInt(ageVal, 10) : null,
+            patientGender: document.getElementById('patientGender').value,
+            roomNumber: document.getElementById('roomNumber').value,
             treatment: document.getElementById('treatment').value,
             startTime: start,
-            endTime: end
+            endTime: end,
+            specificMedicines: document.getElementById('specificMedicines').value
         };
 
         const existingId = document.getElementById('sessionId').value;
@@ -801,6 +1294,200 @@
             closeModal();
         }
     });
+
+    const patientDetailsModalElement = document.getElementById('patientDetailsModal');
+    if (patientDetailsModalElement) {
+        patientDetailsModalElement.addEventListener('click', (e) => {
+            if (e.target === patientDetailsModalElement) {
+                closePatientModal();
+            }
+        });
+    }
+
+    // --- Dropdown Select Handlers ---
+    function onPatientSelectChange() {
+        const select = document.getElementById('patientSelect');
+        const pId = select.value;
+        const patient = allPatients.find(p => p.patientId === pId);
+        
+        if (patient) {
+            document.getElementById('patientId').value = patient.patientId;
+            document.getElementById('patientName').value = patient.name || '';
+            document.getElementById('patientAge').value = patient.age || '';
+            document.getElementById('patientGender').value = patient.gender || '';
+            document.getElementById('roomNumber').value = patient.roomNumber || '';
+            
+            // Auto select treatment plan if matches
+            if (patient.treatmentPlan) {
+                const tSelect = document.getElementById('treatmentSelect');
+                // Check if patient's treatmentPlan exists in treatmentSelect options
+                let optionExists = false;
+                for (let i = 0; i < tSelect.options.length; i++) {
+                    if (tSelect.options[i].value === patient.treatmentPlan) {
+                        optionExists = true;
+                        break;
+                    }
+                }
+                
+                // If it doesn't exist in dropdown, add it temporarily so it can be selected
+                if (!optionExists) {
+                    const opt = document.createElement('option');
+                    opt.value = patient.treatmentPlan;
+                    opt.textContent = patient.treatmentPlan;
+                    tSelect.appendChild(opt);
+                }
+                
+                tSelect.value = patient.treatmentPlan;
+                document.getElementById('treatment').value = patient.treatmentPlan;
+            } else {
+                document.getElementById('treatmentSelect').value = '';
+                document.getElementById('treatment').value = '';
+            }
+        } else {
+            document.getElementById('patientId').value = '';
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientAge').value = '';
+            document.getElementById('patientGender').value = '';
+            document.getElementById('roomNumber').value = '';
+            document.getElementById('treatmentSelect').value = '';
+            document.getElementById('treatment').value = '';
+        }
+    }
+
+    // Sync treatment select changes to the hidden treatment input
+    const tSelectElement = document.getElementById('treatmentSelect');
+    if (tSelectElement) {
+        tSelectElement.addEventListener('change', (e) => {
+            document.getElementById('treatment').value = e.target.value;
+        });
+    }
+
+    // --- Melodic Chime using Web Audio API ---
+    function playChime() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Tone 1: C5
+            const osc1 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+            gain1.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+            osc1.start(audioCtx.currentTime);
+            osc1.stop(audioCtx.currentTime + 0.35);
+            
+            // Tone 2: E5 after 150ms
+            setTimeout(() => {
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime); 
+                gain2.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+                osc2.start(audioCtx.currentTime);
+                osc2.stop(audioCtx.currentTime + 0.45);
+            }, 150);
+        } catch (e) {
+            console.error("Failed to play notification chime:", e);
+        }
+    }
+
+    // --- On-screen Toast notification ---
+    function triggerSessionNotification(session) {
+        // System Push Notification
+        if (Notification.permission === "granted") {
+            try {
+                new Notification("Upcoming Session Alert", {
+                    body: `Session with ${session.patientName} (${session.treatment}) starts in 10 minutes (at ${session.startTime})!`,
+                    icon: "assets/logo.jpg"
+                });
+            } catch (e) {
+                console.error("System notification failed, falling back to screen toast:", e);
+            }
+        }
+
+        // Screen Toast Banner
+        const toast = document.createElement('div');
+        toast.style.position = 'fixed';
+        toast.style.bottom = '30px';
+        toast.style.right = '30px';
+        toast.style.background = 'white';
+        toast.style.color = 'var(--text-main)';
+        toast.style.padding = '20px';
+        toast.style.borderRadius = '16px';
+        toast.style.boxShadow = '0 15px 40px rgba(43,89,63,0.15)';
+        toast.style.borderLeft = '6px solid #c5a059';
+        toast.style.zIndex = '10000';
+        toast.style.maxWidth = '360px';
+        toast.style.fontFamily = "'Montserrat', sans-serif";
+        toast.style.animation = 'slideInToast 0.5s ease-out';
+
+        // Add CSS keyframe dynamically
+        if (!document.getElementById('toastStyles')) {
+            const style = document.createElement('style');
+            style.id = 'toastStyles';
+            style.innerHTML = `
+                @keyframes slideInToast {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutToast {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(120%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        toast.innerHTML = `
+            <div style="display: flex; gap: 15px; align-items: flex-start;">
+                <div style="line-height: 1;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; color: var(--accent);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                </div>
+                <div>
+                    <h4 style="margin: 0 0 5px 0; font-family: 'Cormorant Garamond', serif !important; font-size: 1.3rem; color: var(--primary-dark); font-weight: bold;">Upcoming Session</h4>
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
+                        Your session with <strong>${session.patientName}</strong> (${session.treatment}) is starting in 10 minutes at <strong>${session.startTime}</strong>.
+                    </p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        playChime();
+
+        // Auto remove toast
+        setTimeout(() => {
+            toast.style.animation = 'slideOutToast 0.5s ease-in';
+            setTimeout(() => toast.remove(), 500);
+        }, 8000);
+    }
+
+    // --- Upcoming Sessions Check Loop ---
+    function checkUpcomingSessions() {
+        if (userRole !== 'therapist') return;
+
+        const now = new Date();
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+        const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+
+        currentSessions.forEach(session => {
+            const sessionStartMins = timeToMinutes(session.startTime);
+            const diff = sessionStartMins - currentTimeInMinutes;
+
+            // Trigger reminder if starting in exactly 10 minutes
+            if (diff === 10 && !notifiedSessions.has(session.id)) {
+                notifiedSessions.add(session.id);
+                localStorage.setItem('notifiedSessions', JSON.stringify([...notifiedSessions]));
+                triggerSessionNotification(session);
+            }
+        });
+    }
 
     // Run on load
     window.onload = init;

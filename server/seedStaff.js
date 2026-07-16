@@ -18,13 +18,38 @@ async function seedStaff() {
             { name: "Ms. Kritika", therapy: "Ayurveda Therapist", phone: "+91 xxxxx xxxxx" },
             { name: "Mr. Rohan Singh", therapy: "Ayurveda Therapist", phone: "+91 xxxxx xxxxx" },
             { name: "Narendra", therapy: "Ayurveda Chef", phone: "+91 xxxxx xxxxx" },
-            { name: "Dr. Neetu Singh", therapy: "Chief Doctor (Gynecology, Women's Health, Yoga)", phone: "+91 xxxxx xxxxx", bio: "With over 20 years of experience, Dr. Neetu Singh is a renowned Ayurvedic practitioner and yoga expert. Her expertise lies in Gynecology, Women’s Health Disorders, Yoga Philosophy, and Therapeutic Yoga. Dr. Neetu’s holistic approach combines the wisdom of Ayurveda with the power of yoga to address a wide range of health concerns." },
-            { name: "Dr. Vinod Kumar", therapy: "Chief Doctor & CEO (Panchakarma Specialist)", phone: "+91 xxxxx xxxxx", bio: "Dr. Vinod Kumar, a renowned Ayurvedic physician and Panchakarma specialist, brings over 25 years of expertise in holistic healing. His dedication to natural wellness ensures personalized care and comprehensive treatment for each patient. Specializations: Ayurvedic Consultations, Panchakarma Therapies, Personalized Treatment Plans." },
             { name: "Ms. Anjali", therapy: "Yoga Teacher", phone: "+91 xxxxx xxxxx" }
         ];
 
-        await Therapist.insertMany(staffList);
-        console.log("Successfully seeded 9 real staff members.");
+        const bcrypt = require("bcrypt");
+        const seededStaff = [];
+        const seenUsernames = new Set();
+
+        for (let item of staffList) {
+            let baseName = item.name.replace(/^(Dr\.|Mr\.|Ms\.)\s+/i, '');
+            let username = baseName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+            let tempUsername = username;
+            let counter = 1;
+            while (seenUsernames.has(tempUsername)) {
+                counter++;
+                tempUsername = `${username}_${counter}`;
+            }
+            username = tempUsername;
+            seenUsernames.add(username);
+
+            const defaultPass = `${username}_123`;
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(defaultPass, salt);
+
+            seededStaff.push({
+                ...item,
+                username,
+                password: hashedPassword
+            });
+        }
+
+        await Therapist.insertMany(seededStaff);
+        console.log("Successfully seeded 9 real staff members with credentials.");
         process.exit(0);
     } catch (err) {
         console.error(err);

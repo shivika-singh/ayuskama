@@ -23,9 +23,13 @@ router.put("/:id", async (req, res) => {
             therapistId: updatedSession.therapistId,
             patientId: updatedSession.patientId,
             patientName: updatedSession.patientName,
+            patientAge: updatedSession.patientAge,
+            patientGender: updatedSession.patientGender,
+            roomNumber: updatedSession.roomNumber,
             treatment: updatedSession.treatment,
             startTime: updatedSession.startTime,
-            endTime: updatedSession.endTime
+            endTime: updatedSession.endTime,
+            specificMedicines: updatedSession.specificMedicines
         });
     } catch (error) {
         res.status(400).json({ error: error.message });

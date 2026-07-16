@@ -671,7 +671,11 @@
         <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayuskama <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
     </a>
     <div class="nav-links">
-        <a href="dashboard.html" class="nav-btn nav-btn-outline">← Back to Dashboard</a>
+        <a href="treatments.html" class="nav-btn nav-btn-outline">Treatments</a>
+        <a href="register.html" class="nav-btn nav-btn-outline">New Patient</a>
+        <a href="therapist.html" class="nav-btn nav-btn-outline">Therapists</a>
+        <a href="dashboard.html" class="nav-btn nav-btn-outline">Dashboard</a>
+        <a href="login.html" class="nav-btn nav-btn-solid">Logout</a>
     </div>
 </div>
 
@@ -686,7 +690,6 @@
     </div>
 
     <div id="errorState" class="empty-state" style="display: none;">
-        <span>⚠️</span>
         <h2 style="color: var(--text-main); margin-bottom: 10px;">Patient not found</h2>
         <p>We couldn't load the details for this patient.</p>
     </div>
@@ -715,7 +718,7 @@
         </div>
 
         <div id="lockBanner" style="display: none; align-items: center; gap: 10px; background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; border: 1px solid #ef9a9a;">
-            <span>🔒</span>
+            <strong>Locked:</strong>
             <span>Checked Out - This patient profile is locked. Routine, medicines, and payments cannot be modified.</span>
         </div>
 
@@ -723,7 +726,7 @@
             <!-- Personal Info -->
             <div class="card">
                 <div class="card-header">
-                    <h2>👤 Personal Information</h2>
+                    <h2>Personal Information</h2>
                 </div>
                 <div class="card-body">
                     <ul class="info-list">
@@ -882,7 +885,7 @@
             <!-- Daily Routine & Logistics -->
             <div class="card full-width">
                 <div class="card-header">
-                    <h2>🕒 Daily Routine & Logistics</h2>
+                    <h2>Daily Routine & Logistics</h2>
                     <button id="btnEditRoutine" class="nav-btn nav-btn-outline" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openRoutineModal()">Edit Routine</button>
                 </div>
                 <div class="card-body">
@@ -890,7 +893,7 @@
                         <!-- Card 1: Assigned Therapist & Location -->
                         <div class="routine-sub-card">
                             <div class="routine-card-title">
-                                <span>👨‍⚕️ Staff & Care</span>
+                                <span>Staff & Care</span>
                             </div>
                             <div class="routine-detail-row">
                                 <span class="routine-detail-label">Assigned Therapist</span>
@@ -905,7 +908,7 @@
                         <!-- Card 2: Treatment & Yoga Schedule -->
                         <div class="routine-sub-card">
                             <div class="routine-card-title">
-                                <span>🕒 Timetable</span>
+                                <span>Timetable</span>
                             </div>
                             <div class="routine-detail-row">
                                 <span class="routine-detail-label">Treatment Time</span>
@@ -920,7 +923,7 @@
                         <!-- Card 3: Meal Schedule -->
                         <div class="routine-sub-card">
                             <div class="routine-card-title">
-                                <span>🥗 Diet & Nutrition</span>
+                                <span>Diet & Nutrition</span>
                             </div>
                             <div class="routine-detail-row">
                                 <span class="routine-detail-label">Meal Timings</span>
@@ -936,7 +939,7 @@
                     <!-- Dos & Don'ts Alert Box -->
                     <div class="routine-alert-box">
                         <strong style="color: var(--ayuskama-green, #1b3022); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-                            <span>🌿 Dos & Don'ts for Treatment</span>
+                            <span>Dos & Don'ts for Treatment</span>
                         </strong>
                         <div id="dispDosDonts" style="line-height: 1.6; color: var(--text-muted); font-size: 0.95rem;">-</div>
                     </div>
@@ -1774,12 +1777,16 @@
             });
         }
 
-        function showCustomAlert(title, desc, icon = "⚠️") {
+        function showCustomAlert(title, desc, icon = "!") {
             return new Promise((resolve) => {
                 const overlay = document.getElementById("customAlertModal");
                 document.getElementById("alertTitle").textContent = title;
                 document.getElementById("alertDesc").textContent = desc;
-                document.getElementById("alertIcon").textContent = icon;
+                
+                let iconText = icon;
+                if (icon === "⚠️" || icon === "❌") iconText = "!";
+                if (icon === "💚") iconText = "✓";
+                document.getElementById("alertIcon").textContent = iconText;
                 
                 const btnOk = document.getElementById("btnAlertOk");
                 
@@ -1801,7 +1808,7 @@
     <!-- Custom Animated Confirm Modal -->
     <div id="customConfirmModal" class="custom-popup-overlay">
         <div class="custom-popup-container">
-            <div class="custom-popup-icon" style="color: var(--primary);">🌿</div>
+            <div class="custom-popup-icon" style="color: var(--primary);">✓</div>
             <h3 class="custom-popup-title" id="confirmTitle">Confirm Action</h3>
             <p class="custom-popup-desc" id="confirmDesc">Are you sure you want to proceed?</p>
             <div class="custom-popup-actions">
@@ -1814,7 +1821,7 @@
     <!-- Custom Animated Alert Modal -->
     <div id="customAlertModal" class="custom-popup-overlay">
         <div class="custom-popup-container">
-            <div class="custom-popup-icon" id="alertIcon" style="color: var(--accent);">⚠️</div>
+            <div class="custom-popup-icon" id="alertIcon" style="color: var(--accent);">!</div>
             <h3 class="custom-popup-title" id="alertTitle">Attention</h3>
             <p class="custom-popup-desc" id="alertDesc">An alert message has occurred.</p>
             <div class="custom-popup-actions">

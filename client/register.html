@@ -414,6 +414,20 @@
 </head>
 <body>
 
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="dashboard.html" class="brand-logo">
+        <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayuskama <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
+    </a>
+    <div class="nav-links">
+        <a href="treatments.html" class="nav-btn nav-btn-outline">Treatments</a>
+        <a href="register.html" class="nav-btn nav-btn-outline">New Patient</a>
+        <a href="therapist.html" class="nav-btn nav-btn-outline">Therapists</a>
+        <a href="dashboard.html" class="nav-btn nav-btn-outline">Dashboard</a>
+        <a href="login.html" class="nav-btn nav-btn-solid">Logout</a>
+    </div>
+</div>
+
 <div class="layout-container">
     <!-- Branding Side -->
     <div class="branding-panel">
@@ -424,15 +438,15 @@
         
         <div class="brand-features">
             <div class="feature-item">
-                <div class="feature-icon">🌿</div>
+                <div class="feature-icon">•</div>
                 <span>Holistic Ayurvedic Treatments</span>
             </div>
             <div class="feature-item">
-                <div class="feature-icon">📋</div>
+                <div class="feature-icon">•</div>
                 <span>Streamlined Patient Onboarding</span>
             </div>
             <div class="feature-item">
-                <div class="feature-icon">🔒</div>
+                <div class="feature-icon">•</div>
                 <span>Secure Medical Records</span>
             </div>
         </div>
@@ -446,10 +460,10 @@
         </div>
 
         <div id="successMsg" class="alert alert-success" style="display: none;">
-            <span>✅</span> Patient registered successfully!
+            <span>Success:</span> Patient registered successfully!
         </div>
         <div id="errorMsg" class="alert alert-error" style="display: none;">
-            <span>❌</span> Failed to register patient. Please check the backend connection.
+            <span>Error:</span> Failed to register patient. Please check the backend connection.
         </div>
 
         <form id="patientForm">
@@ -459,12 +473,12 @@
 
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input type="text" id="name" placeholder="E.g. Mr. Ajay Gupta" required>
+                    <input type="text" id="name" placeholder="E.g. Mr. Ajay Gupta" required pattern="^[A-Za-z\s\.]+$" title="Only letters, spaces, and dots are allowed">
                 </div>
 
                 <div class="form-group">
                     <label for="guardianName">Guardian Name (S/D/W/O)</label>
-                    <input type="text" id="guardianName" placeholder="E.g. Mr. Janeshwar Prasad" required>
+                    <input type="text" id="guardianName" placeholder="E.g. Mr. Janeshwar Prasad" required pattern="^[A-Za-z\s\.]+$" title="Only letters, spaces, and dots are allowed">
                 </div>
 
                 <div class="form-group">
@@ -484,12 +498,32 @@
 
                 <div class="form-group">
                     <label for="phone">Phone / Contact Number</label>
-                    <input type="tel" id="phone" placeholder="E.g. 9137413315" required>
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <select id="phoneCountryCode" style="width: 100px; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: white;" required>
+                            <option value="+91" selected>+91 (IN)</option>
+                            <option value="+1">+1 (US)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+971">+971 (AE)</option>
+                            <option value="+61">+61 (AU)</option>
+                            <option value="+1">+1 (CA)</option>
+                        </select>
+                        <input type="tel" id="phone" placeholder="E.g. 9876543210" required style="flex: 1;" pattern="^[0-9]{10}$" title="Please enter a valid 10-digit mobile number">
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="emergencyContact">Emergency Contact</label>
-                    <input type="tel" id="emergencyContact" placeholder="E.g. +91 xxxxx xxxxx" required>
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <select id="emergencyCountryCode" style="width: 100px; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: white;" required>
+                            <option value="+91" selected>+91 (IN)</option>
+                            <option value="+1">+1 (US)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+971">+971 (AE)</option>
+                            <option value="+61">+61 (AU)</option>
+                            <option value="+1">+1 (CA)</option>
+                        </select>
+                        <input type="tel" id="emergencyContact" placeholder="E.g. 9988776655" required style="flex: 1;" pattern="^[0-9]{10}$" title="Please enter a valid 10-digit mobile number">
+                    </div>
                 </div>
 
                 <div class="form-group full-width">
@@ -726,8 +760,8 @@
             guardianName: document.getElementById("guardianName").value.trim(),
             age: parseInt(document.getElementById("age").value),
             gender: document.getElementById("gender").value,
-            phone: document.getElementById("phone").value.trim(),
-            emergencyContact: document.getElementById("emergencyContact").value.trim(),
+            phone: document.getElementById("phoneCountryCode").value + " " + document.getElementById("phone").value.trim(),
+            emergencyContact: document.getElementById("emergencyCountryCode").value + " " + document.getElementById("emergencyContact").value.trim(),
             address: document.getElementById("address").value.trim(),
             checkInDate: document.getElementById("checkInDate").value,
             checkOutDate: document.getElementById("checkOutDate").value,
@@ -774,6 +808,20 @@
             submitBtn.style.opacity = "1";
             submitBtn.disabled = false;
         }
+    });
+
+    // Dynamic input filters to enforce text-only names and number-only phones at typing time
+    document.getElementById('name').addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^A-Za-z\s\.]/g, '');
+    });
+    document.getElementById('guardianName').addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^A-Za-z\s\.]/g, '');
+    });
+    document.getElementById('phone').addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+    document.getElementById('emergencyContact').addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
     });
 </script>
 

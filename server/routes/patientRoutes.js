@@ -90,7 +90,14 @@ router.get("/feedbacks", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const patient = await Patient.findById(req.params.id);
+        let patient = null;
+        // Check if req.params.id is a 24-character hexadecimal ObjectId
+        if (req.params.id && req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+            patient = await Patient.findById(req.params.id);
+        }
+        if (!patient) {
+            patient = await Patient.findOne({ patientId: req.params.id });
+        }
         if (!patient) return res.status(404).json({ message: "Patient not found" });
         res.json(patient);
     } catch (err) {

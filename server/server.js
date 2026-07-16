@@ -17,12 +17,14 @@ const therapistRoutes = require("./routes/therapistRoutes");
 const sessionRoutes = require("./routes/sessionRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const treatmentRoutes = require("./routes/treatmentRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
 
 app.use("/api/patients", patientRoutes);
 app.use("/api/therapists", therapistRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/treatments", treatmentRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 app.listen(5001, () => console.log("Server running on port 5001"));
 console.log("URI:", process.env.MONGO_URI);

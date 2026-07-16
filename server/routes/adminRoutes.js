@@ -53,4 +53,29 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// Admin Reset Password (directly via username verification)
+router.post("/reset-password", async (req, res) => {
+    try {
+        const { username, newPassword } = req.body;
+        if (!username || !newPassword) {
+            return res.status(400).json({ message: "Username and new password are required" });
+        }
+
+        const admin = await Admin.findOne({ username });
+        if (!admin) {
+            return res.status(404).json({ message: "Admin username not found" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        admin.password = hashedPassword;
+        await admin.save();
+
+        res.json({ message: "Password reset successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;

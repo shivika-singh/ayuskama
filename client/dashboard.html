@@ -221,7 +221,7 @@
         }
 
         .search-box::before {
-            content: '🔍';
+            content: '';
             position: absolute;
             left: 12px;
             top: 50%;
@@ -370,104 +370,153 @@
         <img src="assets/logo.jpg" alt="Logo" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; vertical-align: middle;"> Ayuskama <small style="font-size: 0.9rem; color: #6b8273; font-weight: 400; margin-left: 10px;">Admin</small>
     </a>
     <div class="nav-links">
-        <a href="treatments.html" class="nav-btn nav-btn-outline">⚙️ Treatments</a>
-        <a href="register.html" class="nav-btn nav-btn-outline">+ New Patient</a>
-        <a href="therapist.html" class="nav-btn nav-btn-outline">👨‍⚕️ Therapists</a>
+        <a href="treatments.html" class="nav-btn nav-btn-outline">Treatments</a>
+        <a href="register.html" class="nav-btn nav-btn-outline">New Patient</a>
+        <a href="therapist.html" class="nav-btn nav-btn-outline">Therapists</a>
+        <a href="dashboard.html" class="nav-btn nav-btn-outline">Dashboard</a>
         <a href="login.html" class="nav-btn nav-btn-solid">Logout</a>
     </div>
 </div>
 
 <div class="main-container">
-    <div class="page-header">
-        <div class="page-title">
-            <h1>Dashboard Overview</h1>
-            <p>Welcome back, Admin. Here's what's happening today.</p>
+    <!-- Hero Dashboard Banner with Ayuskama Background Image -->
+    <div class="dashboard-hero" style="background: linear-gradient(rgba(26, 47, 34, 0.72), rgba(26, 47, 34, 0.72)), url('assets/dashboard_bg.png') no-repeat center center; background-size: cover; padding: 4.5rem 3.5rem; border-radius: 24px; margin-bottom: 2.5rem; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 15px 35px rgba(43,89,63,0.12); flex-wrap: wrap; gap: 20px;">
+        <div class="hero-content">
+            <h1 style="font-family: 'Cormorant Garamond', serif !important; font-size: 3.2rem; font-weight: 700; margin-bottom: 0.6rem; color: #fdfdfd; letter-spacing: -0.5px; line-height: 1.1;">Ayuskama Wellness Admin</h1>
+            <p style="font-family: 'Montserrat', sans-serif; font-size: 1.15rem; color: rgba(255, 255, 255, 0.88); font-weight: 400; max-width: 620px; line-height: 1.5;">Holistic patient management, staff scheduling, and daily clinic attendance overview.</p>
         </div>
-        <a href="register.html" class="nav-btn nav-btn-solid" style="padding: 14px 24px; font-size: 1.1rem;">
+        <a href="register.html" class="nav-btn nav-btn-solid" style="padding: 16px 32px; font-size: 1.1rem; font-weight: 600; border-radius: 12px; background: var(--accent); box-shadow: 0 8px 25px rgba(197, 160, 89, 0.35); border: none; transition: all 0.3s; color: white;">
             Register New Patient
         </a>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon green">👥</div>
-            <div class="stat-content">
-                <h3 id="totalPatientsCounter">0</h3>
-                <p>Total Active Patients</p>
+    <!-- Tab Switcher -->
+    <div style="display: flex; gap: 10px; border-bottom: 2px solid var(--border); margin-bottom: 2.5rem;">
+        <button id="overviewTabBtn" onclick="switchTab('overview')" style="background: none; border: none; padding: 14px 28px; font-size: 1.1rem; font-weight: 600; cursor: pointer; color: var(--primary-dark); border-bottom: 3px solid var(--primary); transition: all 0.2s; font-family: 'Montserrat', sans-serif;">Overview</button>
+        <button id="attendanceTabBtn" onclick="switchTab('attendance')" style="background: none; border: none; padding: 14px 28px; font-size: 1.1rem; font-weight: 500; cursor: pointer; color: var(--text-muted); border-bottom: 3px solid transparent; transition: all 0.2s; font-family: 'Montserrat', sans-serif;">Therapist Attendance</button>
+    </div>
+
+    <!-- Overview Tab Content -->
+    <div id="overviewTabContent">
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; color: var(--primary);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalPatientsCounter">0</h3>
+                    <p style="font-size: 0.95rem; font-weight: 550; color: var(--text-muted);">Total Active Patients</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gold">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; color: var(--accent);"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </div>
+                <div class="stat-content">
+                    <h3 id="availableRoomsCounter">12</h3>
+                    <p style="font-size: 0.95rem; font-weight: 550; color: var(--text-muted);">Available Rooms / Wards</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; color: #2b6e82;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+                <div class="stat-content">
+                    <h3 id="activeTreatmentsCounter">8</h3>
+                    <p style="font-size: 0.95rem; font-weight: 550; color: var(--text-muted);">Active Treatment Plans</p>
+                </div>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon gold">🛏️</div>
-            <div class="stat-content">
-                <h3 id="availableRoomsCounter">12</h3>
-                <p>Available Rooms / Wards</p>
+
+        <!-- Search Bar -->
+        <div class="card" style="margin-bottom: 2.5rem; padding: 1.5rem;">
+            <div style="display: flex; gap: 15px; align-items: center; width: 100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="searchPatients" placeholder="Search patients by name, room, or treatment plan..." style="flex: 1; padding: 12px 18px; border-radius: 12px; border: 1px solid var(--border); font-size: 1.05rem; background: #fafcfa; transition: all 0.3s ease; outline: none;">
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon blue">🌿</div>
-            <div class="stat-content">
-                <h3 id="activeTreatmentsCounter">8</h3>
-                <p>Active Treatment Plans</p>
+
+        <!-- Currently Admitted Patients List -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2>Currently Admitted Patients</h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Age</th>
+                            <th>Room / Ward</th>
+                            <th>Treatment Plan</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activePatientsTableBody">
+                        <!-- Dynamic Content populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Checked Out Patients List -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Past Patients (Checked Out)</h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Age</th>
+                            <th>Room / Ward</th>
+                            <th>Treatment Plan</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pastPatientsTableBody">
+                        <!-- Dynamic Content populated by JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- Search Bar -->
-    <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
-        <div style="display: flex; gap: 15px; align-items: center; width: 100%;">
-            <span style="font-size: 1.2rem;">🔍</span>
-            <input type="text" id="searchPatients" placeholder="Search patients by name, room, or treatment plan..." style="flex: 1; padding: 12px 18px; border-radius: 12px; border: 1px solid var(--border); font-size: 1.05rem; background: #fafcfa; transition: all 0.3s ease; outline: none;">
+    <!-- Attendance Tab Content -->
+    <div id="attendanceTabContent" style="display: none;">
+        <div class="card" style="margin-bottom: 2rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h2 style="font-family: 'Cormorant Garamond', serif !important; font-size: 1.8rem; color: var(--primary-dark); font-weight: bold;">Therapist Attendance Log</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Daily check-in and check-out tracking for wellness staff.</p>
+            </div>
+            <button class="nav-btn nav-btn-outline" onclick="fetchAttendanceLogs()" style="display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer; padding: 10px 18px;">Refresh Logs</button>
         </div>
-    </div>
 
-    <!-- Currently Admitted Patients List -->
-    <div class="card" style="margin-bottom: 2rem;">
-        <div class="card-header">
-            <h2>Currently Admitted Patients</h2>
-        </div>
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Age</th>
-                        <th>Room / Ward</th>
-                        <th>Treatment Plan</th>
-                        <th>Phone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="activePatientsTableBody">
-                    <!-- Dynamic Content populated by JS -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Checked Out Patients List -->
-    <div class="card">
-        <div class="card-header">
-            <h2>Past Patients (Checked Out)</h2>
-        </div>
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Age</th>
-                        <th>Room / Ward</th>
-                        <th>Treatment Plan</th>
-                        <th>Phone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="pastPatientsTableBody">
-                    <!-- Dynamic Content populated by JS -->
-                </tbody>
-            </table>
+        <div class="card">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Therapist Name</th>
+                            <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Loading attendance logs...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -597,7 +646,6 @@
         renderTables(filtered);
     });
 
-    // Fetch real data from your backend
     async function fetchPatients() {
         try {
             const res = await fetch("http://localhost:5001/api/patients");
@@ -613,7 +661,86 @@
             renderTables(dummyPatients);
         }
     }
-    window.onload = fetchPatients;
+    
+    window.onload = () => {
+        fetchPatients();
+    };
+
+    // Tab switching and Attendance log fetching
+    function switchTab(tabName) {
+        const overviewBtn = document.getElementById('overviewTabBtn');
+        const attendanceBtn = document.getElementById('attendanceTabBtn');
+        const overviewContent = document.getElementById('overviewTabContent');
+        const attendanceContent = document.getElementById('attendanceTabContent');
+
+        if (tabName === 'overview') {
+            overviewBtn.style.color = 'var(--primary-dark)';
+            overviewBtn.style.borderBottom = '3px solid var(--primary)';
+            attendanceBtn.style.color = 'var(--text-muted)';
+            attendanceBtn.style.borderBottom = '3px solid transparent';
+            overviewBtn.style.fontWeight = '600';
+            attendanceBtn.style.fontWeight = '500';
+
+            overviewContent.style.display = 'block';
+            attendanceContent.style.display = 'none';
+        } else {
+            attendanceBtn.style.color = 'var(--primary-dark)';
+            attendanceBtn.style.borderBottom = '3px solid var(--primary)';
+            overviewBtn.style.color = 'var(--text-muted)';
+            overviewBtn.style.borderBottom = '3px solid transparent';
+            attendanceBtn.style.fontWeight = '600';
+            overviewBtn.style.fontWeight = '500';
+
+            overviewContent.style.display = 'none';
+            attendanceContent.style.display = 'block';
+            
+            fetchAttendanceLogs();
+        }
+    }
+
+    async function fetchAttendanceLogs() {
+        const tbody = document.getElementById('attendanceTableBody');
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Loading logs... ⏳</td></tr>';
+
+        try {
+            const res = await fetch('http://localhost:5001/api/attendance/admin');
+            if (res.ok) {
+                const logs = await res.json();
+                tbody.innerHTML = '';
+                if (logs.length === 0) {
+                     tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">No attendance logs found.</td></tr>';
+                     return;
+                }
+
+                logs.forEach(log => {
+                     const tr = document.createElement('tr');
+                     
+                     const formatTime = (isoStr) => {
+                         if (!isoStr) return '<span style="color:var(--text-muted);font-style:italic;">Not marked</span>';
+                         return new Date(isoStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                     };
+
+                     const statusBadge = log.checkOut 
+                         ? '<span style="background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Completed</span>'
+                         : '<span style="background: #fff8e1; border: 1px solid #ffe082; color: #f57f17; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Active</span>';
+
+                     tr.innerHTML = `
+                         <td style="font-weight: 600; color: var(--primary-dark);">${log.therapistName}</td>
+                         <td>${log.date}</td>
+                         <td style="font-weight: 500;">${formatTime(log.checkIn)}</td>
+                         <td style="font-weight: 500;">${formatTime(log.checkOut)}</td>
+                         <td>${statusBadge}</td>
+                     `;
+                     tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #ec5959; padding: 20px;">Failed to load logs from server.</td></tr>';
+            }
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #ec5959; padding: 20px;">Connection error to server.</td></tr>';
+        }
+    }
 </script>
 
     <script src="animations.js"></script>
