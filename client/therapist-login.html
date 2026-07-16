@@ -264,6 +264,17 @@
 </div>
 
 <script>
+    // Redirect if already logged in
+    const therapistData = localStorage.getItem('therapistData');
+    if (therapistData) {
+        try {
+            const therapist = JSON.parse(therapistData);
+            window.location.replace(`therapist-details.html?id=${therapist.id}&role=therapist`);
+        } catch (e) {
+            localStorage.removeItem('therapistData');
+        }
+    }
+
     const form = document.getElementById("loginForm");
     const errorMsg = document.getElementById("errorMsg");
     const loginBtn = document.getElementById("loginBtn");
@@ -305,7 +316,7 @@
                     localStorage.setItem('role', 'therapist');
                     
                     // Redirect to therapist details schedule page
-                    window.location.href = `therapist-details.html?id=${data.therapist.id}&role=therapist`;
+                    window.location.replace(`therapist-details.html?id=${data.therapist.id}&role=therapist`);
                 }
             } else {
                 showError(data.message || "Invalid username or password.");
@@ -422,7 +433,7 @@
                 tempTherapist.passwordChanged = true;
                 localStorage.setItem('therapistData', JSON.stringify(tempTherapist));
                 localStorage.setItem('role', 'therapist');
-                window.location.href = `therapist-details.html?id=${tempTherapist.id}&role=therapist`;
+                window.location.replace(`therapist-details.html?id=${tempTherapist.id}&role=therapist`);
             } else {
                 firstTimeErrorMsg.innerHTML = `<span>❌</span> ${data.message || "Failed to update password."}`;
                 firstTimeErrorMsg.style.display = "flex";

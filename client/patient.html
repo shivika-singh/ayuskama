@@ -675,7 +675,7 @@
         <a href="register.html" class="nav-btn nav-btn-outline">New Patient</a>
         <a href="therapist.html" class="nav-btn nav-btn-outline">Therapists</a>
         <a href="dashboard.html" class="nav-btn nav-btn-outline">Dashboard</a>
-        <a href="login.html" class="nav-btn nav-btn-solid">Logout</a>
+        <a href="login.html" onclick="localStorage.removeItem('adminLoggedIn');" class="nav-btn nav-btn-solid">Logout</a>
     </div>
 </div>
 
@@ -1109,6 +1109,14 @@
 </div>
 
 <script>
+    // Authentication Check
+    function checkAuth() {
+        if (!localStorage.getItem('adminLoggedIn')) {
+            window.location.replace("login.html");
+        }
+    }
+    checkAuth();
+    window.addEventListener('pageshow', checkAuth);
 
     let selectedTreatments = [];
     window.predefinedTreatments = [];

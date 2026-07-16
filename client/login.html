@@ -256,6 +256,11 @@
 </div>
 
 <script>
+    // Redirect if already logged in
+    if (localStorage.getItem('adminLoggedIn')) {
+        window.location.replace("dashboard.html");
+    }
+
     const form = document.getElementById("loginForm");
     const errorMsg = document.getElementById("errorMsg");
     const loginBtn = document.getElementById("loginBtn");
@@ -271,10 +276,10 @@
         loginBtn.innerHTML = "Authenticating... <span>⏳</span>";
         loginBtn.style.opacity = "0.8";
         loginBtn.disabled = true;
-
+ 
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
-
+ 
         try {
             const response = await fetch('http://localhost:5001/api/admin/login', {
                 method: 'POST',
@@ -283,12 +288,13 @@
                 },
                 body: JSON.stringify({ username, password })
             });
-
+ 
             const data = await response.json();
-
+ 
             if (response.ok) {
                 // Success - redirect to dashboard
-                window.location.href = "dashboard.html";
+                localStorage.setItem('adminLoggedIn', 'true');
+                window.location.replace("dashboard.html");
             } else {
                 showError(data.message || "Invalid username or password.");
             }

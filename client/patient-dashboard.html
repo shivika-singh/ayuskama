@@ -1599,50 +1599,74 @@
     <script>
 
         // Authentication Check
-        const rawData = localStorage.getItem('patientData');
-        if (!rawData) {
-            window.location.href = "patient-login.html";
+        function checkAuth() {
+            const rawData = localStorage.getItem('patientData');
+            if (!rawData) {
+                window.location.replace("patient-login.html");
+                return null;
+            }
+            return rawData;
         }
 
+        const rawData = checkAuth();
+        window.addEventListener('pageshow', () => {
+            checkAuth();
+        });
+
         let patient = null;
-        try {
-            patient = JSON.parse(rawData);
-        } catch (e) {
-            console.error("Data error", e);
-            logout();
+        if (rawData) {
+            try {
+                patient = JSON.parse(rawData);
+            } catch (e) {
+                console.error("Data error", e);
+                logout();
+            }
         }
+
+        let predefinedTreatments = [];
+
+        async function fetchPredefinedTreatments() {
+            try {
+                const res = await fetch("http://localhost:5001/api/treatments");
+                if (res.ok) {
+                    predefinedTreatments = await res.json();
+                }
+            } catch (e) {
+                console.error("Failed to fetch predefined treatments", e);
+            }
+        }
+
+        const parseTimeToMinutes = (timeStr) => {
+            if (!timeStr || timeStr === 'TBD' || timeStr === '-') return 9999;
+            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+            if (!match) return 9999;
+            let [_, h, m, ampm] = match;
+            let hours = parseInt(h);
+            let minutes = parseInt(m);
+            if (ampm) {
+                const suffix = ampm.toUpperCase();
+                if (suffix === 'PM' && hours !== 12) hours += 12;
+                if (suffix === 'AM' && hours === 12) hours = 0;
+            }
+            return hours * 60 + minutes;
+        };
+
+        const formatTime12h = (timeStr) => {
+            if (!timeStr) return "";
+            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+            if (!match) return timeStr;
+            let [_, h, m, ampm] = match;
+            if (ampm) return timeStr; // Already in 12h format
+            let hours = parseInt(h);
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            const paddedHours = hours.toString().padStart(2, '0');
+            return `${paddedHours}:${m} ${suffix}`;
+        };
 
         function renderDailyTimeline(patientData, therapistSessions = []) {
             const container = document.getElementById("routineCardBody");
             if (!container) return;
-
-            const parseTimeToMinutes = (timeStr) => {
-                if (!timeStr || timeStr === 'TBD' || timeStr === '-') return 9999;
-                const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-                if (!match) return 9999;
-                let [_, h, m, ampm] = match;
-                let hours = parseInt(h);
-                let minutes = parseInt(m);
-                if (ampm) {
-                    const suffix = ampm.toUpperCase();
-                    if (suffix === 'PM' && hours !== 12) hours += 12;
-                    if (suffix === 'AM' && hours === 12) hours = 0;
-                }
-                return hours * 60 + minutes;
-            };
-
-            const formatTime12h = (timeStr) => {
-                if (!timeStr) return "";
-                const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-                if (!match) return timeStr;
-                let [_, h, m, ampm] = match;
-                if (ampm) return timeStr; // Already in 12h format
-                let hours = parseInt(h);
-                const suffix = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
-                const paddedHours = hours.toString().padStart(2, '0');
-                return `${paddedHours}:${m} ${suffix}`;
-            };
 
             const yogaTime = patientData.yogaTiming || "06:00 AM";
             const breakfastTime = (patientData.mealTimings && patientData.mealTimings.breakfast) || "08:00 AM";
@@ -1708,6 +1732,60 @@
             container.innerHTML = html;
         }
 
+        function renderTreatmentCard(patientData, therapistSessions) {
+            const ptTreatment = document.getElementById("ptTreatment");
+            const ptProtocol = document.getElementById("ptProtocol");
+            const ptTreatmentTime = document.getElementById("ptTreatmentTime");
+            const ptTreatmentRoom = document.getElementById("ptTreatmentRoom");
+            const ptTherapist = document.getElementById("ptTherapist");
+            const ptDosDonts = document.getElementById("ptDosDonts");
+
+            if (!ptTreatment) return;
+
+            if (therapistSessions && therapistSessions.length > 0) {
+                // Sort sessions by time
+                therapistSessions.sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+                // Join session treatments
+                const treatmentsList = therapistSessions.map(s => s.treatment);
+                ptTreatment.textContent = treatmentsList.join(", ");
+
+                // Look up protocols and Do's & Don'ts from predefined treatments
+                let protocols = [];
+                let dosDonts = [];
+                treatmentsList.forEach(name => {
+                    const match = predefinedTreatments.find(t => t.name.toLowerCase() === name.toLowerCase());
+                    if (match) {
+                        if (match.protocol) protocols.push(`${name}:\n${match.protocol}`);
+                        if (match.defaultDosAndDonts) dosDonts.push(`${name}:\n${match.defaultDosAndDonts}`);
+                    }
+                });
+
+                ptProtocol.textContent = protocols.length > 0 ? protocols.join("\n\n") : (patientData.treatmentProtocol || "No specific protocol assigned.");
+                ptDosDonts.textContent = dosDonts.length > 0 ? dosDonts.join("\n\n") : (patientData.dosAndDonts || "Follow general hospital guidelines.");
+
+                // Join times
+                const timesList = therapistSessions.map(s => `${formatTime12h(s.startTime)} - ${formatTime12h(s.endTime)}`);
+                ptTreatmentTime.innerHTML = timesList.join("<br>");
+
+                // Join rooms
+                const roomsList = [...new Set(therapistSessions.map(s => s.roomNumber || "TBD"))];
+                ptTreatmentRoom.textContent = roomsList.join(", ");
+
+                // Join therapists
+                const therapistsList = therapistSessions.map(s => s.therapistId ? s.therapistId.name : "Assigned Therapist");
+                ptTherapist.textContent = therapistsList.join(", ");
+            } else {
+                // Fallback to patientData static fields
+                ptTreatment.textContent = patientData.treatmentPlan || "General Consultation";
+                ptProtocol.textContent = patientData.treatmentProtocol || "No specific protocol assigned.";
+                ptTreatmentTime.textContent = patientData.treatmentTime || "TBD";
+                ptTreatmentRoom.textContent = patientData.roomNumber || patientData.treatmentRoom || "TBD";
+                ptTherapist.textContent = patientData.assignedTherapist || "Please check with reception";
+                ptDosDonts.textContent = patientData.dosAndDonts || "Follow general hospital guidelines.";
+            }
+        }
+
         function updateUI(patientData, therapistSessions = []) {
             if (!patientData) return;
 
@@ -1736,21 +1814,15 @@
             document.getElementById("ptCheckOut").textContent = patientData.checkOutDate ? new Date(patientData.checkOutDate).toLocaleDateString() : "Not set";
 
 
-            document.getElementById("ptTreatment").textContent = patientData.treatmentPlan || "General Consultation";
-            document.getElementById("ptProtocol").textContent = patientData.treatmentProtocol || "No specific protocol assigned.";
+            // Render Treatment Card
+            renderTreatmentCard(patientData, therapistSessions);
+
             document.getElementById("ptDietPlan").textContent = patientData.dietPlan || "Follow general hospital meals.";
 
             // Handle Payment Modal on load
             if (patientData.paymentMethod === 'pending') {
                 document.getElementById("paymentModal").style.display = "flex";
             }
-
-
-            // Treatment Details
-            document.getElementById("ptTreatmentTime").textContent = patientData.treatmentTime || "TBD";
-            document.getElementById("ptTreatmentRoom").textContent = patientData.treatmentRoom || "TBD";
-            document.getElementById("ptTherapist").textContent = patientData.assignedTherapist || "Please check with reception";
-            document.getElementById("ptDosDonts").textContent = patientData.dosAndDonts || "Follow general hospital guidelines.";
 
 
 
@@ -1880,7 +1952,9 @@
         // Initial render with cache, then fetch fresh data
         if (patient) {
             updateUI(patient, []);
-            fetchLatestData();
+            fetchPredefinedTreatments().then(() => {
+                fetchLatestData();
+            });
         }
 
 
@@ -2529,7 +2603,7 @@
 
         function logout() {
             localStorage.removeItem('patientData');
-            window.location.href = "patient-login.html";
+            window.location.replace("patient-login.html");
         }
 
         async function fetchFeedbacks() {

@@ -479,7 +479,7 @@
         <a href="register.html" class="nav-btn nav-btn-outline">New Patient</a>
         <a href="therapist.html" class="nav-btn nav-btn-outline">Therapists</a>
         <a href="dashboard.html" class="nav-btn nav-btn-outline">Dashboard</a>
-        <a href="login.html" class="nav-btn nav-btn-solid">Logout</a>
+        <a href="login.html" onclick="localStorage.removeItem('adminLoggedIn');" class="nav-btn nav-btn-solid">Logout</a>
     </div>
 </div>
 
@@ -720,6 +720,23 @@
         <div class="modal-actions" style="margin-top: 2.2rem; display: flex; gap: 10px;">
             <button type="button" class="nav-btn nav-btn-solid" onclick="closePatientModal()" style="width: 100%; padding: 14px; font-weight: 600; border-radius: 12px;">Close Details</button>
         </div><script>
+    // Authentication Check
+    function checkAuth() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userRole = urlParams.get('role') || 'admin';
+        if (userRole === 'therapist') {
+            if (!localStorage.getItem('therapistData')) {
+                window.location.replace("therapist-login.html");
+            }
+        } else {
+            if (!localStorage.getItem('adminLoggedIn')) {
+                window.location.replace("login.html");
+            }
+        }
+    }
+    checkAuth();
+    window.addEventListener('pageshow', checkAuth);
+
     let currentSessions = [];
     let currentTherapistId = null;
     let globalTherapistName = "";
